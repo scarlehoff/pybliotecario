@@ -22,7 +22,7 @@ Adding new actions to each of the different modes is trivial, there are a small 
 
     For this it is necessary to modify the file on_call.py. Note that this file reads the arguments defined in argument_parser.py. If you need (surely yes) new command line arguments, this is where you add them.
 
-    Example: -f test.txt, this will send the file named test.txt to your defined Telegram chat
+    Example: -i test.jpg, this will send the image named test.img to your defined Telegram chat
 
 ## On command:
 
