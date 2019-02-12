@@ -2,6 +2,7 @@
 import urllib
 import requests
 import json
+import os.path
 
 telegram_URL = "https://api.telegram.org/"
 
@@ -18,10 +19,11 @@ class TelegramUtil:
         # Build app the API urls
         base_URL = telegram_URL + "bot{}/".format(TOKEN)
         base_fileURL = telegram_URL + "file/bot{}/".format(TOKEN)
-        self.get_msg = base_URL + "getUpdates"
         self.send_msg = base_URL + "sendMessage"
-        self.get_file = base_URL + "getFile"
         self.send_img = base_URL + "sendPhoto"
+        self.send_doc = base_URL + "sendDocument"
+        self.get_msg = base_URL + "getUpdates"
+        self.get_file = base_URL + "getFile"
 
 
     def __make_request(self, url):
@@ -101,6 +103,15 @@ class TelegramUtil:
         files = {'photo': ('picture.jpg', img)}  # Here, the ,"rb" thing
         blabla = requests.post(self.send_img, data=data, files=files)
         print(blabla.status_code, blabla.reason, blabla.content)
+
+    def send_file(self, filePath, chat):
+        data = {'chat_id': chat}
+        file_stream = open(filePath, 'rb')
+        doc_name = os.path.basename(filePath)
+        files = {'document' : (doc_name, file_stream) }
+        blabla = requests.post(self.send_doc, data=data, files=files)
+        print(blabla.status_code, blabla.reason, blabla.content)
+
 
     def download_file(self, fileId, file_name):
         """ Download file defined by fileId
