@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 from Message import Message
+import on_command
 
 def monthly_folder():
     main_folder = "data"
@@ -21,6 +22,11 @@ def write_to_daily_log(msg):
         f.write("\n")
 
 def main_loop(teleAPI):
+    """
+    This function activates a "listener" and waits for updates from Telegram
+    No matter what the update is about, we first store the content and then
+    if it is a command, we act on the command
+    """
     # Get updates from Telegram
     raw_updates = teleAPI.get_updates(not_empty = True)
     updates = [Message(update) for update in raw_updates]
@@ -38,6 +44,15 @@ def main_loop(teleAPI):
         else:
             write_to_daily_log(update.text)
             teleAPI.send_message("Text recibido", chatId)
+
+
+        # If the update is a command then act on it
+        if update.is_command:
+            # Generate a response (if any)
+            response = on_command.select_command(update.command, update)
+            # If it is a string, just send it as a msg
+            if isinstance(response, str):
+                teleAPI.send_message(response, chatId)
 
 
 

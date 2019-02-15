@@ -8,7 +8,7 @@ class Message:
     # Variables that we are going to parse from json:
     # chatId              - Id of the chat the message came from
     # username            - user who sent the message
-    # isCommand           - t/f
+    # is_command           - t/f
     # isRegisteredCommand - t/f
     # isGroup             - t/f
     # isFile              - t/f
@@ -69,13 +69,13 @@ class Message:
 
         # Now check whether the msg has the structure of a command
         if self.text[0] == '/':
-            self.isCommand = True
+            self.is_command = True
         else:
-            self.isCommand = False
+            self.is_command = False
             self.command = ""
             self.isRegisteredCommand = False
 
-        if self.isCommand:
+        if self.is_command:
             allText = self.text.split(' ', 1)
             self.command = allText[0][1:]
             # Absorb the @ in case is it a directed command
