@@ -21,6 +21,25 @@ def write_to_daily_log(msg):
         f.write(msg)
         f.write("\n")
 
+def still_alive():
+    from random import randint
+    sentences = [
+        "Pong",
+        "This was a triumph",
+        "HUGE SUCCESS",
+        "You torn me to pieces",
+        "Go ahead and leave me",
+        "This cake is great, it's so delicious and moist",
+        "Believe me, I am still alive",
+        "I'm doing science and I'm still alive",
+        "I feel FANTASTIC and I'm still alive",
+        "While you're dying I'll be still alive",
+        "When you're dead I will be still alive"
+    ]
+    r = randint(0,len(sentences)-1)
+    return sentences[r]
+
+
 def main_loop(teleAPI):
     """
     This function activates a "listener" and waits for updates from Telegram
@@ -37,22 +56,22 @@ def main_loop(teleAPI):
             continue
         chatId = update.chatId
         if update.isFile:
+            # If the update is a file, save the file and we are done
             file_name = update.text.replace(" ", "")
             file_path = "{0}/{1}".format(monthly_folder(), file_name)
             teleAPI.download_file(update.fileId, file_path)
-            teleAPI.send_message("File recibida!", chatId)
-        else:
-            write_to_daily_log(update.text)
-            teleAPI.send_message("Text recibido", chatId)
-
-
-        # If the update is a command then act on it
-        if update.is_command:
+            teleAPI.send_message("¡Archivo recibido y guardado!", chatId)
+        elif update.is_command:
+            # If the update is a command then act on it and don't save the command
             # Generate a response (if any)
             response = on_command.select_command(update.command, update)
-            # If it is a string, just send it as a msg
+            # If the response is a string, just send it as a msg
             if isinstance(response, str):
                 teleAPI.send_message(response, chatId)
-
+        else:
+            # Otherwise just save the msg to the log and send a funny reply
+            write_to_daily_log(update.text)
+            random_msg = still_alive()
+            teleAPI.send_message(random_msg, chatId)
 
 

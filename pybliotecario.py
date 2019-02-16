@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from TelegramUtil import TelegramUtil
-from core import main_loop
+from core_loop import main_loop
 
 # Modify argument_parser.py to read new arguments
 from argument_parser import parse_args

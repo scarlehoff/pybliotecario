@@ -37,7 +37,4 @@ In order to communicate with telegram you will need to instantiate an object of 
 
 
 ## TODO:
-- Connection status (?)
 - Automatise the generation of chatId (atm it needs to be done manually)
-- Rationalise Message class to be more than just an organisation feature
-- Change "core" into a processUpdate class
