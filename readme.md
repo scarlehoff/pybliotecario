@@ -35,7 +35,9 @@ In order to communicate with telegram you will need to instantiate an object of 
 - --arxiv_new: sends a msg to Telegram with the latest submissions to arxiv, filtered as you see fit (uses https://github.com/lukasschwab/arxiv.py as API)
 
 ## Available commands
-- /ip tells you the IP where the bot is currently running
+- /ip : tells you the IP where the bot is currently running
+- /arxiv-query arxiv_id: returns information on the queried paper
+- /arxiv-get arxiv_id: downloads the paper ands sends it to telegram
 
 
 ## TODO:

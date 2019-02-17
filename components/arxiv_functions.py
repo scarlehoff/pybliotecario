@@ -69,7 +69,7 @@ def filter_results(result_list, filter_dictionary):
     # Ok, this might be very dangerous here
     return lista
 
-def download_pdf(arxiv_id):
+def arxiv_get_pdf(arxiv_id):
     """ Downloads a paper from the arxiv given an id """
     # First we recover the information about the paper
     paper = arxiv.query( id_list=[arxiv_id] )[0]
@@ -119,5 +119,5 @@ if __name__ == "__main__":
 
 #     print("Test download")
 #     test_id = "1802.02445"
-#     name = download_pdf(test_id)
+#     name = arxiv_get_pdf(test_id)
 #     os.remove(name)

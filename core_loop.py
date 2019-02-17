@@ -68,6 +68,12 @@ def main_loop(teleAPI):
             # If the response is a string, just send it as a msg
             if isinstance(response, str):
                 teleAPI.send_message(response, chatId)
+            elif isinstance(response, dict):
+                if response['isfile']:
+                    filepath = response['filename']
+                    teleAPI.send_file(filepath, chatId)
+                    if response['delete']:
+                        os.remove(filepath)
         else:
             # Otherwise just save the msg to the log and send a funny reply
             write_to_daily_log(update.text)
