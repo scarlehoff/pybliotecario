@@ -94,6 +94,19 @@ def arxiv_recent_filtered(categories, filter_dict, abstract = False):
         lines.append(line)
     return "\n".join(lines)
 
+def arxiv_query_info(arxiv_id):
+    paper = arxiv.query( id_list=[arxiv_id] )[0]
+    title = paper['title']
+    authors = ", ".join(paper['authors'])
+    abstract = paper['summary']
+    msg = """ > {0}
+Title: {1} 
+
+Authors: {2}
+
+Abstract: {3}""".format(arxiv_id, title, authors, abstract)
+    return msg
+
 if __name__ == "__main__":
     print("Testing the arxiv component")
     print("Query a category")
