@@ -112,6 +112,15 @@ class TelegramUtil:
         blabla = requests.post(self.send_doc, data=data, files=files)
         print(blabla.status_code, blabla.reason, blabla.content)
 
+    def send_file_by_url(self, file_url, chat):
+        """
+        Sends a file using the telegram api which allows to send by url
+        it only works for images/pdf, and not all pdfs
+        """
+        data = {'chat_id': chat,
+                'document' : file_url}
+        blabla = requests.post(self.send_doc, data=data)
+        print(blabla.status_code, blabla.reason, blabla.content)
 
     def download_file(self, fileId, file_name):
         """ Download file defined by fileId
