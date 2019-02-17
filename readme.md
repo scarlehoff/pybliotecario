@@ -4,19 +4,12 @@ pybliotecario is a simple Telegram bot written en python.
 The goal of the program is to mantain an active connection between the computer in which the pybliotecario runs
 and your Telegram account.
 
-The program aims to be 100% extensible, running any kind of action in three different fashions:
+The program aims to be 100% extensible, running any kind of action in two different fashions:
 
-- On schedule: keep the bot running in the background so it does a series of actions at given times. For instance, calendar reminders.
 - On call: just call the command with the proper arguments. For instance, send a msg to your phone.
 - On command: write a command to the bot from telegram, so the bot can act on said command.
 
 Adding new actions to each of the different modes is trivial, there are a small example for each case in the relevant files.
-
-## On schedule:
-
-In order to add new command to be run on schedule just add them to the list you will find in on_schedule.py.
-
-Example: a command that says "good morning" every day at 8 am
 
 ## On call:
 
@@ -34,6 +27,15 @@ Example: if you send the command /ip, the bot will respond with the current ip o
 
 
 In order to communicate with telegram you will need to instantiate an object of the TelegramUtil class, with the proper TOKEN. For some specific actions you also need the chat id. You can write a general one in the file configurationData, but it is also possible to use a different one per function. 
+
+## Available cmd_line options:
+- msg: sends msg to Telegram
+- -i: sends a image to Telegram
+- -f: sends a file to Telegram
+- --arxiv_new: sends a msg to Telegram with the latest submissions to arxiv, filtered as you see fit (uses https://github.com/lukasschwab/arxiv.py as API)
+
+## Available commands
+- /ip tells you the IP where the bot is currently running
 
 
 ## TODO:
