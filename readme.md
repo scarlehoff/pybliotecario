@@ -39,6 +39,12 @@ In order to communicate with telegram you will need to instantiate an object of 
 - /arxiv-query arxiv_id: returns information on the queried paper
 - /arxiv-get arxiv_id: downloads the paper ands sends it to telegram
 
+## Some examples and ideas:
+For instance, you can run the pybliotecario every morning at 7:15 a.m. to tell you what are the news in the arxiv today adding a cronjob:
+
+    15 07 * * mon-fri /home/pi/Telegram/pybliotecario/pybliotecario.py --arxiv_new
+
+
 
 ## TODO:
 - Automatise the generation of chatId (atm it needs to be done manually)
