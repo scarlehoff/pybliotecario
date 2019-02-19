@@ -8,6 +8,7 @@ def parse_args():
     parser.add_argument("-f", "--file", help = "Send file to Telegram")
     parser.add_argument("--arxiv_new", help = "Send a msg containing a digest of the new submissions to arxiv", action = "store_true")
     parser.add_argument("--weather", help = "Sends a msg to telegram with the current weather and a small forecast", action = "store_true")
+    parser.add_argument("--check_repository", help = "Sends a msg to telegram with the incoming information for the given repository (receives the base folder of the repository)")
     return parser.parse_args()
 
 

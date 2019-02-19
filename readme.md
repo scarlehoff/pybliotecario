@@ -34,6 +34,7 @@ In order to communicate with telegram you will need to instantiate an object of 
 - -f: sends a file to Telegram
 - --arxiv_new: sends a msg to Telegram with the latest submissions to arxiv, filtered as you see fit (uses https://github.com/lukasschwab/arxiv.py as API)
 - --weather: sends a msg to Telegram with the current weather and some information about the forecast (uses https://github.com/csparpa/pyowm as OpenWeatherMap API, which needs an API key)
+- --check_repository: sends a msg to Telegram with the incoming changes to the repository
 
 ## Available commands
 - /ip : tells you the IP where the bot is currently running
