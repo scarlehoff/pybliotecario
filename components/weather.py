@@ -28,7 +28,7 @@ def check_for_rain_today_at(forecast, hour):
     """
     now = datetime.now()
     check = now.replace(hour = int(hour))
-    if check > now and fc.will_be_rainy_at(check):
+    if check > now and forecast.will_be_rainy_at(check):
         return True
     else:
         return False
