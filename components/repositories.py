@@ -12,13 +12,13 @@ re_git_msg = re.compile('(?<=Subject:).*(?=\n\n)')
 
 def mercurial_incoming():
     cmd = ['hg', 'incoming']
-    out = sp.run(cmd, capture_output = True)
-    changesets = out.stdout.decode().split('changeset')[1:]
+    out = sp.check_output(cmd)
+    changesets = out.decode().split('changeset')[1:]
     rev_dicts = []
     for rev in changesets:
-        branch = re_hg_branch.search(rev)[0].strip()
-        user = re_hg_user.search(rev)[0].strip()
-        msg = re_hg_msg.search(rev)[0].strip()
+        branch = re_hg_branch.search(rev).group().strip()
+        user = re_hg_user.search(rev).group().strip()
+        msg = re_hg_msg.search(rev).group().strip()
         rev_dicts.append( {'branch' : branch, 'user' : user, 'msg' : msg} )
     return rev_dicts
 
@@ -31,8 +31,8 @@ def git_incoming():
     cmd = ["git", "fetch"]
     sp.run(cmd)
     cmd = ["git", "log", "..origin/master", "--no-merges", "--format=email" ]
-    out = sp.run(cmd, capture_output = True)
-    changesets = out.stdout.decode() 
+    out = sp.check_output(cmd)
+    changesets = out.decode().split('changeset')[1:]
     msgs = re_git_msg.findall(changesets)
     users = re_git_user.findall(changesets)
     rev_dicts = []
