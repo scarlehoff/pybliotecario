@@ -14,10 +14,15 @@ def is_today(time_struct, base_time_struct):
     Remember, the previous day for arxiv purposes only starts at 19.00 
     """
     base_day = base_time_struct.tm_mday
+    base_month = base_time_struct.tm_mon
     base_hour = 19
     cd = time_struct.tm_mday
     ch = time_struct.tm_hour
+    cm = time_struct.tm_mon
     if cd < base_day and ch < base_hour:
+        return False
+    # Fix for the first few days of the month
+    elif cm < base_month and ch < base_hour:
         return False
     else:
         return True
