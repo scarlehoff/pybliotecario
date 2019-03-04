@@ -59,8 +59,15 @@ def main_loop(teleAPI):
             # If the update is a file, save the file and we are done
             file_name = update.text.replace(" ", "")
             file_path = "{0}/{1}".format(monthly_folder(), file_name)
-            teleAPI.download_file(update.fileId, file_path)
-            teleAPI.send_message("¡Archivo recibido y guardado!", chatId)
+            result = teleAPI.download_file(update.fileId, file_path)
+            if result:
+                teleAPI.send_message("¡Archivo recibido y guardado!", chatId)
+                print("File saved to {0}".format(file_path))
+            else:
+                teleAPI.send_message("There was some problem with this, sorry", chatId)
+                print("Since there was some problem, let's open a pdb console here and you decide what to do")
+                import pdb
+                pdb.set_trace()
         elif update.is_command:
             # If the update is a command then act on it and don't save the command
             # Generate a response (if any)

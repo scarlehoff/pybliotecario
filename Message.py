@@ -25,7 +25,10 @@ class Message:
         self.json = jsonDict
         keys = jsonDict.keys()
         if msg not in keys:
-            msg = "edited_message"
+            if "edited_message" in keys:
+                msg = 'edited_message'
+            elif "edited_channel_post" in keys:
+                msg = "edited_channel_post"
         try:
             message = jsonDict[msg]
         except:
@@ -38,8 +41,11 @@ class Message:
             return
         else:
             self.ignore = False
-        fromData = message['from']
         chatData = message['chat']
+        if 'from' in message.keys():
+            fromData = message['from']
+        else:
+            fromData = chatData # something has changed or was this a special type of msg???
         # Populate general fields
         self.username = fromData['username']
         self.chatId = chatData['id']

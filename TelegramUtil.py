@@ -18,7 +18,7 @@ class TelegramUtil:
             from configurationData import TOKEN as TOKEN
         # Build app the API urls
         base_URL = telegram_URL + "bot{}/".format(TOKEN)
-        base_fileURL = telegram_URL + "file/bot{}/".format(TOKEN)
+        self.base_fileURL = telegram_URL + "file/bot{}/".format(TOKEN)
         self.send_msg = base_URL + "sendMessage"
         self.send_img = base_URL + "sendPhoto"
         self.send_doc = base_URL + "sendDocument"
@@ -58,9 +58,17 @@ class TelegramUtil:
         in the remote server
         """
         url = self.get_file + "?file_id={0}".format(fileId)
-        json = self.__get_json_from_url(url)['result']
-        fpath = json['file_path']
-        return base_fileURL + fpath
+        json = self.__get_json_from_url(url)
+        # was it ok?
+        if json['ok']:
+            fpath = json['result']['file_path']
+            return self.base_fileURL + fpath
+        else:
+            print(json['error_code'])
+            print("Here's all the information we have on this request")
+            print("This is the url we have used")
+            print(url)
+            return None
 
     def get_updates(self, not_empty = False):
         """
@@ -122,10 +130,19 @@ class TelegramUtil:
         blabla = requests.post(self.send_doc, data=data)
         print(blabla.status_code, blabla.reason, blabla.content)
 
-    def download_file(self, fileId, file_name):
+    def download_file(self, fileId, file_name_raw):
         """ Download file defined by fileId
         to given file_name """
-        file_url = self.self.get_filePath(fileId)
+        file_url = self.get_filePath(fileId)
+        if not file_url:
+            return None
+        file_name = file_name_raw
+        n = 0
+        while os.path.isfile(file_name):
+            filedir = os.path.dirname(file_name_raw)
+            basename = os.path.basename(file_name_raw)
+            file_name = "{0}/n{1}-{2}".format(filedir, n, basename)
+            n += 1
         return urllib.request.urlretrieve(file_url, file_name)
 
 
