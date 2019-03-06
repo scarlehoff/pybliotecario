@@ -74,15 +74,24 @@ def filter_results(result_list, filter_dictionary):
     # Ok, this might be very dangerous here
     return lista
 
-def arxiv_get_pdf(arxiv_id):
+def url_to_id(arxiv_url):
+    """
+    Given an arxiv url return the corresponding id
+    if arxiv_url is already an id, returns unchanged
+    """
+    return os.path.basename(arxiv_url)
+    
+
+# Telegram-usable functions
+def arxiv_get_pdf(arxiv_id_raw):
     """ Downloads a paper from the arxiv given an id """
+    arxiv_id = url_to_id(arxiv_id_raw)
     # First we recover the information about the paper
     paper = arxiv.query( id_list=[arxiv_id] )[0]
     # Now download the pdf (the download command only needs a dictionary with the pdf_url, but that is given by the query)
     file_name = arxiv.download(paper)
     return file_name
 
-# Telegram-usable functions
 def arxiv_recent_filtered(categories, filter_dict, abstract = False):
     lines = []
     for category in categories:
@@ -99,7 +108,11 @@ def arxiv_recent_filtered(categories, filter_dict, abstract = False):
         lines.append(line)
     return "\n".join(lines)
 
-def arxiv_query_info(arxiv_id):
+def arxiv_query_info(arxiv_id_raw):
+    """
+    Returns extra information about the queried paper
+    """
+    arxiv_id = url_to_id(arxiv_id_raw)
     paper = arxiv.query( id_list=[arxiv_id] )[0]
     title = paper['title']
     authors = ", ".join(paper['authors'])
