@@ -1,4 +1,6 @@
 import components as c
+import subprocess as sp
+import os
 import pdb
 
 def select_command(tg_command, message_obj):
@@ -15,5 +17,12 @@ def select_command(tg_command, message_obj):
         from components import arxiv_functions
         arxiv_id = message_obj.text.strip()
         return {'isfile' : True, 'filename' : arxiv_functions.arxiv_get_pdf(arxiv_id), 'delete' : True}
-
+    elif tg_command.lower() in ("goodmorning", "buenosdias", "buenosdías"):
+        morning_file = 'good_morning.sh'
+        if os.path.isfile(morning_file):
+            cmd = "./{0}".format(morning_file)
+            sp.run([cmd])
+            return "¡Muy buenos días!"
+        else:
+            return "File {0} does not exist".format(morning_file)
 
