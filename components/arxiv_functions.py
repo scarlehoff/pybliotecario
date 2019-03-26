@@ -6,9 +6,9 @@ from datetime import datetime
 from datetime import timedelta
 import time
 import os
-import pdb
+from ipdb import set_trace
 
-def is_today(time_struct, base_time_struct = None):
+def is_today(time_struct, i = None):
     """
     Checks whether the given time_struct corresponds to today
     or to the previous day
@@ -22,16 +22,16 @@ def is_today(time_struct, base_time_struct = None):
 
     if wday < 2:
         # If today is monday or tuesday, we should look at thursday/friday for the cutoff
-        base_today = today - timedelta(days = 3)
+        base_today = today - timedelta(days = 4)
     else: # yesterday
         base_today = today - timedelta(days = 1)
-    base_today.replace(hour = base_hour)
+    base_today = base_today.replace(hour = base_hour, minute=0, second=0, microsecond=0)
 
     # Make the time struct into a datetime object
     dt = datetime.fromtimestamp(time.mktime(time_struct))
 
     # Now, if the paper date (dt) is from before the base time (base_today), that means it is not from today
-    return dt > base_today
+    return dt >= base_today
 
 def query_recent(category):
     """
@@ -47,7 +47,7 @@ def query_recent(category):
     indx = 1
     for i, element in enumerate(results):
         time_s = element[update_key]
-        if not is_today(time_s, today):
+        if not is_today(time_s, i = i):
             indx = i
             break
     return results[:indx]
