@@ -3,29 +3,35 @@
 import arxiv
 
 from datetime import datetime
+from datetime import timedelta
 import time
 import os
 import pdb
 
-def is_today(time_struct, base_time_struct):
+def is_today(time_struct, base_time_struct = None):
     """
     Checks whether the given time_struct corresponds to today
     or to the previous day
     Remember, the previous day for arxiv purposes only starts at 19.00 
     """
-    base_day = base_time_struct.tm_mday
-    base_month = base_time_struct.tm_mon
-    base_hour = 19
-    cd = time_struct.tm_mday
-    ch = time_struct.tm_hour
-    cm = time_struct.tm_mon
-    if cd < base_day and ch < base_hour:
-        return False
-    # Fix for the first few days of the month
-    elif cm < base_month and ch < base_hour:
-        return False
-    else:
-        return True
+    # First we need to find out which day is today
+    today = datetime.now()
+    day = today.day
+    wday = today.weekday() # 0 == Monday
+    base_hour = 18
+
+    if wday < 2:
+        # If today is monday or tuesday, we should look at thursday/friday for the cutoff
+        base_today = today - timedelta(days = 3)
+    else: # yesterday
+        base_today = today - timedelta(days = 1)
+    base_today.replace(hour = base_hour)
+
+    # Make the time struct into a datetime object
+    dt = datetime.fromtimestamp(time.mktime(time_struct))
+
+    # Now, if the paper date (dt) is from before the base time (base_today), that means it is not from today
+    return dt > base_today
 
 def query_recent(category):
     """
@@ -45,6 +51,7 @@ def query_recent(category):
             indx = i
             break
     return results[:indx]
+
 
 def filter_results(result_list, filter_dictionary):
     """
