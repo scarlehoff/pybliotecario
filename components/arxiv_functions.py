@@ -24,7 +24,7 @@ def is_today(time_struct, i = None):
         # If today is monday or tuesday, we should look at thursday/friday for the cutoff
         base_today = today - timedelta(days = 4)
     else: # yesterday
-        base_today = today - timedelta(days = 1)
+        base_today = today - timedelta(days = 2)
     base_today = base_today.replace(hour = base_hour, minute=0, second=0, microsecond=0)
 
     # Make the time struct into a datetime object
