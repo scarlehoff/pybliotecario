@@ -38,7 +38,7 @@ def query_recent(category):
     Query the arxiv for the updates of the last day for a given category
     """
     update_key = 'updated_parsed'
-    results = arxiv.query( search_query = category, max_results = 50, sort_by = "submittedDate" )
+    results = arxiv.query( search_query = category, max_results = 50, sort_by = "lastUpdatedDate" )
     try:
         today = results[0][update_key]
     except:
