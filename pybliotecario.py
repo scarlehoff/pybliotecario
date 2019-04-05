@@ -16,6 +16,9 @@ if __name__ == "__main__":
     if args.daemon:
         print("Activating main loop")
         while True:
-            main_loop(teleAPI)
+            main_loop(teleAPI, clear = args.clear_incoming)
     else:
         on_call.run_command(args)
+
+
+
