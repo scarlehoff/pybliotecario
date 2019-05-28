@@ -6,17 +6,12 @@ import pdb
 def run_command(args):
 
     teleAPI = TelegramUtil()
-    if args.message:
-        message_text = " ".join(args.message)
-        teleAPI.send_message(message_text, chatId)
-        print("Message sent")
 
-    if args.file:
-        teleAPI.send_file(args.file, chatId)
-
-    if args.image:
-        teleAPI.send_image(args.image, chatId)
-        print("Image sent")
+    if args.pid:
+        """ Wait until the given pid finish, then do whatever else you have been told to do """
+        from components.pid import wait_for_it_until_finished 
+        print("Waiting for the given PIDs: {0}".format(args.pid))
+        wait_for_it_until_finished(args.pid)
 
     if args.arxiv_new:
         from components.arxiv_functions import arxiv_recent_filtered
@@ -38,4 +33,17 @@ def run_command(args):
         from components import repo_check_incoming
         msg = repo_check_incoming(args.check_repository)
         teleAPI.send_message(msg, chatId)
+
+    # The last things we do is to send the messages if any
+    if args.file:
+        teleAPI.send_file(args.file, chatId)
+
+    if args.image:
+        teleAPI.send_image(args.image, chatId)
+        print("Image sent")
+
+    if args.message:
+        message_text = " ".join(args.message)
+        teleAPI.send_message(message_text, chatId)
+        print("Message sent")
 

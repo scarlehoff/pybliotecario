@@ -10,6 +10,7 @@ def parse_args():
     parser.add_argument("--weather", help = "Sends a msg to telegram with the current weather and a small forecast", action = "store_true")
     parser.add_argument("--check_repository", help = "Sends a msg to telegram with the incoming information for the given repository (receives the base folder of the repository)")
     parser.add_argument("--clear_incoming", help = "Clears incoming messages in case something has gone wrong", action = "store_true")
+    parser.add_argument("--pid", help = "Monitor a PID and sends a message when the PID is finished", type = int, nargs = "+")
     return parser.parse_args()
 
 
