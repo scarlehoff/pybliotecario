@@ -25,4 +25,17 @@ def select_command(tg_command, message_obj):
             return "¡Muy buenos días!"
         else:
             return "File {0} does not exist".format(morning_file)
+    elif tg_command.lower() in ("is_pid_alive"):
+        from components.pid import is_it_alive
+        search_string = message_obj.text.strip()
+        alive_msg = is_it_alive(search_string)
+        return alive_msg
+    elif tg_command.lower() in ("kill_pid"):
+        from components.pid import kill_pid
+        st = message_obj.text.strip()
+        if st.isdigit():
+            msg = kill_pid(int(st))
+            return msg
+        else:
+            return "{0} is not a PID?".format(st)
 
