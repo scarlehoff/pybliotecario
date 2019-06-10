@@ -2,6 +2,11 @@ from datetime import datetime
 import os
 from Message import Message
 import on_command
+try:
+    from configurationData import chatId as acceptedUser
+except:
+    chatId = None
+    print(" > > WARNING no chatId is configured")
 
 def monthly_folder():
     main_folder = "data"
@@ -65,6 +70,11 @@ def main_loop(teleAPI, clear = False):
             if update.ignore:
                 continue
             chatId = update.chatId
+            if acceptedUser:
+                if str(chatId) != acceptedUser:
+                    random_msg = still_alive()
+                    teleAPI.send_message(random_msg, chatId)
+                    continue
             if update.isFile:
                 # If the update is a file, save the file and we are done
                 file_name = update.text.replace(" ", "")
