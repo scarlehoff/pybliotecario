@@ -9,7 +9,7 @@ def run_command(args):
 
     if args.pid:
         """ Wait until the given pid finish, then do whatever else you have been told to do """
-        from components.pid import wait_for_it_until_finished 
+        from components.pid import wait_for_it_until_finished
         print("Waiting for the given PIDs: {0}".format(args.pid))
         wait_for_it_until_finished(args.pid)
 
@@ -42,8 +42,18 @@ def run_command(args):
         teleAPI.send_image(args.image, chatId)
         print("Image sent")
 
+
+    if args.my_ip:
+        from components.ip_lookup import ip_lookup
+        my_ip = ip_lookup(None, force = True)
+        message_text = " ".join(args.message)
+        message = f'{message_text} {my_ip}'
+        teleAPI.send_message(message, chatId)
+        print(f'IP: {my_ip}')
+        return
+
+
     if args.message:
         message_text = " ".join(args.message)
         teleAPI.send_message(message_text, chatId)
         print("Message sent")
-

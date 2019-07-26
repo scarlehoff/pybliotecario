@@ -11,6 +11,7 @@ def parse_args():
     parser.add_argument("--check_repository", help = "Sends a msg to telegram with the incoming information for the given repository (receives the base folder of the repository)")
     parser.add_argument("--clear_incoming", help = "Clears incoming messages in case something has gone wrong", action = "store_true")
     parser.add_argument("--pid", help = "Monitor a PID and sends a message when the PID is finished", type = int, nargs = "+")
+    parser.add_argument("--my_ip", help = "Send to the default chat the current IP of the computer", action = "store_true")
     return parser.parse_args()
 
 
