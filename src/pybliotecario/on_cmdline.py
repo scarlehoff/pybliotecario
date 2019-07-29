@@ -8,15 +8,12 @@
 
     The most obvious example is running the program just to send msgs and files to Telegram
 """
-from pybliotecario.configurationData import chat_id, TOKEN
-from pybliotecario.TelegramUtil import TelegramUtil
 
-def run_command(args):
+def run_command(args, teleAPI, config):
     """
     Receives the whole batch of arguments and acts accordingly
     """
-
-    teleAPI = TelegramUtil(TOKEN)
+    chat_id = config['DEFAULT']['chat_id']
     actors = []
 
     if args.my_ip:
@@ -29,7 +26,7 @@ def run_command(args):
         actors.append(ControllerPID)
 
     for Actor in actors:
-        actor_instance = Actor(teleAPI, chat_id = chat_id)
+        actor_instance = Actor(teleAPI, chat_id = chat_id, configuration = config)
         actor_instance.cmdline_command(args)
         
 
@@ -55,9 +52,6 @@ def run_command(args):
         from pybliotecario.components import repo_check_incoming
         msg = repo_check_incoming(args.check_repository)
         teleAPI.send_message(msg, chat_id)
-
-
-
 
     # These three are the basic commands:
     # send file, send image, send text

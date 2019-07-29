@@ -7,17 +7,18 @@
     if you want to run only some submodules of the pybliotecario.
 """
 
-from pybliotecario.configurationData import chat_id
 import pybliotecario.components as c
 import subprocess as sp
 import os
 import pdb
 
-def act_on_telegram_command(teleAPI, message_obj):
+def act_on_telegram_command(teleAPI, message_obj, config):
     """
     Act for a given telegram command
     """
     tg_command = message_obj.command
+    chat_id = config['DEFAULT']['chat_id']
+
     if tg_command == "ip":
         from pybliotecario.components.ip_lookup import IpLookup as Actor
 
@@ -42,7 +43,7 @@ def act_on_telegram_command(teleAPI, message_obj):
             return "File {0} does not exist".format(morning_file)
 
     try:
-        actor_instance = Actor(teleAPI, chat_id = chat_id)
+        actor_instance = Actor(teleAPI, chat_id = chat_id, configuration = config)
         return actor_instance.telegram_message(message_obj)
     except:
         print("No actor declared for this command: {0}".format(tg_command))

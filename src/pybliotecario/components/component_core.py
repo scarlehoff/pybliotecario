@@ -13,6 +13,15 @@
 """
 
 class Component:
+    """
+    This is the base class from which all components should inherit
+
+    Instantiate the class requires a messeger object able to talk with the telegram API
+    optionally it can receive a configuration object and a chat_id object.
+    In general chat_id will be contained already in the configuration
+    however we want to be able to comunicate with chats not included in the comunication,
+    that's why it is left as a separate option
+    """
     def __init__(self, telegram_object, chat_id = None, configuration = None):
         self.telegram = telegram_object
         self.chat_id = chat_id
