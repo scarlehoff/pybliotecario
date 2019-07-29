@@ -1,11 +1,11 @@
-from pybliotecario.configurationData import chatId
+from pybliotecario.configurationData import chatId, TOKEN
 from pybliotecario.TelegramUtil import TelegramUtil
 import pdb
 
 
 def run_command(args):
 
-    teleAPI = TelegramUtil()
+    teleAPI = TelegramUtil(TOKEN)
 
     if args.pid:
         """ Wait until the given pid finish, then do whatever else you have been told to do """

@@ -1,7 +1,7 @@
 from datetime import datetime
 import os
 from pybliotecario.Message import Message
-import pybliotecario.on_command as on_command
+import pybliotecario.on_cmd_message as on_cmd_message
 try:
     from pybliotecario.configurationData import chatId as acceptedUser
 except:
@@ -91,7 +91,7 @@ def main_loop(teleAPI, clear = False):
             elif update.is_command:
                 # If the update is a command then act on it and don't save the command
                 # Generate a response (if any)
-                response = on_command.select_command(update.command, update)
+                response = on_cmd_message.select_command(update.command, update)
                 # If the response is a string, just send it as a msg
                 if isinstance(response, str):
                     teleAPI.send_message(response, chatId)

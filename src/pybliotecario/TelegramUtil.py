@@ -10,12 +10,10 @@ class TelegramUtil:
     """ This class handles all comunications with
     Telegram """
 
-    def __init__(self, debug = False, timeout = 300, TOKEN = None):
+    def __init__(self, TOKEN, debug = False, timeout = 300):
         self.offset = None
         self.debug = debug
         self.timeout = timeout
-        if TOKEN is None:
-            from pybliotecario.configurationData import TOKEN as TOKEN
         # Build app the API urls
         base_URL = telegram_URL + "bot{}/".format(TOKEN)
         self.base_fileURL = telegram_URL + "file/bot{}/".format(TOKEN)
