@@ -3,7 +3,6 @@ import configparser
 import os
 
 from pybliotecario.TelegramUtil import TelegramUtil
-from pybliotecario.configurationData import TOKEN
 from pybliotecario.core_loop import main_loop
 
 # Modify argument_parser.py to read new arguments
@@ -24,9 +23,10 @@ def read_config(config_file = None):
     else:
         config_files = [config_file]
     for possible_config in config_files:
-        config = configparser.ConfigParser()
-        config.read(possible_config)
-        return config
+        if os.path.isfile(possible_config):
+            config = configparser.ConfigParser()
+            config.read(possible_config)
+            return config
 
 def main():
     """ Driver of the pybliotecario """

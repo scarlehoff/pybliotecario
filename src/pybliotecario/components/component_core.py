@@ -12,6 +12,7 @@
     to the `act_on_command` or `act_on_message` methods.
 """
 
+
 class Component:
     """
     This is the base class from which all components should inherit
@@ -22,7 +23,8 @@ class Component:
     however we want to be able to comunicate with chats not included in the comunication,
     that's why it is left as a separate option
     """
-    def __init__(self, telegram_object, chat_id = None, configuration = None):
+
+    def __init__(self, telegram_object, chat_id=None, configuration=None):
         self.telegram = telegram_object
         self.chat_id = chat_id
         self.configuration = configuration
@@ -53,11 +55,11 @@ class Component:
         """
         self.act_on_command()
 
-    def act_on_message(self, content = None):
+    def act_on_message(self, content=None):
         """ Acts on a received msg """
         self.telegram.send_message("Msg received", self.chat_id)
 
-    def act_on_command(self, content = None):
+    def act_on_command(self, content=None):
         """ Acts on a received command """
         self.telegram.send_message("Comand line argument invoked", self.chat_id)
 
