@@ -1,9 +1,9 @@
 from datetime import datetime
 import os
-from Message import Message
-import on_command
+from pybliotecario.Message import Message
+import pybliotecario.on_command as on_command
 try:
-    from configurationData import chatId as acceptedUser
+    from pybliotecario.configurationData import chatId as acceptedUser
 except:
     chatId = None
     print(" > > WARNING no chatId is configured")

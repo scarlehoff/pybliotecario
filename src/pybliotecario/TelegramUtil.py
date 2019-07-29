@@ -15,7 +15,7 @@ class TelegramUtil:
         self.debug = debug
         self.timeout = timeout
         if TOKEN is None:
-            from configurationData import TOKEN as TOKEN
+            from pybliotecario.configurationData import TOKEN as TOKEN
         # Build app the API urls
         base_URL = telegram_URL + "bot{}/".format(TOKEN)
         self.base_fileURL = telegram_URL + "file/bot{}/".format(TOKEN)

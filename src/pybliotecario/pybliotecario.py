@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-from TelegramUtil import TelegramUtil
-from core_loop import main_loop
+from pybliotecario.TelegramUtil import TelegramUtil
+from pybliotecario.core_loop import main_loop
 
 # Modify argument_parser.py to read new arguments
-from argument_parser import parse_args
-import on_call
+from pybliotecario.argument_parser import parse_args
+import pybliotecario.on_call as on_call
 
-
-if __name__ == "__main__":
+def main():
     print("Initializing the pybliotecario")
     teleAPI = TelegramUtil()
 
@@ -20,5 +19,6 @@ if __name__ == "__main__":
     else:
         on_call.run_command(args)
 
-
+if __name__ == "__main__":
+    main()
 

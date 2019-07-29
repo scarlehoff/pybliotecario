@@ -1,4 +1,4 @@
-from configurationData import chatId
+from pybliotecario.configurationData import chatId
 import urllib.request
 
 def ip_lookup(asker_chatid, force = False):
