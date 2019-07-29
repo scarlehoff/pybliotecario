@@ -20,6 +20,10 @@ def act_on_telegram_command(teleAPI, message_obj):
     tg_command = message_obj.command
     if tg_command == "ip":
         from pybliotecario.components.ip_lookup import IpLookup as Actor
+
+    elif tg_command.lower() in ("is_pid_alive", "kill_pid"):
+        from pybliotecario.components.pid import ControllerPID as Actor
+
     elif tg_command in ( "arxiv-query", "arxiv" ):
         from pybliotecario.components import arxiv_functions
         arxiv_id = message_obj.text.strip()
@@ -36,20 +40,10 @@ def act_on_telegram_command(teleAPI, message_obj):
             return "¡Muy buenos días!"
         else:
             return "File {0} does not exist".format(morning_file)
-    elif tg_command.lower() in ("is_pid_alive"):
-        from pybliotecario.components.pid import is_it_alive
-        search_string = message_obj.text.strip()
-        alive_msg = is_it_alive(search_string)
-        return alive_msg
-    elif tg_command.lower() in ("kill_pid"):
-        from pybliotecario.components.pid import kill_pid
-        st = message_obj.text.strip()
-        if st.isdigit():
-            msg = kill_pid(int(st))
-            return msg
-        else:
-            return "{0} is not a PID?".format(st)
 
-    actor_instance = Actor(teleAPI, chat_id = chat_id)
-    return actor_instance.telegram_message(message_obj)
-
+    try:
+        actor_instance = Actor(teleAPI, chat_id = chat_id)
+        return actor_instance.telegram_message(message_obj)
+    except:
+        print("No actor declared for this command: {0}".format(tg_command))
+        return None

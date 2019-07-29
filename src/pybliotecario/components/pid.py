@@ -1,5 +1,6 @@
 import psutil
-from ipdb import set_trace
+from pybliotecario.components.component_core import Component
+
 
 def get_process(pid):
     exists = psutil.pid_exists(pid)
@@ -55,7 +56,20 @@ def kill_pid(pid):
     else:
         return "No process with pid {0}".format(pid)
 
+class ControllerPID(Component):
+    def cmdline_command(self, args):
+        print("Waiting for the given PIDs: {0}".format(args.pid))
+        wait_for_it_until_finished(args.pid)
 
+    def telegram_message(self, msg):
 
+        pid_string = msg.text.strip()
+        if msg.command == "kill_pid":
+            if pid_string.isdigit:
+                return_msg = kill_pid(int(pid_string))
+            else:
+                return_msg = "{0} is not a PID?".format(pid_string)
+        elif msg.command == "is_pid_alive":
+            return_msg = is_it_alive(pid_string)
 
-
+        self.send_msg(return_msg, msg.chat_id)

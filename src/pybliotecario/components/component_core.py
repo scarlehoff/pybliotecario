@@ -51,3 +51,7 @@ class Component:
     def act_on_command(self, content = None):
         """ Acts on a received command """
         self.telegram.send_message("Comand line argument invoked", self.chat_id)
+
+    # Some useful wrappers
+    def send_msg(self, *args):
+        return self.telegram.send_message(*args)

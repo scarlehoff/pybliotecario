@@ -23,16 +23,17 @@ def run_command(args):
         from pybliotecario.components.ip_lookup import IpLookup
         actors.append(IpLookup)
 
+    if args.pid:
+        """ Wait until the given pid finish, then do whatever else you have been told to do """
+        from pybliotecario.components.pid import ControllerPID 
+        actors.append(ControllerPID)
+
     for Actor in actors:
         actor_instance = Actor(teleAPI, chat_id = chat_id)
         actor_instance.cmdline_command(args)
         
 
-    if args.pid:
-        """ Wait until the given pid finish, then do whatever else you have been told to do """
-        from pybliotecario.components.pid import wait_for_it_until_finished
-        print("Waiting for the given PIDs: {0}".format(args.pid))
-        wait_for_it_until_finished(args.pid)
+
 
     if args.arxiv_new:
         from pybliotecario.components.arxiv_functions import arxiv_recent_filtered
