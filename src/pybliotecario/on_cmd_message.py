@@ -1,14 +1,25 @@
+"""
+    This module contains a mapping between Telegram commands
+    (msgs which start with / ) and components which will act on them.
+
+    Note that the components are only imported when/if the appropiate command is invoked
+    This is a design choice as this way it is not necessary to have all dependencies 
+    if you want to run only some submodules of the pybliotecario.
+"""
+
+from pybliotecario.configurationData import chat_id
 import pybliotecario.components as c
 import subprocess as sp
 import os
 import pdb
 
-def select_command(tg_command, message_obj):
+def act_on_telegram_command(teleAPI, message_obj):
     """
     Act for a given telegram command
     """
+    tg_command = message_obj.command
     if tg_command == "ip":
-        return c.ip_lookup(message_obj.chatId)
+        from pybliotecario.components.ip_lookup import IpLookup as Actor
     elif tg_command in ( "arxiv-query", "arxiv" ):
         from pybliotecario.components import arxiv_functions
         arxiv_id = message_obj.text.strip()
@@ -38,4 +49,7 @@ def select_command(tg_command, message_obj):
             return msg
         else:
             return "{0} is not a PID?".format(st)
+
+    actor_instance = Actor(teleAPI, chat_id = chat_id)
+    return actor_instance.telegram_message(message_obj)
 

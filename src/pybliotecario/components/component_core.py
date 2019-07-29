@@ -13,7 +13,7 @@
 """
 
 class Component:
-    def __init__(self, telegram_object, chat_id, configuration):
+    def __init__(self, telegram_object, chat_id = None, configuration = None):
         self.telegram = telegram_object
         self.chat_id = chat_id
         self.configuration = configuration
@@ -22,23 +22,32 @@ class Component:
     def configure_me(self):
         pass
 
-    def telegram_message_parser(self, msg):
+    def check_identity(self, msg):
+        """ Checks that the user asking is the correct one """
+        if int(self.chat_id) == int(msg.chat_id):
+            return True
+        else:
+            return False
+
+    def telegram_message(self, msg):
         """ Recevies a `msg` object and then
         decides what to do with it.
         The `msg` object includes the Telegram command"""
         self.act_on_message(msg.text.strip())
 
-    def cmdline_command_parser(self, command, command_text):
-        """ Receives the command which invoked the class
-        and the associated text.
-        In the simplest case there is only one command, so just
-        act on it """
-        self.act_on_command(command_text.text_strip())
+    def cmdline_command(self, args):
+        """
+        Receives the full set of arguments (including, of course,
+        the one which invoked the class) in case synergies with
+        other command line arguments are needed.
+        In the most general case, of course, this will just be ignored
+        """
+        self.act_on_command()
 
-    def act_on_message(self, msg):
+    def act_on_message(self, content = None):
         """ Acts on a received msg """
         self.telegram.send_message("Msg received", self.chat_id)
 
-    def act_on_command(self, command):
+    def act_on_command(self, content = None):
         """ Acts on a received command """
-        self.telegram.send_message(msg, self.chat_id)
+        self.telegram.send_message("Comand line argument invoked", self.chat_id)

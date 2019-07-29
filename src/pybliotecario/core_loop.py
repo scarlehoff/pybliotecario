@@ -3,10 +3,10 @@ import os
 from pybliotecario.Message import Message
 import pybliotecario.on_cmd_message as on_cmd_message
 try:
-    from pybliotecario.configurationData import chatId as acceptedUser
+    from pybliotecario.configurationData import chat_id as acceptedUser
 except:
-    chatId = None
-    print(" > > WARNING no chatId is configured")
+    chat_id = None
+    print(" > > WARNING no chat_id is configured")
 
 def monthly_folder():
     main_folder = "data"
@@ -69,11 +69,11 @@ def main_loop(teleAPI, clear = False):
         try:
             if update.ignore:
                 continue
-            chatId = update.chatId
+            chat_id = update.chat_id
             if acceptedUser:
-                if str(chatId) != acceptedUser:
+                if str(chat_id) != acceptedUser:
                     random_msg = still_alive()
-                    teleAPI.send_message(random_msg, chatId)
+                    teleAPI.send_message(random_msg, chat_id)
                     continue
             if update.isFile:
                 # If the update is a file, save the file and we are done
@@ -81,31 +81,30 @@ def main_loop(teleAPI, clear = False):
                 file_path = "{0}/{1}".format(monthly_folder(), file_name)
                 result = teleAPI.download_file(update.fileId, file_path)
                 if result:
-                    teleAPI.send_message("¡Archivo recibido y guardado!", chatId)
+                    teleAPI.send_message("¡Archivo recibido y guardado!", chat_id)
                     print("File saved to {0}".format(file_path))
                 else:
-                    teleAPI.send_message("There was some problem with this, sorry", chatId)
+                    teleAPI.send_message("There was some problem with this, sorry", chat_id)
                     print("Since there was some problem, let's open a pdb console here and you decide what to do")
-                    import pdb
-                    pdb.set_trace()
             elif update.is_command:
-                # If the update is a command then act on it and don't save the command
-                # Generate a response (if any)
-                response = on_cmd_message.select_command(update.command, update)
-                # If the response is a string, just send it as a msg
+                # Calls select command and act on the message
+                # the function will receive the whole telegram API so it is allowed to send msgs directly
+                # it can choose to send back a response instead
+                response = on_cmd_message.act_on_telegram_command(teleAPI, update)
+                # if response is text, or file, it will be sent to the chat
                 if isinstance(response, str):
-                    teleAPI.send_message(response, chatId)
+                    teleAPI.send_message(response, chat_id)
                 elif isinstance(response, dict):
                     if response['isfile']:
                         filepath = response['filename']
-                        teleAPI.send_file(filepath, chatId)
+                        teleAPI.send_file(filepath, chat_id)
                         if response['delete']:
                             os.remove(filepath)
             else:
                 # Otherwise just save the msg to the log and send a funny reply
                 write_to_daily_log(update.text)
                 random_msg = still_alive()
-                teleAPI.send_message(random_msg, chatId)
+                teleAPI.send_message(random_msg, chat_id)
         except Exception as e:
             # If we are in clear mode, we want to recapture updates to ensure we clear the ones that produce a fail
             # in principle in clear mode we don't care what the fail is about, we just want to clear the failure

@@ -6,7 +6,7 @@ registeredCommands = []
 
 class Message:
     # Variables that we are going to parse from json:
-    # chatId              - Id of the chat the message came from
+    # chat_id              - Id of the chat the message came from
     # username            - user who sent the message
     # is_command           - t/f
     # isRegisteredCommand - t/f
@@ -48,7 +48,7 @@ class Message:
             fromData = chatData # something has changed or was this a special type of msg???
         # Populate general fields
         self.username = fromData['username']
-        self.chatId = chatData['id']
+        self.chat_id = chatData['id']
 
         # Check the filetyp of what we just received
         if "photo" in msgKeys:
