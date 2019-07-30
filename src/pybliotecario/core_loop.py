@@ -2,11 +2,6 @@ from datetime import datetime
 import os
 from pybliotecario.Message import Message
 import pybliotecario.on_cmd_message as on_cmd_message
-try:
-    from pybliotecario.configurationData import chat_id as acceptedUser
-except:
-    chat_id = None
-    print(" > > WARNING no chat_id is configured")
 
 def monthly_folder():
     main_folder = "data"
@@ -54,7 +49,7 @@ def still_alive():
     return sentences[r]
 
 
-def main_loop(teleAPI, clear = False):
+def main_loop(teleAPI, accepted_user = None, clear = False):
     """
     This function activates a "listener" and waits for updates from Telegram
     No matter what the update is about, we first store the content and then
@@ -70,8 +65,8 @@ def main_loop(teleAPI, clear = False):
             if update.ignore:
                 continue
             chat_id = update.chat_id
-            if acceptedUser:
-                if str(chat_id) != acceptedUser:
+            if accepted_user:
+                if str(chat_id) != accepted_user:
                     random_msg = still_alive()
                     teleAPI.send_message(random_msg, chat_id)
                     continue

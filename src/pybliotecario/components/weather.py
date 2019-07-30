@@ -1,8 +1,9 @@
+from datetime import datetime
+
 import pyowm
 # https://github.com/csparpa/pyowm
 
-import pdb
-from datetime import datetime
+from pybliotecario.components.component_core import Component
 
 def check_current_weather(location, api_key):
     owm = pyowm.OWM(api_key)
@@ -51,9 +52,31 @@ def will_it_rain(location, api_key, hours = ["10", "17"]):
     return msg
 
 
+class Weather(Component):
+
+    def __init__(self, telegram_object, configuration=None, **kwargs):
+        super().__init__(telegram_object, configuration = configuration, **kwargs)
+        weather_config = configuration['WEATHER']
+        self.api_key = weather_config['api']
+        self.weather_location = weather_config['location']
+        times_str = weather_config['times']
+        self.check_times = times_str.split(',')
+
+    def cmdline_command(self, args):
+        """
+            Checks the weather forecast at a given location
+            at some given times as well as the current forecast at the
+            given location and reports to Telegram the findings
+        """
+        msg_rain = will_it_rain(self.weather_location, self.api_key, self.check_times)
+        msg_current = check_current_weather(self.weather_location, self.api_key)
+        weather_msg = "{1}\n{0}".format(msg_rain, msg_current)
+        self.send_msg(weather_msg)
+        print("Weather information sent")
+
 if __name__ == "__main__":
     print("Testing weather")
-    weather_api = '33f58fa8fd905d895f5f04f8a3c0bdd6'
+    weather_api = '<weather api>'
     city = 'Milano, IT'
     msg = will_it_rain(city, weather_api)
     print("Check of the forecast")

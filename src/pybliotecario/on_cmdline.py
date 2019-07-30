@@ -25,6 +25,12 @@ def run_command(args, teleAPI, config):
         from pybliotecario.components.pid import ControllerPID 
         actors.append(ControllerPID)
 
+    if args.weather:
+        from pybliotecario.components.weather import Weather
+        actors.append(Weather)
+
+
+
     for Actor in actors:
         actor_instance = Actor(teleAPI, chat_id = chat_id, configuration = config)
         actor_instance.cmdline_command(args)
@@ -39,15 +45,7 @@ def run_command(args, teleAPI, config):
         teleAPI.send_message(msg, chat_id)
         print("Arxiv information sent")
 
-    if args.weather:
-        from pybliotecario.components.weather import will_it_rain, check_current_weather
-        from pybliotecario.configurationData import weather_api, weather_location, weather_times
-        msg_rain = will_it_rain(weather_location, weather_api, weather_times)
-        msg_wthr = check_current_weather(weather_location, weather_api)
-        weather_msg = "{1}\n{0}".format(msg_rain, msg_wthr)
-        teleAPI.send_message(weather_msg, chat_id)
-        print("Weather information sent")
-
+    
     if args.check_repository:
         from pybliotecario.components import repo_check_incoming
         msg = repo_check_incoming(args.check_repository)

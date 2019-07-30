@@ -64,5 +64,7 @@ class Component:
         self.telegram.send_message("Comand line argument invoked", self.chat_id)
 
     # Some useful wrappers
-    def send_msg(self, *args):
-        return self.telegram.send_message(*args)
+    def send_msg(self, msg, chat_id = None):
+        if chat_id is None:
+            chat_id = self.chat_id
+        return self.telegram.send_message(msg, chat_id)
