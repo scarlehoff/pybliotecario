@@ -1,7 +1,7 @@
 import os
 import re
 import subprocess as sp
-import pdb
+from pybliotecario.components.component_core import Component
 
 re_hg_branch = re.compile('(?<=branch:).*(?=\n)')
 re_hg_user = re.compile('(?<=user:).*(?=<)')
@@ -12,7 +12,8 @@ re_git_msg = re.compile('(?<=Subject:).*(?=\n\n)')
 
 def mercurial_incoming():
     cmd = ['hg', 'incoming']
-    out = sp.check_output(cmd)
+    cmd_ran = sp.run(cmd, stdout = sp.PIPE)
+    out = cmd_ran.stdout
     changesets = out.decode().split('changeset')[1:]
     rev_dicts = []
     for rev in changesets:
@@ -31,7 +32,8 @@ def git_incoming():
     cmd = ["git", "fetch"]
     sp.run(cmd)
     cmd = ["git", "log", "..origin/master", "--no-merges", "--format=email" ]
-    out = sp.check_output(cmd)
+    cmd_ran = sp.run(cmd, stdout = sp.PIPE)
+    out = cmd_ran.stdout
     changesets = out.decode().split('changeset')[1:]
     msgs = re_git_msg.findall(changesets)
     users = re_git_user.findall(changesets)
@@ -70,3 +72,14 @@ def repo_check_incoming(repo_path, max_print = 4):
         answer.append(m)
     return "\n".join(answer)
 
+class Repository(Component):
+
+    def cmdline_command(self, args):
+        """
+            Checks in the repository given
+            in check_repository for new (i.e., not pulled)
+            commits
+        """
+        repository = args.check_repository
+        msg = repo_check_incoming(repository)
+        self.send_msg(msg)

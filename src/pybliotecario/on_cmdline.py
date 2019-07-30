@@ -22,19 +22,20 @@ def run_command(args, teleAPI, config):
 
     if args.pid:
         """ Wait until the given pid finish, then do whatever else you have been told to do """
-        from pybliotecario.components.pid import ControllerPID 
+        from pybliotecario.components.pid import ControllerPID
         actors.append(ControllerPID)
 
     if args.weather:
         from pybliotecario.components.weather import Weather
         actors.append(Weather)
 
-
+    if args.check_repository:
+        from pybliotecario.components.repositories import Repository
+        actors.append(Repository)
 
     for Actor in actors:
         actor_instance = Actor(teleAPI, chat_id = chat_id, configuration = config)
         actor_instance.cmdline_command(args)
-        
 
 
 
@@ -44,12 +45,6 @@ def run_command(args, teleAPI, config):
         msg = arxiv_recent_filtered(arxiv_categories, arxiv_filter_dict)
         teleAPI.send_message(msg, chat_id)
         print("Arxiv information sent")
-
-    
-    if args.check_repository:
-        from pybliotecario.components import repo_check_incoming
-        msg = repo_check_incoming(args.check_repository)
-        teleAPI.send_message(msg, chat_id)
 
     # These three are the basic commands:
     # send file, send image, send text
