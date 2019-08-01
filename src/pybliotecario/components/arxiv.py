@@ -147,11 +147,11 @@ class Arxiv(Component):
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
         arxiv_config = configuration["ARXIV"]
-        self.keywords = arxiv_config["keywords"].split(",")
+        self.keywords = filter(lambda x: x, arxiv_config["keywords"].split(","))
         filter_dict_str = arxiv_config["filter_dict"]
         filter_dict_str = filter_dict_str.replace("keywords", "['{0}']".format("','".join(self.keywords)))
         self.filter_dict = ast.literal_eval(filter_dict_str)
-        self.categories = arxiv_config["categories"].split(",")
+        self.categories = filter(lambda x: x, arxiv_config["categories"].strip().split(","))
 
     def cmdline_command(self, args):
         """
