@@ -1,2 +1,0 @@
-from pybliotecario.components.ip_lookup import ip_lookup
-from pybliotecario.components.repositories import repo_check_incoming

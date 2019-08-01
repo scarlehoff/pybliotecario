@@ -13,6 +13,7 @@
 """
 import os
 
+
 class Component:
     """
     This is the base class from which all components should inherit
@@ -31,6 +32,8 @@ class Component:
         self.configurable = False
 
     def configure_me(self):
+        """ In first initialization (--init or --config) this method will be called
+        if any configuration is needed for the child class, it should be done here """
         pass
 
     def check_identity(self, msg):
@@ -64,14 +67,14 @@ class Component:
         self.telegram.send_message("Comand line argument invoked", self.chat_id)
 
     # Some useful wrappers
-    def send_msg(self, msg, chat_id = None):
+    def send_msg(self, msg, chat_id=None):
         """ Wrapper around API send_msg, if chat_id is not defined
         it will use the chat_id this class was instantiated to """
         if chat_id is None:
             chat_id = self.chat_id
         return self.telegram.send_message(msg, chat_id)
 
-    def send_file(self, filepath, chat_id = None, delete = False):
+    def send_file(self, filepath, chat_id=None, delete=False):
         """ Wrapper around API send_file, if chat_id is not defined
         it will use the chat_id this class was instantiated to.
         It will check for existence of the file and will delete it afterwards if required
@@ -79,7 +82,7 @@ class Component:
         if chat_id is None:
             chat_id = self.chat_id
         if not os.path.isfile(filepath):
-            self.send_msg(f'ERROR: failed to send {filepath}', chat_id)
+            self.send_msg(f"ERROR: failed to send {filepath}", chat_id)
         self.telegram.send_file(filepath, chat_id)
         if delete:
             os.remove(filepath)

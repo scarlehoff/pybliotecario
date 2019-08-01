@@ -3,6 +3,7 @@ import os
 from pybliotecario.Message import Message
 import pybliotecario.on_cmd_message as on_cmd_message
 
+
 def monthly_folder():
     main_folder = "data"
     ahora = datetime.now()
@@ -13,54 +14,57 @@ def monthly_folder():
         os.makedirs(folder_name)
     return folder_name
 
+
 def write_to_daily_log(msg):
     folder = monthly_folder()
     day = datetime.now().day
     file_name = "{0}/{1}.log".format(folder, day)
-    with open(file_name, 'a+') as f:
+    with open(file_name, "a+") as f:
         f.write(msg)
         f.write("\n")
 
+
 def still_alive():
     from random import randint
+
     sentences = [
-            "Pong",
-            "This was a triumph",
-            "HUGE SUCCESS",
-            "It's hard to overstate my satisfaction",
-            "There's no sense crying over every mistake",
-            "You just keep on trying till you run out of cake",
-            "I'm being so sincere right now",
-            "You tore me to pieces",
-            "These points of data make a beautiful line",
-            "We're out of beta, we're releasing on time",
-            "Think of all the things we learned",
-            "Go ahead and leave me",
-            "I think I prefer to stay inside",
-            "This cake is great, it's so delicious and moist",
-            "When I look out there it makes me glad I'm not you",
-            "Believe me, I am still alive",
-            "I'm doing science and I'm still alive",
-            "I feel FANTASTIC and I'm still alive",
-            "While you're dying I'll be still alive",
-            "When you're dead I will be still alive"
-            ]
-    r = randint(0,len(sentences)-1)
+        "Pong",
+        "This was a triumph",
+        "HUGE SUCCESS",
+        "It's hard to overstate my satisfaction",
+        "There's no sense crying over every mistake",
+        "You just keep on trying till you run out of cake",
+        "I'm being so sincere right now",
+        "You tore me to pieces",
+        "These points of data make a beautiful line",
+        "We're out of beta, we're releasing on time",
+        "Think of all the things we learned",
+        "Go ahead and leave me",
+        "I think I prefer to stay inside",
+        "This cake is great, it's so delicious and moist",
+        "When I look out there it makes me glad I'm not you",
+        "Believe me, I am still alive",
+        "I'm doing science and I'm still alive",
+        "I feel FANTASTIC and I'm still alive",
+        "While you're dying I'll be still alive",
+        "When you're dead I will be still alive",
+    ]
+    r = randint(0, len(sentences) - 1)
     return sentences[r]
 
 
-def main_loop(teleAPI, config = None, clear = False):
+def main_loop(teleAPI, config=None, clear=False):
     """
     This function activates a "listener" and waits for updates from Telegram
     No matter what the update is about, we first store the content and then
     if it is a command, we act on the command
     """
     if config:
-        accepted_user = config['DEFAULT']['chat_id']
+        accepted_user = config["DEFAULT"]["chat_id"]
     else:
         accepted_user = None
     # Get updates from Telegram
-    raw_updates = teleAPI.get_updates(not_empty = True)
+    raw_updates = teleAPI.get_updates(not_empty=True)
     updates = [Message(update) for update in raw_updates]
     # Act on those updates
     for update in updates:
@@ -94,10 +98,10 @@ def main_loop(teleAPI, config = None, clear = False):
                 if isinstance(response, str):
                     teleAPI.send_message(response, chat_id)
                 elif isinstance(response, dict):
-                    if response['isfile']:
-                        filepath = response['filename']
+                    if response["isfile"]:
+                        filepath = response["filename"]
                         teleAPI.send_file(filepath, chat_id)
-                        if response['delete']:
+                        if response["delete"]:
                             os.remove(filepath)
             else:
                 # Otherwise just save the msg to the log and send a funny reply
@@ -111,5 +115,3 @@ def main_loop(teleAPI, config = None, clear = False):
                 print("\n     > > This update produced an exception: {0}\n\n".format(e))
             else:
                 raise e
-
-

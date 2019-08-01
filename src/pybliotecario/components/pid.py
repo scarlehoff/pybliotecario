@@ -1,8 +1,16 @@
+"""
+    This module contains utilities for interacting with processes of the computer
+    in which the bot runs.
+    It allows for things like killing a process from Telegram or querying for
+    an active process
+"""
+
 import psutil
 from pybliotecario.components.component_core import Component
 
 
 def get_process(pid):
+    """ Returns a process object for the given PID """
     exists = psutil.pid_exists(pid)
     proc = None
     if exists:
@@ -59,19 +67,32 @@ def kill_pid(pid):
 
 
 class ControllerPID(Component):
+    """
+    """
     def cmdline_command(self, args):
+        """ Waits until the given PID(s) are finished """
         print("Waiting for the given PIDs: {0}".format(args.pid))
         wait_for_it_until_finished(args.pid)
 
-    def telegram_message(self, msg):
+    @staticmethod
+    def kill(pid):
+        """ Kills the received PID """
+        return kill_pid(pid)
 
+    @staticmethod
+    def alive(pid):
+        """ Check whether a PID (or str for searching
+        for a PID) is alive """
+        return is_it_alive(pid)
+
+    def telegram_message(self, msg):
         pid_string = msg.text.strip()
         if msg.command == "kill_pid":
             if pid_string.isdigit:
-                return_msg = kill_pid(int(pid_string))
+                return_msg = self.kill(int(pid_string))
             else:
                 return_msg = "{0} is not a PID?".format(pid_string)
         elif msg.command == "is_pid_alive":
-            return_msg = is_it_alive(pid_string)
+            return_msg = self.alive(pid_string)
 
         self.send_msg(return_msg, msg.chat_id)

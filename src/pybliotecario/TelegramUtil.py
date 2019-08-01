@@ -44,7 +44,7 @@ class TelegramUtil:
         """ Updates the offset
         i.e., resets don't ask Telegram server for old messages
         """
-        if not updates: #len(updates) == 0
+        if not updates:  # len(updates) == 0
             return
         li = []
         for update in updates:
