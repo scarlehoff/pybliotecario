@@ -5,6 +5,8 @@ import urllib
 import requests
 
 TELEGRAM_URL = "https://api.telegram.org/"
+import logging
+log = logging.getLogger(__name__)
 
 
 class TelegramUtil:
@@ -62,10 +64,10 @@ class TelegramUtil:
             fpath = json["result"]["file_path"]
             return self.base_fileURL + fpath
         else:
-            print(json["error_code"])
-            print("Here's all the information we have on this request")
-            print("This is the url we have used")
-            print(url)
+            log.info(json["error_code"])
+            log.info("Here's all the information we have on this request")
+            log.info("This is the url we have used")
+            log.info(url)
             return None
 
     def get_updates(self, not_empty=False):
@@ -83,16 +85,16 @@ class TelegramUtil:
         if not updates and not_empty:
             return self.get_updates(not_empty=True)
         if self.debug:
-            print("Request url: {0}".format(url))
-            print("Obtained updates: {0}".format(updates))
+            log.info("Request url: {0}".format(url))
+            log.info("Obtained updates: {0}".format(updates))
         try:
             result = updates["result"]
         except Exception as e:
-            # in case of ANY exception, just print it out and let the program run
-            print("Error: ")
-            print(str(e))
-            print("List of updates: ")
-            print(updates)
+            # in case of ANY exception, just log.info it out and let the program run
+            log.info("Error: ")
+            log.info(str(e))
+            log.info("List of updates: ")
+            log.info(updates)
             return []
         self.__re_offset(result)
         return result
@@ -109,7 +111,7 @@ class TelegramUtil:
         img = open(imgPath, "rb")
         files = {"photo": ("picture.jpg", img)}  # Here, the ,"rb" thing
         blabla = requests.post(self.send_img, data=data, files=files)
-        print(blabla.status_code, blabla.reason, blabla.content)
+        log.info(blabla.status_code, blabla.reason, blabla.content)
 
     def send_file(self, filePath, chat):
         data = {"chat_id": chat}
@@ -117,7 +119,7 @@ class TelegramUtil:
         doc_name = os.path.basename(filePath)
         files = {"document": (doc_name, file_stream)}
         blabla = requests.post(self.send_doc, data=data, files=files)
-        print(blabla.status_code, blabla.reason, blabla.content)
+        log.info(blabla.status_code, blabla.reason, blabla.content)
 
     def send_file_by_url(self, file_url, chat):
         """
@@ -126,7 +128,7 @@ class TelegramUtil:
         """
         data = {"chat_id": chat, "document": file_url}
         blabla = requests.post(self.send_doc, data=data)
-        print(blabla.status_code, blabla.reason, blabla.content)
+        log.info(blabla.status_code, blabla.reason, blabla.content)
 
     def download_file(self, fileId, file_name_raw):
         """ Download file defined by fileId
@@ -145,17 +147,17 @@ class TelegramUtil:
 
 
 if __name__ == "__main__":
-    print("Testing TelegramUtil")
+    log.info("Testing TelegramUtil")
     TOKEN = "must put a token here to test"
     ut = TelegramUtil(TOKEN, debug=True)
     results = ut.get_updates()
     for result in results:
-        print("Complete json:")
-        print(result)
+        log.info("Complete json:")
+        log.info(result)
         message = result["message"]
         chat_id = message["chat"]["id"]
         txt = message["text"]
-        print("Message from {0}: {1}".format(chat_id, txt))
+        log.info("Message from {0}: {1}".format(chat_id, txt))
         ut.send_message("Message received", chat_id)
     ut.timeout = 1
     ut.get_updates()  # Use the offset to confirm updates

@@ -2,6 +2,8 @@
 import urllib.request
 from pybliotecario.components.component_core import Component
 
+import logging
+log = logging.getLogger(__name__)
 
 def ip_lookup():
     """ Uses ident.me to find out the current ip of the host """
@@ -11,7 +13,7 @@ def ip_lookup():
 
 class IpLookup(Component):
     """
-        Reads the current IP of the computer and sends it to Telegram """
+        Reads the current IP of the computer and sends it to Telegram 
     """
     def telegram_message(self, msg):
         """ If the chat id asking is the correct one
@@ -30,6 +32,6 @@ class IpLookup(Component):
         message_text = " ".join(args.message)
         message = f"{message_text} {my_ip}"
         self.telegram.send_message(message, self.chat_id)
-        print(f"IP: {my_ip}")
+        log.info(f"IP: {my_ip}")
         # Finally, consume the text
         args.message = None

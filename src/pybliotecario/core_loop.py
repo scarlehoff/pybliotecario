@@ -2,6 +2,8 @@ from datetime import datetime
 import os
 from pybliotecario.Message import Message
 import pybliotecario.on_cmd_message as on_cmd_message
+import logging
+log = logging.getLogger(__name__)
 
 
 def monthly_folder():
@@ -68,7 +70,7 @@ def main_loop(teleAPI, config=None, clear=False):
     updates = [Message(update) for update in raw_updates]
     # Act on those updates
     for update in updates:
-        print(update.json)
+        log.info(update.json)
         try:
             if update.ignore:
                 continue
@@ -85,10 +87,10 @@ def main_loop(teleAPI, config=None, clear=False):
                 result = teleAPI.download_file(update.fileId, file_path)
                 if result:
                     teleAPI.send_message("¡Archivo recibido y guardado!", chat_id)
-                    print("File saved to {0}".format(file_path))
+                    log.info("File saved to {0}".format(file_path))
                 else:
                     teleAPI.send_message("There was some problem with this, sorry", chat_id)
-                    print("Since there was some problem, let's open a pdb console here and you decide what to do")
+                    log.info("Since there was some problem, let's open a pdb console here and you decide what to do")
             elif update.is_command:
                 # Calls select command and act on the message
                 # the function will receive the whole telegram API so it is allowed to send msgs directly
@@ -112,6 +114,6 @@ def main_loop(teleAPI, config=None, clear=False):
             # If we are in clear mode, we want to recapture updates to ensure we clear the ones that produce a fail
             # in principle in clear mode we don't care what the fail is about, we just want to clear the failure
             if clear:
-                print("\n     > > This update produced an exception: {0}\n\n".format(e))
+                log.info("\n     > > This update produced an exception: {0}\n\n".format(e))
             else:
                 raise e

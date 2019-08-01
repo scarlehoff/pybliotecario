@@ -9,6 +9,9 @@ from pybliotecario.core_loop import main_loop
 from pybliotecario.argument_parser import parse_args
 import pybliotecario.on_cmdline as on_cmdline
 
+import logging
+logging.basicConfig(level = logging.INFO)
+log = logging.getLogger(__name__)
 
 # Now read the configuration file
 CONFIG_FILE = "pybliotecario.ini"
@@ -32,11 +35,11 @@ def main():
     args = parse_args()
     config = read_config(args.config_file)
 
-    print("Initializing the pybliotecario")
+    log.info("Initializing the pybliotecario")
     teleAPI = TelegramUtil(config["DEFAULT"]["TOKEN"])
 
     if args.daemon:
-        print("Activating main loop")
+        log.info("Activating main loop")
         while True:
             main_loop(teleAPI, config=config, clear=args.clear_incoming)
     else:

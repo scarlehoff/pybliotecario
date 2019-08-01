@@ -11,6 +11,8 @@ import pybliotecario.components as c
 import subprocess as sp
 import os
 import pdb
+import logging
+log = logging.getLogger(__name__)
 
 
 def act_on_telegram_command(teleAPI, message_obj, config):
@@ -36,7 +38,7 @@ def act_on_telegram_command(teleAPI, message_obj, config):
         else:
             return "File {0} does not exist".format(morning_file)
     else:
-        print("No actor declared for this command: {0}".format(tg_command))
+        log.info("No actor declared for this command: {0}".format(tg_command))
         return None
 
     actor_instance = Actor(teleAPI, chat_id=chat_id, configuration=config)

@@ -9,6 +9,8 @@
     The most obvious example is running the program just to send msgs and files to Telegram
 """
 
+import logging
+log = logging.getLogger(__name__)
 
 def run_command(args, teleAPI, config):
     """
@@ -51,13 +53,13 @@ def run_command(args, teleAPI, config):
     # send file, send image, send text
     if args.file:
         teleAPI.send_file(args.file, chat_id)
-        print("File sent")
+        log.info("File sent")
 
     if args.image:
         teleAPI.send_image(args.image, chat_id)
-        print("Image sent")
+        log.info("Image sent")
 
     if args.message:
         message_text = " ".join(args.message)
         teleAPI.send_message(message_text, chat_id)
-        print("Message sent")
+        log.info("Message sent")

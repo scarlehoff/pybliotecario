@@ -3,6 +3,8 @@
 
 
 registeredCommands = []
+import logging
+log = logging.getLogger(__name__)
 
 
 class Message:
@@ -32,8 +34,8 @@ class Message:
         try:
             message = jsonDict[msg]
         except:
-            print("   >>>>> ")
-            print(jsonDict)
+            log.info("   >>>>> ")
+            log.info(jsonDict)
             raise Exception("Not a message or an edited message?")
         msgKeys = message.keys()
         if set(ign_keys) & set(msgKeys):

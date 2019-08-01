@@ -7,6 +7,8 @@ import os
 import re
 import subprocess as sp
 from pybliotecario.components.component_core import Component
+import logging
+log = logging.getLogger(__name__)
 
 re_hg_branch = re.compile("(?<=branch:).*(?=\n)")
 re_hg_user = re.compile("(?<=user:).*(?=<)")
@@ -63,7 +65,7 @@ def git_pull():
     sp.run(cmd)
 
 
-def repo_check_incoming(repo_path, max_print=4):
+def repo_check_incoming(repo_path, max_log.info=4):
     """ Wrapper around git incoming / hg incoming """
     os.chdir(repo_path)
     if os.path.isdir(".hg"):
@@ -76,10 +78,10 @@ def repo_check_incoming(repo_path, max_print=4):
     n_commits = len(commits)
     repo_name = os.path.basename(repo_path)
     msg = "{0} new commits found in the {1} repository".format(n_commits, repo_name)
-    if n_commits > max_print:
-        msg += ", showing only the latest {0}".format(max_print)
+    if n_commits > max_log.info:
+        msg += ", showing only the latest {0}".format(max_log.info)
     answer = [msg]
-    for commit in commits[:max_print]:
+    for commit in commits[:max_log.info]:
         m = "\n > By {0}".format(commit["user"])
         if commit["branch"]:
             m += " in branch {0}".format(commit["branch"])

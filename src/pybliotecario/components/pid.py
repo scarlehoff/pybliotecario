@@ -8,6 +8,8 @@
 import psutil
 from pybliotecario.components.component_core import Component
 
+import logging
+log = logging.getLogger(__name__)
 
 def get_process(pid):
     """ Returns a process object for the given PID """
@@ -20,7 +22,7 @@ def get_process(pid):
             pass
 
     if proc is None:
-        print("WARNING: Process {0} was not found".format(pid))
+        log.info("WARNING: Process {0} was not found".format(pid))
 
     return proc
 
@@ -71,7 +73,7 @@ class ControllerPID(Component):
     """
     def cmdline_command(self, args):
         """ Waits until the given PID(s) are finished """
-        print("Waiting for the given PIDs: {0}".format(args.pid))
+        log.info("Waiting for the given PIDs: {0}".format(args.pid))
         wait_for_it_until_finished(args.pid)
 
     @staticmethod

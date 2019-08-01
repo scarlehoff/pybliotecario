@@ -1,5 +1,5 @@
 """
-    Module using the arxiv API for preprint tracking
+    Module using the arxiv API for prelog.info tracking
     update notifications and quick-querying from the Telegram app
 """
 
@@ -10,6 +10,8 @@ import os
 import ast
 import arxiv
 from pybliotecario.components.component_core import Component
+import logging
+log = logging.getLogger(__name__)
 
 
 def is_today(time_struct):
@@ -159,7 +161,7 @@ class Arxiv(Component):
         """
         msg = arxiv_recent_filtered(self.categories, self.filter_dict)
         self.send_msg(msg)
-        print("Arxiv information sent")
+        log.info("Arxiv information sent")
 
     def telegram_message(self, msg):
         command = msg.command
@@ -173,16 +175,16 @@ class Arxiv(Component):
 
 
 if __name__ == "__main__":
-    print("Testing the arxiv component")
-    print("Query a category")
+    log.info("Testing the arxiv component")
+    log.info("Query a category")
     category = "hep-ph"
     recent_papers = query_recent(category)
     dict_search = {"title": ["Higgs"], "authors": ["Cruz-Martinez"], "summary": ["VBF"]}
     filter_papers = filter_results(recent_papers, dict_search)
     tlg_msg = arxiv_recent_filtered([category], dict_search)
-    print(tlg_msg)
+    log.info(tlg_msg)
 
-#     print("Test download")
+#     log.info("Test download")
 #     test_id = "1802.02445"
 #     name = arxiv_get_pdf(test_id)
 #     os.remove(name)
