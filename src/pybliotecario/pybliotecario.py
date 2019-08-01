@@ -10,8 +10,7 @@ from pybliotecario.argument_parser import parse_args
 import pybliotecario.on_cmdline as on_cmdline
 
 import logging
-logging.basicConfig(filename = '/tmp/pybliotecario.log', level = logging.INFO)
-log = logging.getLogger(__name__)
+log = logging.getLogger()
 
 # Now read the configuration file
 CONFIG_FILE = "pybliotecario.ini"
@@ -29,11 +28,18 @@ def read_config(config_file=None):
             config.read(possible_config)
             return config
 
+def logger_setup(filename):
+    filehandler = logging.FileHandler(filename, 'a')
+    log.addHandler(filehandler)
+    log.setLevel(logging.INFO)
+
 
 def main():
     """ Driver of the pybliotecario """
     args = parse_args()
     config = read_config(args.config_file)
+    main_folder = config["DEFAULT"]["main_folder"]
+    logger_setup(f'{main_folder}/info.log')
 
     log.info("Initializing the pybliotecario")
     teleAPI = TelegramUtil(config["DEFAULT"]["TOKEN"])
