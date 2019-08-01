@@ -32,7 +32,6 @@ def main():
     """ Driver of the pybliotecario """
     args = parse_args()
     config = read_config(args.config_file)
-    config_chat_id = config['DEFAULT']['chat_id']
 
     print("Initializing the pybliotecario")
     teleAPI = TelegramUtil(config['DEFAULT']['TOKEN'])
@@ -40,7 +39,7 @@ def main():
     if args.daemon:
         print("Activating main loop")
         while True:
-            main_loop(teleAPI, accepted_user = config_chat_id, clear = args.clear_incoming)
+            main_loop(teleAPI, config = config, clear = args.clear_incoming)
     else:
         on_cmdline.run_command(args, teleAPI, config)
 

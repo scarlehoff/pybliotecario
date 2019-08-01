@@ -11,7 +11,7 @@
     the class Component will just pass the text of the msg (or the command)
     to the `act_on_command` or `act_on_message` methods.
 """
-
+import os
 
 class Component:
     """
@@ -65,6 +65,21 @@ class Component:
 
     # Some useful wrappers
     def send_msg(self, msg, chat_id = None):
+        """ Wrapper around API send_msg, if chat_id is not defined
+        it will use the chat_id this class was instantiated to """
         if chat_id is None:
             chat_id = self.chat_id
         return self.telegram.send_message(msg, chat_id)
+
+    def send_file(self, filepath, chat_id = None, delete = False):
+        """ Wrapper around API send_file, if chat_id is not defined
+        it will use the chat_id this class was instantiated to.
+        It will check for existence of the file and will delete it afterwards if required
+        """
+        if chat_id is None:
+            chat_id = self.chat_id
+        if not os.path.isfile(filepath):
+            self.send_msg(f'ERROR: failed to send {filepath}', chat_id)
+        self.telegram.send_file(filepath, chat_id)
+        if delete:
+            os.remove(filepath)

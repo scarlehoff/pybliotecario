@@ -1,12 +1,13 @@
 # arxiv-useful functions
 
-import arxiv
 
 from datetime import datetime
 from datetime import timedelta
 import time
 import os
-from ipdb import set_trace
+import ast
+import arxiv
+from pybliotecario.components.component_core import Component
 
 def is_today(time_struct, i = None):
     """
@@ -82,7 +83,6 @@ def url_to_id(arxiv_url):
     if arxiv_url is already an id, returns unchanged
     """
     return os.path.basename(arxiv_url)
-    
 
 # Telegram-usable functions
 def arxiv_get_pdf(arxiv_id_raw):
@@ -120,12 +120,48 @@ def arxiv_query_info(arxiv_id_raw):
     authors = ", ".join(paper['authors'])
     abstract = paper['summary']
     msg = """ > {0}
-Title: {1} 
+Title: {1}
 
 Authors: {2}
 
 Abstract: {3}""".format(arxiv_id, title, authors, abstract)
     return msg
+
+class Arxiv(Component):
+
+    def __init__(self, telegram_object, configuration=None, **kwargs):
+        super().__init__(telegram_object, configuration = configuration, **kwargs)
+        arxiv_config = configuration['ARXIV']
+        self.keywords = arxiv_config['keywords'].split(',')
+        filter_dict_str = arxiv_config['filter_dict']
+        filter_dict_str = filter_dict_str.replace("keywords", "['{0}']".format("','".join(self.keywords)))
+        self.filter_dict = ast.literal_eval(filter_dict_str)
+        self.categories = arxiv_config['categories'].split(',')
+
+
+    def cmdline_command(self, args):
+        """
+            Reads the latests arrivals to the arxiv and
+            sends a notification if any of the entries fullfill any of
+            the requirements set in the config file
+        """
+        msg = arxiv_recent_filtered(self.categories, self.filter_dict)
+        self.send_msg(msg)
+        print("Arxiv information sent")
+
+    def telegram_message(self, msg):
+        command = msg.command
+        arxiv_id = msg.text.strip()
+        if command in ("arxivget", "arxiv-get"):
+            file_send = arxiv_get_pdf(arxiv_id)
+            self.send_file(file_send, delete = True)
+        else:
+            msg = arxiv_query_info(arxiv_id)
+            self.send_msg(msg)
+
+
+
+
 
 if __name__ == "__main__":
     print("Testing the arxiv component")

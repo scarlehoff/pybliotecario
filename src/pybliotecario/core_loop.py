@@ -49,12 +49,16 @@ def still_alive():
     return sentences[r]
 
 
-def main_loop(teleAPI, accepted_user = None, clear = False):
+def main_loop(teleAPI, config = None, clear = False):
     """
     This function activates a "listener" and waits for updates from Telegram
     No matter what the update is about, we first store the content and then
     if it is a command, we act on the command
     """
+    if config:
+        accepted_user = config['DEFAULT']['chat_id']
+    else:
+        accepted_user = None
     # Get updates from Telegram
     raw_updates = teleAPI.get_updates(not_empty = True)
     updates = [Message(update) for update in raw_updates]
@@ -85,7 +89,7 @@ def main_loop(teleAPI, accepted_user = None, clear = False):
                 # Calls select command and act on the message
                 # the function will receive the whole telegram API so it is allowed to send msgs directly
                 # it can choose to send back a response instead
-                response = on_cmd_message.act_on_telegram_command(teleAPI, update)
+                response = on_cmd_message.act_on_telegram_command(teleAPI, update, config)
                 # if response is text, or file, it will be sent to the chat
                 if isinstance(response, str):
                     teleAPI.send_message(response, chat_id)
