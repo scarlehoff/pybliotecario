@@ -6,8 +6,8 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def monthly_folder():
-    main_folder = "data"
+def monthly_folder(base_main_folder):
+    main_folder = f"{base_main_folder}/data"
     ahora = datetime.now()
     y = ahora.year
     m = ahora.strftime("%B")
@@ -17,8 +17,8 @@ def monthly_folder():
     return folder_name
 
 
-def write_to_daily_log(msg):
-    folder = monthly_folder()
+def write_to_daily_log(main_folder, msg):
+    folder = monthly_folder(main_folder)
     day = datetime.now().day
     file_name = "{0}/{1}.log".format(folder, day)
     with open(file_name, "a+") as f:
@@ -65,6 +65,7 @@ def main_loop(teleAPI, config=None, clear=False):
         accepted_user = config["DEFAULT"]["chat_id"]
     else:
         accepted_user = None
+    main_folder = config["DEFAULT"]["main_folder"]
     # Get updates from Telegram
     raw_updates = teleAPI.get_updates(not_empty=True)
     updates = [Message(update) for update in raw_updates]
@@ -107,7 +108,7 @@ def main_loop(teleAPI, config=None, clear=False):
                             os.remove(filepath)
             else:
                 # Otherwise just save the msg to the log and send a funny reply
-                write_to_daily_log(update.text)
+                write_to_daily_log(main_folder, update.text)
                 random_msg = still_alive()
                 teleAPI.send_message(random_msg, chat_id)
         except Exception as e:

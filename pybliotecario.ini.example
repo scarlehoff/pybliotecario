@@ -1,6 +1,7 @@
 [DEFAULT]
 TOKEN = <telegram bot token>
 chat_id = <chat_id number> 
+main_folder = /home/<username>/.pybliotecario
 
 # Other configs
 [ARXIV]

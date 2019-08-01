@@ -10,7 +10,7 @@ from pybliotecario.argument_parser import parse_args
 import pybliotecario.on_cmdline as on_cmdline
 
 import logging
-logging.basicConfig(level = logging.INFO)
+logging.basicConfig(filename = '/tmp/pybliotecario.log', level = logging.INFO)
 log = logging.getLogger(__name__)
 
 # Now read the configuration file
