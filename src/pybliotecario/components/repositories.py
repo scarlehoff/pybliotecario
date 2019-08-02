@@ -65,7 +65,7 @@ def git_pull():
     sp.run(cmd)
 
 
-def repo_check_incoming(repo_path, max_log.info=4):
+def repo_check_incoming(repo_path, max_log_n=4):
     """ Wrapper around git incoming / hg incoming """
     os.chdir(repo_path)
     if os.path.isdir(".hg"):
@@ -78,10 +78,10 @@ def repo_check_incoming(repo_path, max_log.info=4):
     n_commits = len(commits)
     repo_name = os.path.basename(repo_path)
     msg = "{0} new commits found in the {1} repository".format(n_commits, repo_name)
-    if n_commits > max_log.info:
-        msg += ", showing only the latest {0}".format(max_log.info)
+    if n_commits > max_log_n:
+        msg += ", showing only the latest {0}".format(max_log_n)
     answer = [msg]
-    for commit in commits[:max_log.info]:
+    for commit in commits[:max_log_n]:
         m = "\n > By {0}".format(commit["user"])
         if commit["branch"]:
             m += " in branch {0}".format(commit["branch"])
@@ -92,7 +92,7 @@ def repo_check_incoming(repo_path, max_log.info=4):
 
 class Repository(Component):
     """
-        Checks in the repository given
+    Checks in the repository given
         in check_repository for new (i.e., not pulled)
         commits
     """

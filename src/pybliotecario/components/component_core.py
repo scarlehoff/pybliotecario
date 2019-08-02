@@ -31,7 +31,8 @@ class Component:
         self.configuration = configuration
         self.configurable = False
 
-    def configure_me(self):
+    @staticmethod
+    def configure_me():
         """ In first initialization (--init or --config) this method will be called
         if any configuration is needed for the child class, it should be done here """
         pass
