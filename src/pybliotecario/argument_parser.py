@@ -3,8 +3,9 @@ import glob
 import importlib
 import configparser
 from argparse import ArgumentParser, Action
+from ipdb import set_trace
 
-INITIALIZE = True
+INITIALIZE = False
 
 def write_config(config_dict, config_file):
     """
@@ -42,8 +43,12 @@ def config_module(module):
         name_py = getattr(module, name)
         if check_attr(name_py):
             actor_list.append(name_py)
+    dict_list = []
     for actor in actor_list:
-        actor.configure_me()
+        result = actor.configure_me()
+        if result:
+            dict_list.append(result)
+    return dict_list
 
 class InitAction(Action):
     """
@@ -99,7 +104,10 @@ class InitAction(Action):
             module_name = "{0}.{1}".format(module_components, os.path.basename(module_file))
             module_clean = module_name.replace(".py","")
             module = importlib.import_module(module_clean)
-            config_module(module)
+            dict_list = config_module(module)
+            for dictionary in dict_list:
+                for key, item in dictionary.items():
+                    config_dict[key] = item
         # And finally write the config file
         write_config(config_dict, config_file)
         parser.exit(0)

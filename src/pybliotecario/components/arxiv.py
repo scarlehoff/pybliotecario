@@ -7,7 +7,6 @@ from datetime import datetime
 from datetime import timedelta
 import time
 import os
-import ast
 import arxiv
 from pybliotecario.components.component_core import Component
 import logging
@@ -143,15 +142,47 @@ Abstract: {3}""".format(
     return msg
 
 
+def split_list(comma_separated_str):
+    """ Receives a string representation of a comma separated list
+    and splits it, filters out empty spaces and returns a list """
+    # TODO make that part of the Config object
+    list_str = comma_separated_str.strip().split(",")
+    filtered_str = filter(lambda x: x, list_str)
+    return list(filtered_str)
+
 class Arxiv(Component):
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
         arxiv_config = configuration["ARXIV"]
-        self.keywords = filter(lambda x: x, arxiv_config["keywords"].split(","))
-        filter_dict_str = arxiv_config["filter_dict"]
-        filter_dict_str = filter_dict_str.replace("keywords", "['{0}']".format("','".join(self.keywords)))
-        self.filter_dict = ast.literal_eval(filter_dict_str)
-        self.categories = filter(lambda x: x, arxiv_config["categories"].strip().split(","))
+        title = arxiv_config["title"]
+        abstract = arxiv_config["summary"]
+        authors = arxiv_config["authors"]
+        self.filter_dict = {
+            'title' : split_list(title),
+            'summary' : split_list(abstract),
+            'authors' : split_list(authors),
+        }
+        self.categories = split_list(arxiv_config["categories"])
+
+    @staticmethod
+    def configure_me():
+        print("This is the configuration helper for the arxiv module")
+        print("First introduce (comma-separated) the categories you are interested in: ")
+        categories = input(" > ")
+        print("Now introduce (again, comma-separated) the keywords you want to check the titles for")
+        title_keywords = input(" > ")
+        print("Same for checking the abstract:")
+        summary_keywords = input(" > ")
+        print("And now authors")
+        authors_keywords = input(" > ")
+        dict_out = {'ARXIV': {
+            'categories' : categories,
+            'title' : title_keywords,
+            'summary' : summary_keywords,
+            'authors' : authors_keywords,
+        }}
+        return dict_out
+
 
     def cmdline_command(self, args):
         """

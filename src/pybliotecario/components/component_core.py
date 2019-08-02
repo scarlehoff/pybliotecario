@@ -35,7 +35,7 @@ class Component:
     def configure_me():
         """ In first initialization (--init or --config) this method will be called
         if any configuration is needed for the child class, it should be done here """
-        pass
+        return None
 
     def check_identity(self, msg):
         """ Checks that the user asking is the correct one """
