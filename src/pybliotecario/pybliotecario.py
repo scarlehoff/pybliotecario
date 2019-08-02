@@ -44,12 +44,12 @@ def main():
     log.info("Initializing the pybliotecario")
     teleAPI = TelegramUtil(config["DEFAULT"]["TOKEN"])
 
+    on_cmdline.run_command(args, teleAPI, config)
+
     if args.daemon:
         log.info("Activating main loop")
         while True:
             main_loop(teleAPI, config=config, clear=args.clear_incoming)
-    else:
-        on_cmdline.run_command(args, teleAPI, config)
 
 
 if __name__ == "__main__":
