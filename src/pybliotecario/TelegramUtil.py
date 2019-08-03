@@ -1,39 +1,39 @@
 #!/usr/bin/env python3
-import urllib
-import requests
 import json
 import os.path
+import urllib
+import requests
 
-telegram_URL = "https://api.telegram.org/"
+TELEGRAM_URL = "https://api.telegram.org/"
+import logging
+log = logging.getLogger(__name__)
+
 
 class TelegramUtil:
     """ This class handles all comunications with
     Telegram """
 
-    def __init__(self, debug = False, timeout = 300, TOKEN = None):
+    def __init__(self, TOKEN, debug=False, timeout=300):
         self.offset = None
         self.debug = debug
         self.timeout = timeout
-        if TOKEN is None:
-            from pybliotecario.configurationData import TOKEN as TOKEN
         # Build app the API urls
-        base_URL = telegram_URL + "bot{}/".format(TOKEN)
-        self.base_fileURL = telegram_URL + "file/bot{}/".format(TOKEN)
+        base_URL = TELEGRAM_URL + "bot{}/".format(TOKEN)
+        self.base_fileURL = TELEGRAM_URL + "file/bot{}/".format(TOKEN)
         self.send_msg = base_URL + "sendMessage"
         self.send_img = base_URL + "sendPhoto"
         self.send_doc = base_URL + "sendDocument"
         self.get_msg = base_URL + "getUpdates"
         self.get_file = base_URL + "getFile"
 
-
     def __make_request(self, url):
         """ Returns the response for a given url
         In case of timeout, emulate an empty response
         """
         try:
-            response = requests.get(url, timeout = self.timeout)
+            response = requests.get(url, timeout=self.timeout)
             content = response.content.decode("utf-8")
-        except requests.exceptions.Timeout as e:
+        except requests.exceptions.Timeout:
             content = '{ "ok": true, "result": [] }'
         return content
 
@@ -46,7 +46,7 @@ class TelegramUtil:
         """ Updates the offset
         i.e., resets don't ask Telegram server for old messages
         """
-        if len(updates) == 0:
+        if not updates:  # len(updates) == 0
             return
         li = []
         for update in updates:
@@ -60,17 +60,17 @@ class TelegramUtil:
         url = self.get_file + "?file_id={0}".format(fileId)
         json = self.__get_json_from_url(url)
         # was it ok?
-        if json['ok']:
-            fpath = json['result']['file_path']
+        if json["ok"]:
+            fpath = json["result"]["file_path"]
             return self.base_fileURL + fpath
         else:
-            print(json['error_code'])
-            print("Here's all the information we have on this request")
-            print("This is the url we have used")
-            print(url)
+            log.info(json["error_code"])
+            log.info("Here's all the information we have on this request")
+            log.info("This is the url we have used")
+            log.info(url)
             return None
 
-    def get_updates(self, not_empty = False):
+    def get_updates(self, not_empty=False):
         """
         Returns a json with the last messages the bot has received
         when an offset is found, previous msg are not retrieved
@@ -83,17 +83,18 @@ class TelegramUtil:
             url += "&offset={0}".format(self.offset)
         updates = self.__get_json_from_url(url)
         if not updates and not_empty:
-            return self.get_updates(not_empty = True)
+            return self.get_updates(not_empty=True)
         if self.debug:
-            print("Request url: {0}".format(url))
-            print("Obtained updates: {0}".format(updates))
+            log.info("Request url: {0}".format(url))
+            log.info("Obtained updates: {0}".format(updates))
         try:
             result = updates["result"]
         except Exception as e:
-            print("Error: ")
-            print(str(e))
-            print("List of updates: ") #Return an empty list and dont raise, let the program run
-            print(updates)
+            # in case of ANY exception, just log.info it out and let the program run
+            log.info("Error: ")
+            log.info(str(e))
+            log.info("List of updates: ")
+            log.info(updates)
             return []
         self.__re_offset(result)
         return result
@@ -105,30 +106,29 @@ class TelegramUtil:
         self.__make_request(url)
 
     def send_image(self, imgPath, chat):
-        """ Send an image to a given chat """ 
-        data = {'chat_id': chat}
-        img = open(imgPath, 'rb')
-        files = {'photo': ('picture.jpg', img)}  # Here, the ,"rb" thing
+        """ Send an image to a given chat """
+        data = {"chat_id": chat}
+        img = open(imgPath, "rb")
+        files = {"photo": ("picture.jpg", img)}  # Here, the ,"rb" thing
         blabla = requests.post(self.send_img, data=data, files=files)
-        print(blabla.status_code, blabla.reason, blabla.content)
+        log.info(blabla.status_code, blabla.reason, blabla.content)
 
     def send_file(self, filePath, chat):
-        data = {'chat_id': chat}
-        file_stream = open(filePath, 'rb')
+        data = {"chat_id": chat}
+        file_stream = open(filePath, "rb")
         doc_name = os.path.basename(filePath)
-        files = {'document' : (doc_name, file_stream) }
+        files = {"document": (doc_name, file_stream)}
         blabla = requests.post(self.send_doc, data=data, files=files)
-        print(blabla.status_code, blabla.reason, blabla.content)
+        log.info(blabla.status_code, blabla.reason, blabla.content)
 
     def send_file_by_url(self, file_url, chat):
         """
         Sends a file using the telegram api which allows to send by url
         it only works for images/pdf, and not all pdfs
         """
-        data = {'chat_id': chat,
-                'document' : file_url}
+        data = {"chat_id": chat, "document": file_url}
         blabla = requests.post(self.send_doc, data=data)
-        print(blabla.status_code, blabla.reason, blabla.content)
+        log.info(blabla.status_code, blabla.reason, blabla.content)
 
     def download_file(self, fileId, file_name_raw):
         """ Download file defined by fileId
@@ -147,17 +147,17 @@ class TelegramUtil:
 
 
 if __name__ == "__main__":
-    print("Testing TelegramUtil")
-    ut = TelegramUtil(debug = True)
+    log.info("Testing TelegramUtil")
+    TOKEN = "must put a token here to test"
+    ut = TelegramUtil(TOKEN, debug=True)
     results = ut.get_updates()
     for result in results:
-        print("Complete json:")
-        print(result)
-        message = result['message']
-        chat_id = message['chat']['id']
-        txt = message['text']
-        print("Message from {0}: {1}".format(chat_id, txt))
+        log.info("Complete json:")
+        log.info(result)
+        message = result["message"]
+        chat_id = message["chat"]["id"]
+        txt = message["text"]
+        log.info("Message from {0}: {1}".format(chat_id, txt))
         ut.send_message("Message received", chat_id)
     ut.timeout = 1
-    ut.get_updates() # Use the offset to confirm updates
-
+    ut.get_updates()  # Use the offset to confirm updates
