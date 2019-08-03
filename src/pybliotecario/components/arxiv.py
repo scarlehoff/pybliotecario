@@ -145,10 +145,10 @@ Abstract: {3}""".format(
 class Arxiv(Component):
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
-        arxiv_config = configuration["ARXIV"]
-        title = arxiv_config["title"]
-        abstract = arxiv_config["summary"]
-        authors = arxiv_config["authors"]
+        arxiv_config = self.read_config_section('ARXIV')
+        title = arxiv_config.get("title")
+        abstract = arxiv_config.get("summary")
+        authors = arxiv_config.get("authors")
         self.filter_dict = {
             'title' : self.split_list(title),
             'summary' : self.split_list(abstract),

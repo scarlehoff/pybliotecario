@@ -12,6 +12,8 @@
     to the `act_on_command` or `act_on_message` methods.
 """
 import os
+import logging
+log = logging.getLogger(__name__)
 
 
 class Component:
@@ -31,7 +33,23 @@ class Component:
         self.configuration = configuration
         self.configurable = False
 
-    @staticmethod
+    def read_config_section(self, section):
+        """
+        Checks whether section exists within the configuration file
+        returns None if it doesn't
+        """
+        try:
+            section_dict = self.configuration[section]
+        except KeyError:
+            log.warning(f'There is no section {section} in configuration file')
+            yesno = input("Do you want to configure? [yn] ")
+            if yesno.lower() in ("y", "s"):
+                self.configure_me()
+            else:
+                log.error("Exiting with error")
+                exit(-1)
+
+    @classmethod
     def configure_me():
         """ In first initialization (--init or --config) this method will be called
         if any configuration is needed for the child class, it should be done here """
@@ -41,7 +59,6 @@ class Component:
     def split_list(comma_separated_str):
         """ Receives a string representation of a comma separated list
         and splits it, filters out empty spaces and returns a list """
-        # TODO make that part of the Config object
         list_str = comma_separated_str.strip().split(",")
         filtered_str = filter(lambda x: x, list_str)
         return list(filtered_str)

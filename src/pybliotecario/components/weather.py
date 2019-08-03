@@ -78,10 +78,10 @@ class Weather(Component):
     """
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
-        weather_config = configuration["WEATHER"]
-        self.api_key = weather_config["api"]
-        self.weather_location = weather_config["location"]
-        times_str = weather_config["times"]
+        weather_config = self.read_config_section("WEATHER")
+        self.api_key = weather_config.get("api")
+        self.weather_location = weather_config.get("location")
+        times_str = weather_config.get("times")
         self.check_times = self.split_list(times_str)
 
     @staticmethod

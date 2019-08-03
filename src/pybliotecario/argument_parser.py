@@ -9,8 +9,8 @@ INITIALIZE = True
 
 def write_config(config_dict, config_file):
     """
-        Receives a dictionary of dictionaries and makes it into a
-        ConfigParser
+    Receives a dictionary of dictionaries and makes it into a
+    ConfigParser
     """
     config = configparser.ConfigParser()
     for key, item in config_dict.items():
@@ -63,7 +63,7 @@ class InitAction(Action):
         # Set up environmental stuff
         home = os.environ['HOME']
         config_folder = home + '/.pybliotecario/'
-        config_file = home + '/.pybliotecario.test'
+        config_file = home + '/.pybliotecario.ini'
         config_dict = {}
         if INITIALIZE:
             # Initialize the bot in telegram
