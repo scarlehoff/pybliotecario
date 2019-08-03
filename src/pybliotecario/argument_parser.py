@@ -49,8 +49,8 @@ def config_module(module):
         if check_attr(name_py):
             actor_list.append(name_py)
     dict_list = []
-    for actor in actor_list:
-        result = actor.configure_me()
+    for Actor in actor_list:
+        result = Actor.configure_me()
         if result:
             dict_list.append(result)
     return dict_list
@@ -70,7 +70,8 @@ class InitAction(Action):
     def __call__(self, parser, *args, **kwargs):
         # Set up environmental stuff
         home = os.environ["HOME"]
-        config_folder = home + "/.pybliotecario/"
+        main_folder = home + "/.pybliotecario/"
+        os.makedirs(main_folder, exist_ok = True)
         config_file = home + "/.pybliotecario.ini"
         config_dict = {}
         if INITIALIZE:
@@ -99,7 +100,7 @@ class InitAction(Action):
                 else:
                     print("Try again")
             # Fill the DEFAULT options
-            config_dict["DEFAULT"] = {"TOKEN": token, "chat_id": chat_id, "main_folder": config_folder}
+            config_dict["DEFAULT"] = {"TOKEN": token, "chat_id": chat_id, "main_folder": main_folder}
 
         # Now initialize all the different options
         print("Next we will run over the different modules of this program to fill some configuration options")

@@ -92,8 +92,8 @@ class Weather(Component):
         times_str = weather_config.get("times")
         self.check_times = self.split_list(times_str)
 
-    @staticmethod
-    def configure_me():
+    @classmethod
+    def configure_me(cls):
         print("")
         print(" # WEATHER MODULE # ")
         print("In order to configure the weather module, you need an API token from OpenWeatherMap")

@@ -44,7 +44,7 @@ def query_recent(category):
     Query the arxiv for the updates of the last day for a given category
     """
     update_key = "updated_parsed"
-    results = arxiv.query(search_query=category, max_results=75, sort_by="lastUpdatedDate")
+    results = arxiv.query(query=category, max_results=75, sort_by="lastUpdatedDate")
     indx = -1
     for i, element in enumerate(results):
         time_s = element[update_key]
@@ -157,8 +157,8 @@ class Arxiv(Component):
         }
         self.categories = self.split_list(arxiv_config["categories"])
 
-    @staticmethod
-    def configure_me():
+    @classmethod
+    def configure_me(cls):
         print("")
         print(" # Arxiv module ")
         print("This is the configuration helper for the arxiv module")

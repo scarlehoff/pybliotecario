@@ -68,7 +68,7 @@ fi
 echo "You can receive the IP of the host computer every time the unit starts"
 if confirm "Do you want to recieve a msg with the IP of the computer?"
 then
-    extra_options="${extra_options} --my_ip Estoy despierto, ip:"
+    extra_options="${extra_options} --my_ip Estoy despierto, ip: "
 fi
 
 tmpfile=.pybliounit.unit
