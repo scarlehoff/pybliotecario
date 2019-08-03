@@ -82,7 +82,28 @@ class Weather(Component):
         self.api_key = weather_config["api"]
         self.weather_location = weather_config["location"]
         times_str = weather_config["times"]
-        self.check_times = times_str.split(",")
+        self.check_times = self.split_list(times_str)
+
+    @staticmethod
+    def configure_me():
+        print("")
+        print(" # WEATHER MODULE # ")
+        print("In order to configure the weather module, you need an API token from OpenWeatherMap")
+        print("Go here in order to get one: https://openweathermap.org/appid")
+        print("Introduce below the API token, leave empty to skip the configuration of the weather module")
+        api = input(" > ")
+        if api.strip() == "":
+            return None
+        print("At which times (comma-separated) do you want to check the weather?")
+        times = input(" > ")
+        print("In which city?")
+        location = input(" > ")
+        dict_out = {'WEATHER' : {
+            'api' : api,
+            'location' : location,
+            'times' : times,
+        }}
+        return dict_out
 
     def cmdline_command(self, args):
         # instantiate open wather object

@@ -37,6 +37,15 @@ class Component:
         if any configuration is needed for the child class, it should be done here """
         return None
 
+    @staticmethod
+    def split_list(comma_separated_str):
+        """ Receives a string representation of a comma separated list
+        and splits it, filters out empty spaces and returns a list """
+        # TODO make that part of the Config object
+        list_str = comma_separated_str.strip().split(",")
+        filtered_str = filter(lambda x: x, list_str)
+        return list(filtered_str)
+
     def check_identity(self, msg):
         """ Checks that the user asking is the correct one """
         if int(self.chat_id) == int(msg.chat_id):

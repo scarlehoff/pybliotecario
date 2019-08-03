@@ -142,14 +142,6 @@ Abstract: {3}""".format(
     return msg
 
 
-def split_list(comma_separated_str):
-    """ Receives a string representation of a comma separated list
-    and splits it, filters out empty spaces and returns a list """
-    # TODO make that part of the Config object
-    list_str = comma_separated_str.strip().split(",")
-    filtered_str = filter(lambda x: x, list_str)
-    return list(filtered_str)
-
 class Arxiv(Component):
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
@@ -158,14 +150,16 @@ class Arxiv(Component):
         abstract = arxiv_config["summary"]
         authors = arxiv_config["authors"]
         self.filter_dict = {
-            'title' : split_list(title),
-            'summary' : split_list(abstract),
-            'authors' : split_list(authors),
+            'title' : self.split_list(title),
+            'summary' : self.split_list(abstract),
+            'authors' : self.split_list(authors),
         }
-        self.categories = split_list(arxiv_config["categories"])
+        self.categories = self.split_list(arxiv_config["categories"])
 
     @staticmethod
     def configure_me():
+        print("")
+        print(" # Arxiv module ")
         print("This is the configuration helper for the arxiv module")
         print("First introduce (comma-separated) the categories you are interested in: ")
         categories = input(" > ")

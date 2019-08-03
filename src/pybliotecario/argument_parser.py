@@ -5,7 +5,7 @@ import configparser
 from argparse import ArgumentParser, Action
 from ipdb import set_trace
 
-INITIALIZE = False
+INITIALIZE = True
 
 def write_config(config_dict, config_file):
     """
