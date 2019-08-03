@@ -41,7 +41,7 @@ fi
 # TODO: make it into part of the --install command?
 unitname=pybliotecario
 username=$USER
-python_exe=$(which python)
+python_exe=$(which python3)
 pybliotecario_exe=$(which ${executable})
 systemd_file=/usr/lib/systemd/system/${unitname}.service
 
