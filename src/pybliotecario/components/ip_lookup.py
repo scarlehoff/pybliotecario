@@ -15,7 +15,7 @@ def ip_lookup():
 
 class IpLookup(Component):
     """
-        Reads the current IP of the computer and sends it to Telegram 
+        Reads the current IP of the computer and sends it to Telegram
     """
 
     def telegram_message(self, msg):

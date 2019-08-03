@@ -33,10 +33,10 @@ def is_today(time_struct):
     base_today = base_today.replace(hour=base_hour, minute=0, second=0, microsecond=0)
 
     # Make the time struct into a datetime object
-    dt = datetime.fromtimestamp(time.mktime(time_struct))
+    pdt = datetime.fromtimestamp(time.mktime(time_struct))
 
-    # Now, if the paper date (dt) is from before the base time (base_today), that means it is not from today
-    return dt >= base_today
+    # Now, if the paper date (pdt) is from before the base time (base_today), that means it is not from today
+    return pdt >= base_today
 
 
 def query_recent(category):

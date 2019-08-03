@@ -12,6 +12,7 @@
     to the `act_on_command` or `act_on_message` methods.
 """
 import os
+import sys
 import logging
 
 log = logging.getLogger(__name__)
@@ -41,14 +42,16 @@ class Component:
         """
         try:
             section_dict = self.configuration[section]
+            return section_dict
         except KeyError:
             log.warning(f"There is no section {section} in configuration file")
             yesno = input("Do you want to configure? [yn] ")
             if yesno.lower() in ("y", "s"):
                 self.configure_me()
+                sys.exit(-1)
             else:
                 log.error("Exiting with error")
-                exit(-1)
+                sys.exit(-1)
 
     @classmethod
     def configure_me():

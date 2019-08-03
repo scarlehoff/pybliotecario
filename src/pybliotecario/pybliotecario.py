@@ -73,14 +73,14 @@ def main():
         log.error("No 'default:token' option set in config file, run --init option")
         sys.exit(-1)
 
-    teleAPI = TelegramUtil(api_token)
+    tele_api = TelegramUtil(api_token)
 
-    on_cmdline.run_command(args, teleAPI, config)
+    on_cmdline.run_command(args, tele_api, config)
 
     if args.daemon:
         log.info("Activating main loop")
         while True:
-            main_loop(teleAPI, config=config, clear=args.clear_incoming)
+            main_loop(tele_api, config=config, clear=args.clear_incoming)
 
 
 if __name__ == "__main__":

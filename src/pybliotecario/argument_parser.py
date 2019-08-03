@@ -1,3 +1,6 @@
+"""
+    Wrapper for argument parser and initialization
+"""
 import os
 import glob
 import importlib
@@ -121,6 +124,7 @@ class InitAction(Action):
 
 
 def parse_args():
+    """ Wrapper for ArgumentParser """
     parser = ArgumentParser()
     parser.add_argument("message", help="Message to send to Telegram", nargs="*")
     parser.add_argument("--init", help="Wizard to configure the pybliotecario for the first time", action=InitAction)
