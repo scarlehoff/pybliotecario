@@ -6,7 +6,6 @@ import glob
 import importlib
 import configparser
 from argparse import ArgumentParser, Action
-from ipdb import set_trace
 
 INITIALIZE = True
 

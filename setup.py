@@ -15,6 +15,11 @@ setup(
         package_dir = {'':'src'},
         packages=find_packages('src'),
 
+        install_requires=[
+            'arxiv',
+            'pyowm',
+        ],
+
         entry_points = {'console_scripts':
             [f'{pybliotecario_name} = pybliotecario.pybliotecario:main',]
             },
