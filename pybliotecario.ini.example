@@ -1,9 +1,9 @@
-# this file needs to be renamed to "configurationData.py"
-
+[DEFAULT]
 TOKEN = <telegram bot token>
-chatId = None
+chat_id = <chat_id number> 
+main_folder = /home/<username>/.pybliotecario
 
-
-# Other config
+# Other configs
+[ARXIV]
 arxiv_filter_dict = {'title' : ["Higgs"], 'summary' : ["VBF"]}
 arxiv_categories = ['hep-ph']
