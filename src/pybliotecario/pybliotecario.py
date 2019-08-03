@@ -11,6 +11,7 @@ from pybliotecario.argument_parser import parse_args
 import pybliotecario.on_cmdline as on_cmdline
 
 import logging
+
 log = logging.getLogger()
 
 # Now read the configuration file
@@ -34,6 +35,7 @@ def read_config(config_file=None):
     else:
         print("Before using this program you need to run the --init option to configure")
 
+
 def logger_setup(filename):
     """
     Send all logger output to file
@@ -41,9 +43,9 @@ def logger_setup(filename):
     to stdout
     """
     # Set the formatter
-    formatter = logging.Formatter('[%(levelname)s] - %(message)s')
+    formatter = logging.Formatter("[%(levelname)s] - %(message)s")
     # Default handler
-    file_handler = logging.FileHandler(filename, 'a')
+    file_handler = logging.FileHandler(filename, "a")
     file_handler.setFormatter(formatter)
     log.addHandler(file_handler)
     log.setLevel(logging.INFO)
@@ -53,6 +55,7 @@ def logger_setup(filename):
     error_handler.setLevel(logging.WARNING)
     log.addHandler(error_handler)
 
+
 def main():
     """ Driver of the pybliotecario """
     args = parse_args()
@@ -61,11 +64,11 @@ def main():
     main_folder = defaults.get("main_folder")
     if not main_folder:
         print("Warning: there is no 'default:main_folder' option set in {0}, using /tmp/".format(args.config_file))
-        main_folder = '/tmp/'
-    logger_setup(f'{main_folder}/info.log')
+        main_folder = "/tmp/"
+    logger_setup(f"{main_folder}/info.log")
 
     log.info("Initializing the pybliotecario")
-    api_token = defaults.get('token')
+    api_token = defaults.get("token")
     if not api_token:
         log.error("No 'default:token' option set in config file, run --init option")
         sys.exit(-1)

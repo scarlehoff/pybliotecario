@@ -1,11 +1,13 @@
 from setuptools import setup, find_packages
-import socket
 
 
-# By default we will use 'hostname' as the name for the script
+if __name__ == "__main__":
+    import socket
+# When installing with setup.py use the hostname
+# as the name of the script
 # with the first letter uppercased
-hostname = socket.gethostname()
-pybliotecario_name = hostname.capitalize()
+    hostname = socket.gethostname()
+    pybliotecario_name = hostname.capitalize()
 
 setup(
         name=pybliotecario_name,

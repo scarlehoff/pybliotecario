@@ -13,6 +13,7 @@
 """
 import os
 import logging
+
 log = logging.getLogger(__name__)
 
 
@@ -41,7 +42,7 @@ class Component:
         try:
             section_dict = self.configuration[section]
         except KeyError:
-            log.warning(f'There is no section {section} in configuration file')
+            log.warning(f"There is no section {section} in configuration file")
             yesno = input("Do you want to configure? [yn] ")
             if yesno.lower() in ("y", "s"):
                 self.configure_me()

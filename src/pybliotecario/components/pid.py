@@ -9,7 +9,9 @@ import psutil
 from pybliotecario.components.component_core import Component
 
 import logging
+
 log = logging.getLogger(__name__)
+
 
 def get_process(pid):
     """ Returns a process object for the given PID """
@@ -71,6 +73,7 @@ def kill_pid(pid):
 class ControllerPID(Component):
     """
     """
+
     def cmdline_command(self, args):
         """ Waits until the given PID(s) are finished """
         log.info("Waiting for the given PIDs: {0}".format(args.pid))

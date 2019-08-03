@@ -8,6 +8,7 @@ import re
 import subprocess as sp
 from pybliotecario.components.component_core import Component
 import logging
+
 log = logging.getLogger(__name__)
 
 re_hg_branch = re.compile("(?<=branch:).*(?=\n)")
@@ -96,6 +97,7 @@ class Repository(Component):
         in check_repository for new (i.e., not pulled)
         commits
     """
+
     def cmdline_command(self, args):
         repository = args.check_repository
         msg = repo_check_incoming(repository)

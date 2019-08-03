@@ -9,7 +9,9 @@ from types import MethodType
 import logging
 from pyowm import OWM
 from pybliotecario.components.component_core import Component
+
 log = logging.getLogger(__name__)
+
 
 def check_current_weather(self, location):
     """ Checks the current weather at a specific location """
@@ -23,11 +25,13 @@ def check_current_weather(self, location):
     msg = "Right now we have {0} in {2}, the current temperature is {1}°C"
     return msg.format(stat, temp, city)
 
+
 def get_forecast(self, location):
     """ Gets the full forecast for a given location """
     forecast = self.three_hours_forecast(location)
     return forecast
-    #f = fc.get_forecast()
+    # f = fc.get_forecast()
+
 
 # Telegram-usable wrapper
 def will_it_rain(self, location, hours=None):
@@ -48,6 +52,7 @@ def will_it_rain(self, location, hours=None):
         msg = "I can see no rain in my foreseeable future"
     return msg
 
+
 def check_for_rain_today_at(forecast, hour):
     """
     Receives a forecast object
@@ -60,6 +65,7 @@ def check_for_rain_today_at(forecast, hour):
     else:
         return False
 
+
 def open_weather_wrapper(api_key, **kwargs):
     """
         Extends OpenWeather main class to have an instance with the API key already defined
@@ -70,12 +76,14 @@ def open_weather_wrapper(api_key, **kwargs):
     owm.will_it_rain = MethodType(will_it_rain, owm)
     return owm
 
+
 class Weather(Component):
     """
         Checks the weather forecast at a given location
         at some given times as well as the current forecast at the
         given location and reports to Telegram the findings
     """
+
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
         weather_config = self.read_config_section("WEATHER")
@@ -98,11 +106,7 @@ class Weather(Component):
         times = input(" > ")
         print("In which city?")
         location = input(" > ")
-        dict_out = {'WEATHER' : {
-            'api' : api,
-            'location' : location,
-            'times' : times,
-        }}
+        dict_out = {"WEATHER": {"api": api, "location": location, "times": times}}
         return dict_out
 
     def cmdline_command(self, args):

@@ -3,7 +3,9 @@ import urllib.request
 from pybliotecario.components.component_core import Component
 
 import logging
+
 log = logging.getLogger(__name__)
+
 
 def ip_lookup():
     """ Uses ident.me to find out the current ip of the host """
@@ -15,6 +17,7 @@ class IpLookup(Component):
     """
         Reads the current IP of the computer and sends it to Telegram 
     """
+
     def telegram_message(self, msg):
         """ If the chat id asking is the correct one
         sends a msg with the current ip, otherwise fails """

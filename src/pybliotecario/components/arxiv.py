@@ -10,6 +10,7 @@ import os
 import arxiv
 from pybliotecario.components.component_core import Component
 import logging
+
 log = logging.getLogger(__name__)
 
 
@@ -145,14 +146,14 @@ Abstract: {3}""".format(
 class Arxiv(Component):
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
-        arxiv_config = self.read_config_section('ARXIV')
+        arxiv_config = self.read_config_section("ARXIV")
         title = arxiv_config.get("title")
         abstract = arxiv_config.get("summary")
         authors = arxiv_config.get("authors")
         self.filter_dict = {
-            'title' : self.split_list(title),
-            'summary' : self.split_list(abstract),
-            'authors' : self.split_list(authors),
+            "title": self.split_list(title),
+            "summary": self.split_list(abstract),
+            "authors": self.split_list(authors),
         }
         self.categories = self.split_list(arxiv_config["categories"])
 
@@ -169,14 +170,15 @@ class Arxiv(Component):
         summary_keywords = input(" > ")
         print("And now authors")
         authors_keywords = input(" > ")
-        dict_out = {'ARXIV': {
-            'categories' : categories,
-            'title' : title_keywords,
-            'summary' : summary_keywords,
-            'authors' : authors_keywords,
-        }}
+        dict_out = {
+            "ARXIV": {
+                "categories": categories,
+                "title": title_keywords,
+                "summary": summary_keywords,
+                "authors": authors_keywords,
+            }
+        }
         return dict_out
-
 
     def cmdline_command(self, args):
         """

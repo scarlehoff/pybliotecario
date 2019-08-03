@@ -3,6 +3,7 @@ import os
 from pybliotecario.Message import Message
 import pybliotecario.on_cmd_message as on_cmd_message
 import logging
+
 log = logging.getLogger(__name__)
 
 
