@@ -1,13 +1,15 @@
 from setuptools import setup, find_packages
+from sys import argv
 
-
-if __name__ == "__main__":
+if len(argv) > 1 and argv[1] in ('develop', 'install'):
     import socket
-# When installing with setup.py use the hostname
-# as the name of the script
+# When installing with setup.py in develop/install mode
+# use hostname as the name of the script
 # with the first letter uppercased
     hostname = socket.gethostname()
     pybliotecario_name = hostname.capitalize()
+else:
+    pybliotecario_name = "pybliotecario"
 
 setup(
         name=pybliotecario_name,
