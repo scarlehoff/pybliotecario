@@ -1,8 +1,10 @@
 #!/bin/bash
 
+host_name=$(hostname)
+
 usage() {
     echo "Usage: ./systemd_install.sh -e executable_name
-Example: ./systemd_install.sh -e $(hostname)"
+Example: ./systemd_install.sh -e ${host_name^}"
 }
 confirm() {
     read -rp " > ${1} [y/n] " yn
@@ -63,6 +65,9 @@ The bot can just exit on failure or just ignore the error"
 if confirm "Do you want to ignore errors?" 
 then
     extra_options="${extra_options} --clear_incoming"
+    restart_on="
+Restart=on-failure
+RestartSec=5s"
 fi
 
 echo "You can receive the IP of the host computer every time the unit starts"
@@ -80,6 +85,7 @@ After=multi-user.target
 User=${username}
 Type=simple
 ExecStart=${python_exe} ${pybliotecario_exe} -d ${extra_options}
+${restart_on}
 
 [Install]
 WantedBy=multi-user.target"  > ${tmpfile}

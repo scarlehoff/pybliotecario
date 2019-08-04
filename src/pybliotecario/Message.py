@@ -23,7 +23,7 @@ class Message:
 
     def __init__(self, jsonDict):
         # ignore keys:
-        ign_keys = ["new_chat_participant", "left_chat_participant"]
+        ign_keys = ["new_chat_participant", "left_chat_participant", "sticker"]
         msg = "message"
         self.json = jsonDict
         keys = jsonDict.keys()
@@ -69,8 +69,12 @@ class Message:
             fileData = message["document"]
             self.fileId = fileData["file_id"]
             self.text = fileData["file_name"]
+        elif "sticker" in msgKeys:
+            self.isSticker = True
+            stickerData = message["sticker"]
+            self.stickerSet = stickerData["set_name"]
         else:
-            self.text = message["text"]
+            self.text = message.get("text")
             self.isFile = False
 
         # Check whether the msg comes from a group
