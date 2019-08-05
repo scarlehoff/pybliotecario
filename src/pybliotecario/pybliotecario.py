@@ -19,6 +19,7 @@ CONFIG_FILE = "pybliotecario.ini"
 
 
 def read_config(config_file=None):
+    result = None
     if config_file is None:
         # Check first in this directory and afterwards in HOME/.pybliotecario.ini
         config_files = [CONFIG_FILE, "{0}/.{1}".format(os.environ.get("HOME"), CONFIG_FILE)]
@@ -30,10 +31,11 @@ def read_config(config_file=None):
             config.read(possible_config)
             result = config
             break
-    if result.defaults():
+    if result and result.defaults():
         return result
     else:
-        print("Before using this program you need to run the --init option to configure")
+        print("Before using this program you need to run the --init option in order to configure it")
+        sys.exit(-1)
 
 
 def logger_setup(filename):

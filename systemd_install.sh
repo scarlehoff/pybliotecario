@@ -6,6 +6,7 @@ usage() {
     echo "Usage: ./systemd_install.sh -e executable_name
 Example: ./systemd_install.sh -e ${host_name^}"
 }
+
 confirm() {
     read -rp " > ${1} [y/n] " yn
     case "$yn" in
@@ -24,7 +25,13 @@ do
             exit 1 ;;
     esac
 done
+if [[ $# -le 1 ]]
+then
+    usage
+    exit 1
+fi
 
+# Check whether the script does exist
 if ! command -v ${executable} > /dev/null
 then
     echo "Can't find executable ${executable} in path"
@@ -32,11 +39,15 @@ then
     exit 1
 fi
 
-if [[ $# -le 1 ]]
+
+# Check whether the config file does exist, if it doesn't, run init
+if [ ! -f ${HOME}/.pybliotecario.ini ]
 then
-    usage
-    exit 1
+    echo "User config file not found in ${HOME}/.pybliotecario.ini"
+    echo "Running --init to configure ${executable} for the first time"
+    ${executable} --init || exit 1
 fi
+
 
 # Small bash script to create a systemd unit with to start the 
 # bot on start as a daemon

@@ -27,4 +27,11 @@ setup(
             },
 )
 
-print(f'Installed pybliotecario as {pybliotecario_name}')
+print(f"""
+
+##############
+Installed pybliotecario as {pybliotecario_name}
+
+IMPORTANT: Don't forget to run
+      ~$ {pybliotecario_name} --init
+for proper configuration of the pybliotecario""")
