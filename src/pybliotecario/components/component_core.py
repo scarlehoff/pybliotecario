@@ -29,9 +29,13 @@ class Component:
     that's why it is left as a separate option
     """
 
-    def __init__(self, telegram_object, chat_id=None, configuration=None):
+    def __init__(self, telegram_object, chat_id=None, configuration=None, interaction_chat = None):
         self.telegram = telegram_object
         self.chat_id = chat_id
+        if interaction_chat is None:
+            self.interaction_chat = chat_id
+        else:
+            self.interaction_chat = chat_id
         self.configuration = configuration
         self.configurable = False
 
@@ -102,7 +106,7 @@ class Component:
         """ Wrapper around API send_msg, if chat_id is not defined
         it will use the chat_id this class was instantiated to """
         if chat_id is None:
-            chat_id = self.chat_id
+            chat_id = self.interaction_chat
         return self.telegram.send_message(msg, chat_id)
 
     def send_file(self, filepath, chat_id=None, delete=False):
@@ -111,7 +115,7 @@ class Component:
         It will check for existence of the file and will delete it afterwards if required
         """
         if chat_id is None:
-            chat_id = self.chat_id
+            chat_id = self.interaction_chat
         if not os.path.isfile(filepath):
             self.send_msg(f"ERROR: failed to send {filepath}", chat_id)
         self.telegram.send_file(filepath, chat_id)
