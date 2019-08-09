@@ -15,6 +15,7 @@ import os
 import sys
 import logging
 
+from pybliotecario.argument_parser import CONFIG_FILE
 log = logging.getLogger(__name__)
 
 
@@ -39,6 +40,15 @@ class Component:
         self.configuration = configuration
         self.configurable = False
 
+    def update_config(self):
+        """ Updates default ($HOME/.CONFIG_FILE) configuration file """
+        default_config = "{0}/.{1}".format(os.environ.get("HOME"), CONFIG_FILE)
+        new_section = self.configure_me()
+        for key, item in new_section.items():
+            self.configuration[key] = item
+        with open(default_config, 'w') as f:
+            self.configuration.write(f)
+
     def read_config_section(self, section):
         """
         Checks whether section exists within the configuration file
@@ -49,9 +59,9 @@ class Component:
             return section_dict
         except KeyError:
             log.warning(f"There is no section {section} in configuration file")
-            yesno = input("Do you want to configure? [yn] ")
+            yesno = input(f"Do you want to configure? (this will add a new section to $HOME/.{CONFIG_FILE} [yn] ")
             if yesno.lower() in ("y", "s"):
-                self.configure_me()
+                self.update_config()
                 sys.exit(-1)
             else:
                 log.error("Exiting with error")

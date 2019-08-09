@@ -7,32 +7,23 @@ from pybliotecario.TelegramUtil import TelegramUtil
 from pybliotecario.core_loop import main_loop
 
 # Modify argument_parser.py to read new arguments
-from pybliotecario.argument_parser import parse_args
+from pybliotecario.argument_parser import parse_args, CONFIG_FILE
 import pybliotecario.on_cmdline as on_cmdline
 
 import logging
 
 log = logging.getLogger()
 
-# Now read the configuration file
-CONFIG_FILE = "pybliotecario.ini"
-
 
 def read_config(config_file=None):
     result = None
-    if config_file is None:
-        # Check first in this directory and afterwards in HOME/.pybliotecario.ini
-        config_files = [CONFIG_FILE, "{0}/.{1}".format(os.environ.get("HOME"), CONFIG_FILE)]
-    else:
-        config_files = [config_file]
-    for possible_config in config_files:
-        if os.path.isfile(possible_config):
-            config = configparser.ConfigParser()
-            config.read(possible_config)
-            result = config
-            break
-    if result and result.defaults():
-        return result
+    config_files = ["{0}/.{1}".format(os.environ.get("HOME"), CONFIG_FILE), CONFIG_FILE]
+    if config_file is not None:
+        config_files.append(config_file)
+    config = configparser.ConfigParser()
+    config.read(config_files)
+    if config and config.defaults():
+        return config
     else:
         print("Before using this program you need to run the --init option in order to configure it")
         sys.exit(-1)

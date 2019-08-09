@@ -8,6 +8,7 @@ import configparser
 from argparse import ArgumentParser, Action
 
 INITIALIZE = True
+CONFIG_FILE = "pybliotecario.ini"
 
 
 def write_config(config_dict, config_file):
@@ -72,6 +73,7 @@ class InitAction(Action):
         home = os.environ["HOME"]
         main_folder = home + "/.pybliotecario/"
         os.makedirs(main_folder, exist_ok = True)
+        config_file = f'{home}/{CONFIG_FILE}'
         config_file = home + "/.pybliotecario.ini"
         config_dict = {}
         if INITIALIZE:
