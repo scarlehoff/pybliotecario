@@ -69,6 +69,10 @@ class Component:
                 sys.exit(-1)
 
     @classmethod
+    def whoamI(cls):
+        return cls.__name__
+
+    @classmethod
     def configure_me(cls):
         """ In first initialization (--init or --config) this method will be called
         if any configuration is needed for the child class, it should be done here """

@@ -7,16 +7,17 @@ import importlib
 import configparser
 from argparse import ArgumentParser, Action
 
-INITIALIZE = True
 CONFIG_FILE = "pybliotecario.ini"
 
 
-def write_config(config_dict, config_file):
+def write_config(config_dict, config_file, config_exists=False):
     """
     Receives a dictionary of dictionaries and makes it into a
     ConfigParser
     """
     config = configparser.ConfigParser()
+    if config_exists:
+        config.read(config_file)
     for key, item in config_dict.items():
         config[key] = item
     with open(config_file, "w") as f:
@@ -35,7 +36,8 @@ def check_attr(attr):
     if attr == Component:
         return False
     if issubclass(attr, Component):
-        return True
+        # Is there a more elegant way of knowing whether a method is overriden?
+        return not Component.configure_me.__code__ == attr.configure_me.__code__
     return False
 
 
@@ -51,10 +53,67 @@ def config_module(module):
             actor_list.append(name_py)
     dict_list = []
     for Actor in actor_list:
+        name = Actor.whoamI()
+        yn = input(f"Do you want to configure {name} now? [yn] ")
+        if not yn.lower().startswith(("y", "s")):
+            continue
         result = Actor.configure_me()
         if result:
             dict_list.append(result)
     return dict_list
+
+
+def configure_telegram():
+    """ Configure Telegram """
+    # Initialize the bot in telegram
+    print(
+        """Welcome to The Wizard!
+The first thing you will need is an authorization token from the botfather.
+If you don't know how to get one, read here: https://core.telegram.org/bots#6-botfather"""
+    )
+    token = input("Authorization token: ")
+    print("Thanks, let's test this out. Say something to your bot")
+    from pybliotecario.TelegramUtil import TelegramUtil
+
+    teleAPI = TelegramUtil(token, timeout=20)
+    while True:
+        all_updates = teleAPI.get_updates(not_empty=True)
+        from pybliotecario.Message import Message
+
+        update = Message(all_updates[0])
+        print("Message received: {0}".format(update.text))
+        yn = input("Was this your msg? [y/n] ")
+        if yn.lower() in ("y", "s"):
+            chat_id = update.chat_id
+            print("Your chat id is: {0} and your username is: {1}".format(chat_id, update.username))
+            break
+        else:
+            print("Try again")
+    # Fill the DEFAULT options
+    config_dict = {"DEFAULT": {"TOKEN": token, "chat_id": chat_id, "main_folder": main_folder}}
+    return config_dict
+
+
+def configure_all():
+    """ Import everything inside the components folder that
+    inherint from Component and run config_module
+    on it """
+    config_dict = {}
+    # Import everything that inherits from Component
+    import pybliotecario.components as components
+
+    folder_components = os.path.dirname(components.__file__)
+    module_components = components.__name__
+    modules = glob.glob(f"{folder_components}/*.py")
+    for module_file in modules:
+        module_name = "{0}.{1}".format(module_components, os.path.basename(module_file))
+        module_clean = module_name.replace(".py", "")
+        module = importlib.import_module(module_clean)
+        dict_list = config_module(module)
+        for dictionary in dict_list:
+            for key, item in dictionary.items():
+                config_dict[key] = item
+    return config_dict
 
 
 class InitAction(Action):
@@ -69,59 +128,32 @@ class InitAction(Action):
         super().__init__(nargs=nargs, **kwargs)
 
     def __call__(self, parser, *args, **kwargs):
+        """
+            Configures the pybliotecario by first
+            configuring Telegram
+            and then calling the configure_me method of all components
+        """
+        config_dict = {}
         # Set up environmental stuff
         home = os.environ["HOME"]
         main_folder = home + "/.pybliotecario/"
         os.makedirs(main_folder, exist_ok=True)
-        config_file = f"{home}/{CONFIG_FILE}"
-        config_file = home + "/.pybliotecario.ini"
-        config_dict = {}
-        if INITIALIZE:
-            # Initialize the bot in telegram
-            print(
-                """Welcome to The Wizard!
-    The first thing you will need is an authorization token from the botfather.
-    If you don't know how to get one, read here: https://core.telegram.org/bots#6-botfather"""
-            )
-            token = input("Authorization token: ")
-            print("Thanks, let's test this out. Say something to your bot")
-            from pybliotecario.TelegramUtil import TelegramUtil
-
-            teleAPI = TelegramUtil(token, timeout=20)
-            while True:
-                all_updates = teleAPI.get_updates(not_empty=True)
-                from pybliotecario.Message import Message
-
-                update = Message(all_updates[0])
-                print("Message received: {0}".format(update.text))
-                yn = input("Was this your msg? [y/n] ")
-                if yn.lower() in ("y", "s"):
-                    chat_id = update.chat_id
-                    print("Your chat id is: {0} and your username is: {1}".format(chat_id, update.username))
-                    break
-                else:
-                    print("Try again")
-            # Fill the DEFAULT options
-            config_dict["DEFAULT"] = {"TOKEN": token, "chat_id": chat_id, "main_folder": main_folder}
-
-        # Now initialize all the different options
+        config_file = f"{home}/.{CONFIG_FILE}"
+        # Check whether a config file already exists
+        config_exists = os.path.isfile(config_file)
+        # If it does you might not want to reconfigure Telegram, so let's ask
+        initialize = True
+        if config_exists:
+            print("It seems pybliotecario's Telegram capabilities have already been configured in this computer")
+            yn = input("Do you want to configure it again? [y/n] ")
+            if not yn.lower().startswith(("y", "s")):
+                initialize = False
+        if initialize:
+            config_dict.update(configure_telegram())
         print("Next we will run over the different modules of this program to fill some configuration options")
-        # Import everything that inherits from Component
-        import pybliotecario.components as components
-
-        folder_components = os.path.dirname(components.__file__)
-        module_components = components.__name__
-        modules = glob.glob(f"{folder_components}/*.py")
-        for module_file in modules:
-            module_name = "{0}.{1}".format(module_components, os.path.basename(module_file))
-            module_clean = module_name.replace(".py", "")
-            module = importlib.import_module(module_clean)
-            dict_list = config_module(module)
-            for dictionary in dict_list:
-                for key, item in dictionary.items():
-                    config_dict[key] = item
+        config_dict.update(configure_all())
         # And finally write the config file
-        write_config(config_dict, config_file)
+        write_config(config_dict, config_file, config_exists=config_exists)
         parser.exit(0)
 
 
