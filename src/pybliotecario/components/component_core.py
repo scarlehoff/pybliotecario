@@ -16,6 +16,7 @@ import sys
 import logging
 
 from pybliotecario.argument_parser import CONFIG_FILE
+
 log = logging.getLogger(__name__)
 
 
@@ -30,7 +31,7 @@ class Component:
     that's why it is left as a separate option
     """
 
-    def __init__(self, telegram_object, chat_id=None, configuration=None, interaction_chat = None):
+    def __init__(self, telegram_object, chat_id=None, configuration=None, interaction_chat=None):
         self.telegram = telegram_object
         self.chat_id = chat_id
         if interaction_chat is None:
@@ -46,7 +47,7 @@ class Component:
         new_section = self.configure_me()
         for key, item in new_section.items():
             self.configuration[key] = item
-        with open(default_config, 'w') as f:
+        with open(default_config, "w") as f:
             self.configuration.write(f)
 
     def read_config_section(self, section):

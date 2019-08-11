@@ -29,14 +29,14 @@ def read_config(config_file=None):
         sys.exit(-1)
 
 
-def logger_setup(filename, debug = False):
+def logger_setup(filename, debug=False):
     """
     Send all logger output to file
     But make sure that errors and warning also go
     to stdout
     """
     # Set the formatter
-    formatter = logging.Formatter("[%(levelname)s] - %(message)s")
+    formatter = logging.Formatter("[%(levelname)s:%(asctime)s] - %(message)s", "%d/%m/%y %H:%M")
     if debug:
         file_handler = logging.StreamHandler(sys.stdout)
     else:
@@ -61,7 +61,7 @@ def main():
     if not main_folder:
         print("Warning: there is no 'default:main_folder' option set in {0}, using /tmp/".format(args.config_file))
         main_folder = "/tmp/"
-    logger_setup(f"{main_folder}/info.log", debug = args.debug)
+    logger_setup(f"{main_folder}/info.log", debug=args.debug)
 
     log.info("Initializing the pybliotecario")
     api_token = defaults.get("token")

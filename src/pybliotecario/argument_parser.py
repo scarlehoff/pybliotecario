@@ -72,8 +72,8 @@ class InitAction(Action):
         # Set up environmental stuff
         home = os.environ["HOME"]
         main_folder = home + "/.pybliotecario/"
-        os.makedirs(main_folder, exist_ok = True)
-        config_file = f'{home}/{CONFIG_FILE}'
+        os.makedirs(main_folder, exist_ok=True)
+        config_file = f"{home}/{CONFIG_FILE}"
         config_file = home + "/.pybliotecario.ini"
         config_dict = {}
         if INITIALIZE:
@@ -149,5 +149,7 @@ def parse_args():
     )
     parser.add_argument("--pid", help="Monitor a PID and sends a message when the PID is finished", type=int, nargs="+")
     parser.add_argument("--my_ip", help="Send to the default chat the current IP of the computer", action="store_true")
-    parser.add_argument("--debug", help="Write everything to terminal instead of writing to log file", action="store_true")
+    parser.add_argument(
+        "--debug", help="Write everything to terminal instead of writing to log file", action="store_true"
+    )
     return parser.parse_args()
