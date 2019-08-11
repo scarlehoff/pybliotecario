@@ -78,7 +78,7 @@ then
     extra_options="${extra_options} --clear_incoming"
     restart_on="
 Restart=on-failure
-RestartSec=5s"
+RestartSec=60s"
 fi
 
 echo "You can receive the IP of the host computer every time the unit starts"
