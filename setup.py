@@ -20,6 +20,7 @@ setup(
         install_requires=[
             'arxiv',
             'pyowm',
+            'psutil',
         ],
 
         entry_points = {'console_scripts':
