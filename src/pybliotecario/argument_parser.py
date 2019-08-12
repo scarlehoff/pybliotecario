@@ -138,7 +138,7 @@ class InitAction(Action):
         home = os.environ["HOME"]
         main_folder = home + "/.pybliotecario/"
         os.makedirs(main_folder, exist_ok=True)
-        config_file = home + "/.{CONFIG_FILE}"
+        config_file = home + "/." + CONFIG_FILE
         # Check whether a config file already exists
         config_exists = os.path.isfile(config_file)
         # If it does you might not want to reconfigure Telegram, so let's ask
