@@ -63,7 +63,7 @@ def config_module(module):
     return dict_list
 
 
-def configure_telegram():
+def configure_telegram(main_folder):
     """ Configure Telegram """
     # Initialize the bot in telegram
     print(
@@ -149,7 +149,7 @@ class InitAction(Action):
             if not yn.lower().startswith(("y", "s")):
                 initialize = False
         if initialize:
-            config_dict.update(configure_telegram())
+            config_dict.update(configure_telegram(main_folder))
         print("Next we will run over the different modules of this program to fill some configuration options")
         config_dict.update(configure_all())
         # And finally write the config file
