@@ -14,6 +14,7 @@ class Message:
     # username            - user who sent the message
     # is_command           - t/f
     # isRegisteredCommand - t/f
+    # has_arguments       - t/f
     # is_group             - t/f
     # isFile              - t/f
     # fileId              - file id
@@ -44,6 +45,7 @@ class Message:
             return
         else:
             self.ignore = False
+        self.has_arguments = False
         chatData = message["chat"]
         if "from" in message.keys():
             fromData = message["from"]
@@ -89,10 +91,14 @@ class Message:
             self.isRegisteredCommand = False
 
         if self.is_command:
-            allText = self.text.split(" ", 1)
-            self.command = allText[0][1:]
+            all_text = self.text.split(" ", 1)
+            # Check whether the command comes by itself or has arguments
+            if len(all_text) > 1:
+                self.has_arguments = True
+            # Remove the /
+            self.command = all_text[0][1:]
             # Absorb the @ in case is it a directed command
             if "@" in self.command:
                 self.command = self.command.split("@")[0]
-            self.text = allText[-1]
+            self.text = all_text[-1]
             self.isRegisteredCommand = self.command in registeredCommands

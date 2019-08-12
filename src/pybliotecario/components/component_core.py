@@ -50,11 +50,13 @@ class Component:
         with open(default_config, "w") as f:
             self.configuration.write(f)
 
-    def read_config_section(self, section):
+    def read_config_section(self, section = None):
         """
         Checks whether section exists within the configuration file
         returns None if it doesn't
         """
+        if section is None:
+            section = self.section_name
         try:
             section_dict = self.configuration[section]
             return section_dict

@@ -27,15 +27,8 @@ def act_on_telegram_command(tele_api, message_obj, config):
         from pybliotecario.components.pid import ControllerPID as Actor
     elif tg_command in ("arxiv-query", "arxiv", "arxivget", "arxiv-get"):
         from pybliotecario.components.arxiv_mod import Arxiv as Actor
-
-    elif tg_command.lower() in ("goodmorning", "buenosdias", "buenosdías"):
-        morning_file = "good_morning.sh"
-        if os.path.isfile(morning_file):
-            cmd = "./{0}".format(morning_file)
-            sp.run([cmd])
-            return "¡Muy buenos días!"
-        else:
-            return "File {0} does not exist".format(morning_file)
+    elif tg_command in ("script"):
+        from pybliotecario.components.scripts import Script as Actor
     else:
         log.info("No actor declared for this command: {0}".format(tg_command))
         return None
