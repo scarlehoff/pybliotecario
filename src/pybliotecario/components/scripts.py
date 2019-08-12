@@ -17,9 +17,6 @@ class Script(Component):
     def __init__(self, telegram_object, **kwargs):
         super().__init__(telegram_object, **kwargs)
         self.blocked = False
-        if self.interaction_chat != self.chat_id:
-            self.blocked = True
-            self.send_msg("You are not allowed to run scripts here")
         self.scripts = self.read_config_section()
         if not self.scripts:
             self.blocked = True
@@ -47,6 +44,9 @@ class Script(Component):
         return dict_out
 
     def telegram_message(self, msg):
+        if not self.check_identity(msg):
+            self.blocked = True
+            self.send_msg("You are not allowed to run scripts here")
         if self.blocked:
             return
         command_name = msg.text.strip()
