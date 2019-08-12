@@ -27,8 +27,10 @@ def act_on_telegram_command(tele_api, message_obj, config):
         from pybliotecario.components.pid import ControllerPID as Actor
     elif tg_command in ("arxiv-query", "arxiv", "arxivget", "arxiv-get"):
         from pybliotecario.components.arxiv_mod import Arxiv as Actor
-    elif tg_command in ("script"):
+    elif tg_command is "script":
         from pybliotecario.components.scripts import Script as Actor
+    elif tg_command in ("r", "roll"):
+        from pybliotecario.components.dnd import DnD as Actor
     else:
         log.info("No actor declared for this command: {0}".format(tg_command))
         return None
