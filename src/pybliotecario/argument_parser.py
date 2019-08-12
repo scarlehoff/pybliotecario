@@ -54,7 +54,7 @@ def config_module(module):
     dict_list = []
     for Actor in actor_list:
         name = Actor.whoamI()
-        yn = input(f"Do you want to configure {name} now? [yn] ")
+        yn = input("Do you want to configure {0} now? [yn] ".format(name))
         if not yn.lower().startswith(("y", "s")):
             continue
         result = Actor.configure_me()
@@ -104,7 +104,7 @@ def configure_all():
 
     folder_components = os.path.dirname(components.__file__)
     module_components = components.__name__
-    modules = glob.glob(f"{folder_components}/*.py")
+    modules = glob.glob(folder_components + "/*.py")
     for module_file in modules:
         module_name = "{0}.{1}".format(module_components, os.path.basename(module_file))
         module_clean = module_name.replace(".py", "")
@@ -138,7 +138,7 @@ class InitAction(Action):
         home = os.environ["HOME"]
         main_folder = home + "/.pybliotecario/"
         os.makedirs(main_folder, exist_ok=True)
-        config_file = f"{home}/.{CONFIG_FILE}"
+        config_file = home + "/.{CONFIG_FILE}"
         # Check whether a config file already exists
         config_exists = os.path.isfile(config_file)
         # If it does you might not want to reconfigure Telegram, so let's ask

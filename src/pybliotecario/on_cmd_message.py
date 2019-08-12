@@ -33,5 +33,7 @@ def act_on_telegram_command(tele_api, message_obj, config):
         log.info("No actor declared for this command: {0}".format(tg_command))
         return None
 
-    actor_instance = Actor(tele_api, chat_id=chat_id, configuration=config, interaction_chat=message_obj.chat_id, running_in_loop = True)
+    actor_instance = Actor(
+        tele_api, chat_id=chat_id, configuration=config, interaction_chat=message_obj.chat_id, running_in_loop=True
+    )
     return actor_instance.telegram_message(message_obj)

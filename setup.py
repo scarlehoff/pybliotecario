@@ -23,15 +23,15 @@ setup(
         ],
 
         entry_points = {'console_scripts':
-            [f'{pybliotecario_name} = pybliotecario.pybliotecario:main',]
+            ['{0} = pybliotecario.pybliotecario:main'.format(pybliotecario_name),]
             },
 )
 
-print(f"""
+print("""
 
 ##############
-Installed pybliotecario as {pybliotecario_name}
+Installed pybliotecario as {0}
 
 IMPORTANT: Don't forget to run
-      ~$ {pybliotecario_name} --init
-for proper configuration of the pybliotecario""")
+      ~$ {0} --init
+for proper configuration of the pybliotecario""".format(pybliotecario_name))

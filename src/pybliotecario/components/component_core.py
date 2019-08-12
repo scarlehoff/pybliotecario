@@ -31,7 +31,7 @@ class Component:
     that's why it is left as a separate option
     """
 
-    def __init__(self, telegram_object, chat_id=None, configuration=None, interaction_chat=None, running_in_loop = False):
+    def __init__(self, telegram_object, chat_id=None, configuration=None, interaction_chat=None, running_in_loop=False):
         self.telegram = telegram_object
         self.chat_id = chat_id
         if interaction_chat is None:
@@ -51,7 +51,7 @@ class Component:
         with open(default_config, "w") as f:
             self.configuration.write(f)
 
-    def read_config_section(self, section = None):
+    def read_config_section(self, section=None):
         """
         Checks whether section exists within the configuration file
         returns None if it doesn't
@@ -65,11 +65,13 @@ class Component:
             return section_dict
         except KeyError:
             if self.running_in_loop:
-                self.send_msg(f'Section {section} is not configured and will not work')
-                log.error(f'Section {section} is not configured, please run --init')
+                self.send_msg("Section {0} is not configured and will not work".format(section))
+                log.error("Section {0} is not configured, please run --init".format(section))
                 return {}
-            log.warning(f"There is no section {section} in configuration file")
-            yesno = input(f"Do you want to configure? (this will add a new section to $HOME/.{CONFIG_FILE} [yn] ")
+            log.warning("There is no section {0} in configuration file".format(section))
+            yesno = input(
+                "Do you want to configure? (this will add a new section to $HOME/.{0} [yn] ".format(CONFIG_FILE)
+            )
             if yesno.lower() in ("y", "s"):
                 self.update_config()
                 sys.exit(-1)
@@ -141,7 +143,7 @@ class Component:
         if chat_id is None:
             chat_id = self.interaction_chat
         if not os.path.isfile(filepath):
-            self.send_msg(f"ERROR: failed to send {filepath}", chat_id)
+            self.send_msg("ERROR: failed to send {0}".format(filepath), chat_id)
         self.telegram.send_file(filepath, chat_id)
         if delete:
             os.remove(filepath)

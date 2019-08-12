@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 
 def monthly_folder(base_main_folder):
-    main_folder = f"{base_main_folder}/data"
+    main_folder = base_main_folder + "/data"
     ahora = datetime.now()
     y = ahora.year
     m = ahora.strftime("%B")

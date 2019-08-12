@@ -33,8 +33,8 @@ class IpLookup(Component):
         my_ip = ip_lookup()
         # Then append it to the text and send it to Telegram
         message_text = " ".join(args.message)
-        message = f"{message_text} {my_ip}"
+        message = "{0} {1}".format(message_text, my_ip)
         self.telegram.send_message(message, self.chat_id)
-        log.info(f"IP: {my_ip}")
+        log.info("IP: {0}".format(my_ip))
         # Finally, consume the text
         args.message = None

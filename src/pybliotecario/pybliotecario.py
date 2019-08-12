@@ -61,7 +61,7 @@ def main():
     if not main_folder:
         print("Warning: there is no 'default:main_folder' option set in {0}, using /tmp/".format(args.config_file))
         main_folder = "/tmp/"
-    logger_setup(f"{main_folder}/info.log", debug=args.debug)
+    logger_setup(main_folder + "/info.log", debug=args.debug)
 
     log.info("Initializing the pybliotecario")
     api_token = defaults.get("token")
