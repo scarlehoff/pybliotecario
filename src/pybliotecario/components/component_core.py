@@ -31,7 +31,7 @@ class Component:
     that's why it is left as a separate option
     """
 
-    def __init__(self, telegram_object, chat_id=None, configuration=None, interaction_chat=None):
+    def __init__(self, telegram_object, chat_id=None, configuration=None, interaction_chat=None, running_in_loop = False):
         self.telegram = telegram_object
         self.chat_id = chat_id
         if interaction_chat is None:
@@ -40,6 +40,7 @@ class Component:
             self.interaction_chat = chat_id
         self.configuration = configuration
         self.configurable = False
+        self.running_in_loop = running_in_loop
 
     def update_config(self):
         """ Updates default ($HOME/.CONFIG_FILE) configuration file """
@@ -54,6 +55,8 @@ class Component:
         """
         Checks whether section exists within the configuration file
         returns None if it doesn't
+
+        If the bot is running in daemon/receiving from Telegram mode, can't configure
         """
         if section is None:
             section = self.section_name
@@ -61,6 +64,10 @@ class Component:
             section_dict = self.configuration[section]
             return section_dict
         except KeyError:
+            if self.running_in_loop:
+                self.send_msg(f'Section {section} is not configured and will not work')
+                log.error(f'Section {section} is not configured, please run --init')
+                return {}
             log.warning(f"There is no section {section} in configuration file")
             yesno = input(f"Do you want to configure? (this will add a new section to $HOME/.{CONFIG_FILE} [yn] ")
             if yesno.lower() in ("y", "s"):

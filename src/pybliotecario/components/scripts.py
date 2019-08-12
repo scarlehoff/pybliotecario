@@ -18,6 +18,8 @@ class Script(Component):
             self.blocked = True
             self.send_msg("You are not allowed to run scripts here")
         self.scripts = self.read_config_section()
+        if not self.scripts:
+            self.blocked = True
         default_keys = set(self.configuration['DEFAULT'].keys())
         self.script_names = list(set(self.scripts.keys()) -default_keys)
 
@@ -37,7 +39,7 @@ class Script(Component):
             sc_cmd = script_command.strip()
             if not sc_cmd:
                 break
-            script_file = input(f" Introduce the path of the command to run with '{sc_cmd}' :")
+            script_file = input(f" Introduce the path of the command to run with '{sc_cmd}': ")
             dict_out[cls.section_name][sc_cmd] = script_file
         return dict_out
 
