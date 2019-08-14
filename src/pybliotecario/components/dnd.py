@@ -87,8 +87,18 @@ class DnD(Component):
     default_roll = "1d20"
 
     def telegram_message(self, msg):
+        # Get the text and the username
         text = msg.text.strip()
+        username = msg.username.strip()
         # Separate possible extra msgs that go with the text
-        roll_cmd = text.split()[0]
-        answer = roll_dice(roll_cmd)
+        split_text = text.split(" ",1)
+        roll_cmd = split_text[0]
+        if len(split_text) == 2:
+            roll_text = " " + split_text[1]
+        else:
+            roll_text = ""
+        # Compute the result in the form of a string
+        roll_result = roll_dice(roll_cmd)
+        # Write the answer
+        answer = "{0} rolled{1}:\n{2}".format(username, roll_text, roll_result)
         self.send_msg(answer)
