@@ -52,7 +52,15 @@ class Message:
         else:
             fromData = chatData  # something has changed or was this a special type of msg???
         # Populate general fields
-        self.username = fromData["username"]
+        # Check whetehr username exists, otherwise use name, otherwise, unknown
+        if "username" in fromData:
+            self.username = fromData["username"]
+        elif "first_name" in fromData:
+            self.username = fromData["first_name"]
+        elif "last_name" in fromData:
+            self.username = fromData["last_name"]
+        else:
+            self.username = "unknown_user"
         self.chat_id = chatData["id"]
 
         # Check the filetyp of what we just received

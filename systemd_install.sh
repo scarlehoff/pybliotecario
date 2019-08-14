@@ -76,6 +76,9 @@ The bot can just exit on failure or just ignore the error"
 if confirm "Do you want to ignore errors?" 
 then
     extra_options="${extra_options} --clear_incoming"
+    limit_interval="
+StartLimitInterval=3600
+StartLimitBurst=5"
     restart_on="
 Restart=on-failure
 RestartSec=60s"
