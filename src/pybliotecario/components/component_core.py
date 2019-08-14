@@ -37,7 +37,7 @@ class Component:
         if interaction_chat is None:
             self.interaction_chat = chat_id
         else:
-            self.interaction_chat = chat_id
+            self.interaction_chat = interaction_chat
         self.configuration = configuration
         self.configurable = False
         self.running_in_loop = running_in_loop

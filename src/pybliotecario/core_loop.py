@@ -77,11 +77,6 @@ def main_loop(teleAPI, config=None, clear=False):
             if update.ignore:
                 continue
             chat_id = update.chat_id
-            if accepted_user:
-                if str(chat_id) != accepted_user:
-                    random_msg = still_alive()
-                    teleAPI.send_message(random_msg, chat_id)
-                    continue
             if update.isFile:
                 # If the update is a file, save the file and we are done
                 file_name = update.text.replace(" ", "")
