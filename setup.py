@@ -18,7 +18,7 @@ setup(
     name=pybliotecario_name,
     version="1.0",
 
-    author="Juacrumar",
+    author="Scarlehoff",
     author_email="juacrumar@lairen.eu",
     url="https://github.com/scarlehoff/pybliotecario",
 

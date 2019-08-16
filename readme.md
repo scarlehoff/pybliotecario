@@ -6,9 +6,11 @@ and your Telegram account.
 
 # Installing the pybliotecario
 
-TODO: pip upload the package to pip so some of this is automatized
+The pybliotecario can be installed as other python projects, using pip
 
-The pybliotecario can be installed as other python projects, using setuptools.
+`pip install pybliotecario`
+
+o setuptools:
 
 `python3 setup.py install`
 
@@ -18,7 +20,7 @@ In order to link the program with a Telegram bot it is necessary to create a bot
 
 `pybliotecario --init`
 
-A small `systemd_install.sh` script is shipped alongside the pybliotecario in order to daemonize it easily.
+A small `systemd_install.sh` script is shipped alongside the github version of the pybliotecario in order to daemonize it easily.
 
 # Configuration of the pybliotecario
 
