@@ -9,6 +9,10 @@ import logging
 
 log = logging.getLogger(__name__)
 
+def log_request(status_code, reason, content):
+    """ Log the status of the send requests """
+    result = "Request sent, status code: {0} - {1}: {2}".format(status_code, reason, content)
+    log.info(result)
 
 class TelegramUtil:
     """ This class handles all comunications with
@@ -112,7 +116,7 @@ class TelegramUtil:
         img = open(imgPath, "rb")
         files = {"photo": ("picture.jpg", img)}  # Here, the ,"rb" thing
         blabla = requests.post(self.send_img, data=data, files=files)
-        log.info(blabla.status_code, blabla.reason, blabla.content)
+        log_request(blabla.status_code, blabla.reason, blabla.content)
 
     def send_file(self, filePath, chat):
         data = {"chat_id": chat}
@@ -120,7 +124,7 @@ class TelegramUtil:
         doc_name = os.path.basename(filePath)
         files = {"document": (doc_name, file_stream)}
         blabla = requests.post(self.send_doc, data=data, files=files)
-        log.info(blabla.status_code, blabla.reason, blabla.content)
+        log_request(blabla.status_code, blabla.reason, blabla.content)
 
     def send_file_by_url(self, file_url, chat):
         """
