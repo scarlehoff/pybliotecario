@@ -1,3 +1,5 @@
+[![PyPI version](https://badge.fury.io/py/pybliotecario.svg)](https://badge.fury.io/py/pybliotecario)
+
 # pybliotecario
 
 pybliotecario is a simple Telegram bot written en python.
