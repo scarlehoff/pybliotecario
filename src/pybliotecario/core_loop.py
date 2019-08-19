@@ -80,7 +80,7 @@ def main_loop(teleAPI, config=None, clear=False):
             if update.isFile:
                 # If the update is a file, save the file and we are done
                 file_name = update.text.replace(" ", "")
-                file_path = "{0}/{1}".format(monthly_folder(), file_name)
+                file_path = "{0}/{1}".format(monthly_folder(main_folder), file_name)
                 result = teleAPI.download_file(update.fileId, file_path)
                 if result:
                     teleAPI.send_message("¡Archivo recibido y guardado!", chat_id)
