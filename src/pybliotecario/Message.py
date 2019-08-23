@@ -24,7 +24,7 @@ class Message:
 
     def __init__(self, jsonDict):
         # ignore keys:
-        ign_keys = ["new_chat_participant", "left_chat_participant", "sticker", "game"]
+        ign_keys = ["new_chat_participant", "left_chat_participant", "sticker", "game", "contact"]
         msg = "message"
         self.json = jsonDict
         keys = jsonDict.keys()
