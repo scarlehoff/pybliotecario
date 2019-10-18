@@ -3,13 +3,13 @@
     update notifications and quick-querying from the Telegram app
 """
 
+import os
+import time
+import logging
 from datetime import datetime
 from datetime import timedelta
-import time
-import os
 import arxiv
 from pybliotecario.components.component_core import Component
-import logging
 
 log = logging.getLogger(__name__)
 
@@ -100,7 +100,7 @@ def arxiv_get_pdf(arxiv_id_raw):
     # First we recover the information about the paper
     paper = arxiv.query(id_list=[arxiv_id])[0]
     # Now download the pdf (the download command only needs a dictionary with the pdf_url, but that is given by the query)
-    file_name = arxiv.download(paper)
+    file_name = arxiv.download(paper, dirpath='/tmp/')
     return file_name
 
 
