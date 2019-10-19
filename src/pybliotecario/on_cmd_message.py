@@ -31,6 +31,8 @@ def act_on_telegram_command(tele_api, message_obj, config):
         from pybliotecario.components.scripts import Script as Actor
     elif tg_command in ("r", "roll"):
         from pybliotecario.components.dnd import DnD as Actor
+    elif tg_command in ("reaction-save", "reaction", "reaction-list"):
+        from pybliotecario.components.reactions import Reactions as Actor
     else:
         log.info("No actor declared for this command: {0}".format(tg_command))
         return None

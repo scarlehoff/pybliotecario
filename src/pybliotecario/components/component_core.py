@@ -39,6 +39,7 @@ class Component:
         else:
             self.interaction_chat = interaction_chat
         self.configuration = configuration
+        self.main_folder = self.configuration["DEFAULT"]["main_folder"]
         self.configurable = False
         self.running_in_loop = running_in_loop
 
