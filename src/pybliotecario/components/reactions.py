@@ -59,16 +59,11 @@ class Reactions(Component):
             self.send_msg(f"Error: reaction '{name}' not found")
             return
         for reaction in files:
-            self.send_file(reaction)
+            self.send_img(reaction)
 
     def telegram_message(self, msg):
         command = msg.command
         if command == "reaction":
             self.send_reaction(msg.text.strip())
-        elif command == "reaction-list":
+        elif command == "reaction_list":
             self.list_reactions()
-
-
-if __name__ == "__main__":
-    TEST_FOLDER = "/home/jumax9/.pybliotecario/reactions/"
-    print(list_content_folder_as_str(TEST_FOLDER))
