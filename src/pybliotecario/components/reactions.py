@@ -51,6 +51,13 @@ class Reactions(Component):
         out_msg = f"Reaction pics: {files_str}"
         self.send_msg(out_msg)
 
+    def save_reactions(self, msg):
+        file_name = msg.text.replace(" ", "")
+        file_path = f"{self.reaction_folder}/{file_name}"
+        file_id = msg.fileId
+        self.telegram.download_file(file_id, file_path)
+        self.send_msg(f"Reaction image {file_name} correctly saved")
+
     def send_reaction(self, name):
         """ Check whether the file `name` is in the reaction folder and,
         if it is, send it back. it can have any extension! """
@@ -67,3 +74,5 @@ class Reactions(Component):
             self.send_reaction(msg.text.strip())
         elif command == "reaction_list":
             self.list_reactions()
+        elif command == "reaction_save":
+            self.save_reactions(msg)
