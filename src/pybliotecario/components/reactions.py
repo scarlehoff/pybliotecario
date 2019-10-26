@@ -52,6 +52,7 @@ class Reactions(Component):
         self.send_msg(out_msg)
 
     def save_reactions(self, msg):
+        """ Saves the raction within msg to the reaciton folder """
         file_name = msg.text.replace(" ", "")
         file_path = f"{self.reaction_folder}/{file_name}"
         file_id = msg.fileId
