@@ -25,19 +25,20 @@ def act_on_telegram_command(tele_api, message_obj, config):
         from pybliotecario.components.ip_lookup import IpLookup as Actor
     elif tg_command.lower() in ("is_pid_alive", "kill_pid"):
         from pybliotecario.components.pid import ControllerPID as Actor
-    elif tg_command in ("arxiv-query", "arxiv", "arxivget", "arxiv-get"):
+    elif tg_command in ("arxiv_query", "arxiv", "arxivget", "arxiv_get"):
         from pybliotecario.components.arxiv_mod import Arxiv as Actor
     elif tg_command == "script":
         from pybliotecario.components.scripts import Script as Actor
     elif tg_command in ("r", "roll"):
         from pybliotecario.components.dnd import DnD as Actor
+    elif tg_command in ("reaction_save", "reaction", "reaction_list"):
+        from pybliotecario.components.reactions import Reactions as Actor
     else:
         log.info("No actor declared for this command: {0}".format(tg_command))
         return None
 
-
-
     actor_instance = Actor(
         tele_api, chat_id=chat_id, configuration=config, interaction_chat=message_obj.chat_id, running_in_loop=True
     )
+
     return actor_instance.telegram_message(message_obj)

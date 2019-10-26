@@ -77,18 +77,7 @@ def main_loop(teleAPI, config=None, clear=False):
             if update.ignore:
                 continue
             chat_id = update.chat_id
-            if update.isFile:
-                # If the update is a file, save the file and we are done
-                file_name = update.text.replace(" ", "")
-                file_path = "{0}/{1}".format(monthly_folder(main_folder), file_name)
-                result = teleAPI.download_file(update.fileId, file_path)
-                if result:
-                    teleAPI.send_message("¡Archivo recibido y guardado!", chat_id)
-                    log.info("File saved to {0}".format(file_path))
-                else:
-                    teleAPI.send_message("There was some problem with this, sorry", chat_id)
-                    log.info("Since there was some problem, let's open a pdb console here and you decide what to do")
-            elif update.is_command:
+            if update.is_command:
                 # Calls select command and act on the message
                 # the function will receive the whole telegram API so it is allowed to send msgs directly
                 # it can choose to send back a response instead
@@ -102,6 +91,18 @@ def main_loop(teleAPI, config=None, clear=False):
                         teleAPI.send_file(filepath, chat_id)
                         if response["delete"]:
                             os.remove(filepath)
+            elif update.isFile:
+                # If the update is a file, save the file and we are done
+                file_name = update.text.replace(" ", "")
+                file_path = "{0}/{1}".format(monthly_folder(main_folder), file_name)
+                result = teleAPI.download_file(update.fileId, file_path)
+                if result:
+                    teleAPI.send_message("¡Archivo recibido y guardado!", chat_id)
+                    log.info("File saved to {0}".format(file_path))
+                else:
+                    teleAPI.send_message("There was some problem with this, sorry", chat_id)
+                    log.info("Since there was some problem, let's open a pdb console here and you decide what to do")
+
             else:
                 # Otherwise just save the msg to the log and send a funny reply
                 write_to_daily_log(main_folder, update.text)

@@ -39,6 +39,7 @@ class Component:
         else:
             self.interaction_chat = interaction_chat
         self.configuration = configuration
+        self.main_folder = self.configuration["DEFAULT"]["main_folder"]
         self.configurable = False
         self.running_in_loop = running_in_loop
 
@@ -134,6 +135,17 @@ class Component:
         if chat_id is None:
             chat_id = self.interaction_chat
         return self.telegram.send_message(msg, chat_id)
+
+    def send_img(self, imgpath, chat_id = None, delete = False):
+        """ Wrapper around API send_img, if chat_id is not defined
+        will use the chat id this class was instantiated to """
+        if chat_id is None:
+            chat_id = self.interaction_chat
+        if not os.path.isfile(imgpath):
+            self.send_msg("ERROR: failed to send {0}".format(imgpath), chat_id)
+        self.telegram.send_image(imgpath, chat_id)
+        if delete:
+            os.remove(imgpath)
 
     def send_file(self, filepath, chat_id=None, delete=False):
         """ Wrapper around API send_file, if chat_id is not defined
