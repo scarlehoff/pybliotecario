@@ -85,12 +85,18 @@ If you don't know how to get one, read here: https://core.telegram.org/bots#6-bo
         yn = input("Was this your msg? [y/n] ")
         if yn.lower() in ("y", "s"):
             chat_id = update.chat_id
-            print("Your chat id is: {0} and your username is: {1}".format(chat_id, update.username))
+            print(
+                "Your chat id is: {0} and your username is: {1}".format(
+                    chat_id, update.username
+                )
+            )
             break
         else:
             print("Try again")
     # Fill the DEFAULT options
-    config_dict = {"DEFAULT": {"TOKEN": token, "chat_id": chat_id, "main_folder": main_folder}}
+    config_dict = {
+        "DEFAULT": {"TOKEN": token, "chat_id": chat_id, "main_folder": main_folder}
+    }
     return config_dict
 
 
@@ -144,13 +150,17 @@ class InitAction(Action):
         # If it does you might not want to reconfigure Telegram, so let's ask
         initialize = True
         if config_exists:
-            print("It seems pybliotecario's Telegram capabilities have already been configured in this computer")
+            print(
+                "It seems pybliotecario's Telegram capabilities have already been configured in this computer"
+            )
             yn = input("Do you want to configure it again? [y/n] ")
             if not yn.lower().startswith(("y", "s")):
                 initialize = False
         if initialize:
             config_dict.update(configure_telegram(main_folder))
-        print("Next we will run over the different modules of this program to fill some configuration options")
+        print(
+            "Next we will run over the different modules of this program to fill some configuration options"
+        )
         config_dict.update(configure_all())
         # And finally write the config file
         write_config(config_dict, config_file, config_exists=config_exists)
@@ -161,27 +171,50 @@ def parse_args():
     """ Wrapper for ArgumentParser """
     parser = ArgumentParser()
     parser.add_argument("message", help="Message to send to Telegram", nargs="*")
-    parser.add_argument("--init", help="Wizard to configure the pybliotecario for the first time", action=InitAction)
+    parser.add_argument(
+        "--init",
+        help="Wizard to configure the pybliotecario for the first time",
+        action=InitAction,
+    )
     parser.add_argument("--config_file", help="Define a custom configuration file")
-    parser.add_argument("-d", "--daemon", help="Activate the librarian", action="store_true")
+    parser.add_argument(
+        "-d", "--daemon", help="Activate the librarian", action="store_true"
+    )
     parser.add_argument("-i", "--image", help="Send iamge to Telegram")
     parser.add_argument("-f", "--file", help="Send file to Telegram")
     parser.add_argument(
-        "--arxiv_new", help="Send a msg containing a digest of the new submissions to arxiv", action="store_true"
+        "--arxiv_new",
+        help="Send a msg containing a digest of the new submissions to arxiv",
+        action="store_true",
     )
     parser.add_argument(
-        "--weather", help="Sends a msg to telegram with the current weather and a small forecast", action="store_true"
+        "--weather",
+        help="Sends a msg to telegram with the current weather and a small forecast",
+        action="store_true",
     )
     parser.add_argument(
         "--check_repository",
         help="Sends a msg to telegram with the incoming information for the given repository (receives the base folder of the repository)",
     )
     parser.add_argument(
-        "--clear_incoming", help="Clears incoming messages in case something has gone wrong", action="store_true"
+        "--clear_incoming",
+        help="Clears incoming messages in case something has gone wrong",
+        action="store_true",
     )
-    parser.add_argument("--pid", help="Monitor a PID and sends a message when the PID is finished", type=int, nargs="+")
-    parser.add_argument("--my_ip", help="Send to the default chat the current IP of the computer", action="store_true")
     parser.add_argument(
-        "--debug", help="Write everything to terminal instead of writing to log file", action="store_true"
+        "--pid",
+        help="Monitor a PID and sends a message when the PID is finished",
+        type=int,
+        nargs="+",
+    )
+    parser.add_argument(
+        "--my_ip",
+        help="Send to the default chat the current IP of the computer",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--debug",
+        help="Write everything to terminal instead of writing to log file",
+        action="store_true",
     )
     return parser.parse_args()

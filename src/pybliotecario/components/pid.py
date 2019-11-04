@@ -53,7 +53,9 @@ def is_it_alive(data):
     if alive:
         msg = "{0} is alive".format(data)
         if matches:
-            msg += "\nI found the following matching processes: \n > {0}".format("\n > ".join(matches))
+            msg += "\nI found the following matching processes: \n > {0}".format(
+                "\n > ".join(matches)
+            )
 
     else:
         msg = "{0} not found among active processes".format(data)

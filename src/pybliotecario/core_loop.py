@@ -81,7 +81,9 @@ def main_loop(teleAPI, config=None, clear=False):
                 # Calls select command and act on the message
                 # the function will receive the whole telegram API so it is allowed to send msgs directly
                 # it can choose to send back a response instead
-                response = on_cmd_message.act_on_telegram_command(teleAPI, update, config)
+                response = on_cmd_message.act_on_telegram_command(
+                    teleAPI, update, config
+                )
                 # if response is text, or file, it will be sent to the chat
                 if isinstance(response, str):
                     teleAPI.send_message(response, chat_id)
@@ -100,8 +102,12 @@ def main_loop(teleAPI, config=None, clear=False):
                     teleAPI.send_message("¡Archivo recibido y guardado!", chat_id)
                     log.info("File saved to {0}".format(file_path))
                 else:
-                    teleAPI.send_message("There was some problem with this, sorry", chat_id)
-                    log.info("Since there was some problem, let's open a pdb console here and you decide what to do")
+                    teleAPI.send_message(
+                        "There was some problem with this, sorry", chat_id
+                    )
+                    log.info(
+                        "Since there was some problem, let's open a pdb console here and you decide what to do"
+                    )
 
             else:
                 # Otherwise just save the msg to the log and send a funny reply
@@ -112,6 +118,8 @@ def main_loop(teleAPI, config=None, clear=False):
             # If we are in clear mode, we want to recapture updates to ensure we clear the ones that produce a fail
             # in principle in clear mode we don't care what the fail is about, we just want to clear the failure
             if clear:
-                log.info("\n     > > This update produced an exception: {0}\n\n".format(e))
+                log.info(
+                    "\n     > > This update produced an exception: {0}\n\n".format(e)
+                )
             else:
                 raise e

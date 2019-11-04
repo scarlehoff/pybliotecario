@@ -32,14 +32,18 @@ class Script(Component):
     def configure_me(cls):
         print("")
         print(" # Scripts module ")
-        print("This is the configuration helper for the scripts module, leave empty to exit")
+        print(
+            "This is the configuration helper for the scripts module, leave empty to exit"
+        )
         dict_out = {cls.section_name: {}}
         while True:
             script_command = input(" Introduce the command name: ")
             sc_cmd = script_command.strip()
             if not sc_cmd:
                 break
-            script_file = input(" Introduce the path of the command to run with '{0}': ".format(sc_cmd))
+            script_file = input(
+                " Introduce the path of the command to run with '{0}': ".format(sc_cmd)
+            )
             dict_out[cls.section_name][sc_cmd] = script_file
         return dict_out
 

@@ -38,7 +38,11 @@ def act_on_telegram_command(tele_api, message_obj, config):
         return None
 
     actor_instance = Actor(
-        tele_api, chat_id=chat_id, configuration=config, interaction_chat=message_obj.chat_id, running_in_loop=True
+        tele_api,
+        chat_id=chat_id,
+        configuration=config,
+        interaction_chat=message_obj.chat_id,
+        running_in_loop=True,
     )
 
     return actor_instance.telegram_message(message_obj)

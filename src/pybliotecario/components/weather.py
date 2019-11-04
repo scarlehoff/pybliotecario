@@ -96,9 +96,13 @@ class Weather(Component):
     def configure_me(cls):
         print("")
         print(" # WEATHER MODULE # ")
-        print("In order to configure the weather module, you need an API token from OpenWeatherMap")
+        print(
+            "In order to configure the weather module, you need an API token from OpenWeatherMap"
+        )
         print("Go here in order to get one: https://openweathermap.org/appid")
-        print("Introduce below the API token, leave empty to skip the configuration of the weather module")
+        print(
+            "Introduce below the API token, leave empty to skip the configuration of the weather module"
+        )
         api = input(" > ")
         if api.strip() == "":
             return None

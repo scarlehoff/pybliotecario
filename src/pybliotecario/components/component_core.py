@@ -31,7 +31,14 @@ class Component:
     that's why it is left as a separate option
     """
 
-    def __init__(self, telegram_object, chat_id=None, configuration=None, interaction_chat=None, running_in_loop=False):
+    def __init__(
+        self,
+        telegram_object,
+        chat_id=None,
+        configuration=None,
+        interaction_chat=None,
+        running_in_loop=False,
+    ):
         self.telegram = telegram_object
         self.chat_id = chat_id
         if interaction_chat is None:
@@ -66,12 +73,18 @@ class Component:
             return section_dict
         except KeyError:
             if self.running_in_loop:
-                self.send_msg("Section {0} is not configured and will not work".format(section))
-                log.error("Section {0} is not configured, please run --init".format(section))
+                self.send_msg(
+                    "Section {0} is not configured and will not work".format(section)
+                )
+                log.error(
+                    "Section {0} is not configured, please run --init".format(section)
+                )
                 return {}
             log.warning("There is no section {0} in configuration file".format(section))
             yesno = input(
-                "Do you want to configure? (this will add a new section to $HOME/.{0} [yn] ".format(CONFIG_FILE)
+                "Do you want to configure? (this will add a new section to $HOME/.{0} [yn] ".format(
+                    CONFIG_FILE
+                )
             )
             if yesno.lower() in ("y", "s"):
                 self.update_config()
@@ -136,7 +149,7 @@ class Component:
             chat_id = self.interaction_chat
         return self.telegram.send_message(msg, chat_id)
 
-    def send_img(self, imgpath, chat_id = None, delete = False):
+    def send_img(self, imgpath, chat_id=None, delete=False):
         """ Wrapper around API send_img, if chat_id is not defined
         will use the chat id this class was instantiated to """
         if chat_id is None:

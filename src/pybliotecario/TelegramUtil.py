@@ -9,10 +9,14 @@ import logging
 
 log = logging.getLogger(__name__)
 
+
 def log_request(status_code, reason, content):
     """ Log the status of the send requests """
-    result = "Request sent, status code: {0} - {1}: {2}".format(status_code, reason, content)
+    result = "Request sent, status code: {0} - {1}: {2}".format(
+        status_code, reason, content
+    )
     log.info(result)
+
 
 class TelegramUtil:
     """ This class handles all comunications with

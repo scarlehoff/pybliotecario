@@ -25,7 +25,9 @@ def read_config(config_file=None):
     if config and config.defaults():
         return config
     else:
-        print("Before using this program you need to run the --init option in order to configure it")
+        print(
+            "Before using this program you need to run the --init option in order to configure it"
+        )
         sys.exit(-1)
 
 
@@ -36,7 +38,9 @@ def logger_setup(filename, debug=False):
     to stdout
     """
     # Set the formatter
-    formatter = logging.Formatter("[%(levelname)s:%(asctime)s] - %(message)s", "%d/%m/%y %H:%M")
+    formatter = logging.Formatter(
+        "[%(levelname)s:%(asctime)s] - %(message)s", "%d/%m/%y %H:%M"
+    )
     if debug:
         file_handler = logging.StreamHandler(sys.stdout)
     else:
@@ -59,7 +63,11 @@ def main():
     defaults = config.defaults()
     main_folder = defaults.get("main_folder")
     if not main_folder:
-        print("Warning: there is no 'default:main_folder' option set in {0}, using /tmp/".format(args.config_file))
+        print(
+            "Warning: there is no 'default:main_folder' option set in {0}, using /tmp/".format(
+                args.config_file
+            )
+        )
         main_folder = "/tmp/"
     logger_setup(main_folder + "/info.log", debug=args.debug)
 
