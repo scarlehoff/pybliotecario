@@ -5,6 +5,7 @@
 # TODO:
 #   Make sure you don't save img1.png img1.jpg
 
+import os
 import glob
 import pathlib
 import logging
@@ -16,7 +17,7 @@ REACTIONS = "reactions"
 
 def list_content_folder_as_str(folder):
     """ List the stem of all the files of a folder as a str """
-    reaction_wild = f"{folder}/*"
+    reaction_wild = "{0}/*".format(folder)
     reaction_content = glob.glob(reaction_wild)
     files_found = [pathlib.Path(i).stem for i in reaction_content]
     files_str = ", ".join(files_found)
@@ -26,7 +27,7 @@ def list_content_folder_as_str(folder):
 def look_for_file(folder, filename):
     """ Receives a `filename` without the extension and looks
     whether it exists in `folder` (with any extension) """
-    reaction_wild = f"{folder}/{filename}.*"
+    reaction_wild = "{0}/{1}.*".format(folder, filename)
     reaction_content = glob.glob(reaction_wild)
     return reaction_content
 
@@ -43,28 +44,29 @@ class Reactions(Component):
 
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
-        self.reaction_folder = f"{self.main_folder}/{REACTIONS}"
+        self.reaction_folder = "{0}/{1}".format(self.main_folder, REACTIONS)
+        os.makedirs(self.reaction_folder, exist_ok=True)
 
     def list_reactions(self):
         """ List the reaction pictures saved in the computer """
         files_str = list_content_folder_as_str(self.reaction_folder)
-        out_msg = f"Reaction pics: {files_str}"
+        out_msg = "Reaction pics: {0}".format(files_str)
         self.send_msg(out_msg)
 
     def save_reactions(self, msg):
         """ Saves the raction within msg to the reaciton folder """
         file_name = msg.text.replace(" ", "")
-        file_path = f"{self.reaction_folder}/{file_name}"
+        file_path = "{0}/{1}".format(self.reaction_folder, file_name)
         file_id = msg.fileId
         self.telegram.download_file(file_id, file_path)
-        self.send_msg(f"Reaction image {file_name} correctly saved")
+        self.send_msg("Reaction image {0} correctly saved".format(file_name))
 
     def send_reaction(self, name):
         """ Check whether the file `name` is in the reaction folder and,
         if it is, send it back. it can have any extension! """
         files = look_for_file(self.reaction_folder, name)
         if not files:
-            self.send_msg(f"Error: reaction '{name}' not found")
+            self.send_msg("Error: reaction '{0}' not found".format(name))
             return
         for reaction in files:
             self.send_img(reaction)
