@@ -31,6 +31,8 @@ class Component:
     that's why it is left as a separate option
     """
 
+    help_text = None
+
     def __init__(self, telegram_object, chat_id=None, configuration=None, interaction_chat=None, running_in_loop=False):
         self.telegram = telegram_object
         self.chat_id = chat_id
@@ -82,7 +84,18 @@ class Component:
 
     @classmethod
     def whoamI(cls):
+        """ Name """
         return cls.__name__
+
+    @classmethod
+    def help_msg(cls):
+        """ Help msg to send to telegram """
+        if cls.help_text:
+            return cls.help_text
+        else:
+            name = cls.whoamI()
+            help_str = "Help msg for {0} not implemented".format(name)
+            return help_str
 
     @classmethod
     def configure_me(cls):

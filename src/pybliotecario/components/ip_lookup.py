@@ -18,6 +18,9 @@ class IpLookup(Component):
         Reads the current IP of the computer and sends it to Telegram
     """
 
+    help_text = """ > IP module
+    /ip : send the current ip in which the bot is running """
+
     def telegram_message(self, msg):
         """ If the chat id asking is the correct one
         sends a msg with the current ip, otherwise fails """

@@ -42,6 +42,11 @@ class Reactions(Component):
     and /reaction-list (which would list all files in the reactions folder)
     """
 
+    help_text = """ > Reactions module
+    /reaction_save reaction_name: save an image with name reaction_name
+    /reaction_list: list all reactions
+    /reaction reaction_name: sends the reaction given by reaction_name """
+
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
         self.reaction_folder = "{0}/{1}".format(self.main_folder, REACTIONS)

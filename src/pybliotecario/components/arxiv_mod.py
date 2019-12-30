@@ -144,6 +144,11 @@ Abstract: {3}""".format(
 
 
 class Arxiv(Component):
+
+    help_text = """ > Arxiv module
+    /arxiv arxiv_id: sends information about the given id
+    /arxiv_get arxiv_id: sends the PDF for the given id """
+
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
         arxiv_config = self.read_config_section("ARXIV")
@@ -193,7 +198,7 @@ class Arxiv(Component):
     def telegram_message(self, msg):
         command = msg.command
         arxiv_id = msg.text.strip()
-        if command in ("arxivget", "arxiv-get"):
+        if command in ("arxivget", "arxiv-get", "arxiv_get"):
             file_send = arxiv_get_pdf(arxiv_id)
             self.send_file(file_send, delete=True)
         else:

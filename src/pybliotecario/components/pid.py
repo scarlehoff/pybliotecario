@@ -74,6 +74,11 @@ class ControllerPID(Component):
     """
     """
 
+    help_text = """ > PID module
+    /kill_pid pid: kills a given pid
+    /is_pid_alive pid/name_of_program: looks for the given pid or program to check whether it is still alive"""
+
+
     def cmdline_command(self, args):
         """ Waits until the given PID(s) are finished """
         log.info("Waiting for the given PIDs: {0}".format(args.pid))

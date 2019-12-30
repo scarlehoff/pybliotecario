@@ -13,6 +13,9 @@ log = logging.getLogger(__name__)
 
 class Script(Component):
     section_name = "SCRIPT"
+    help_text = """ > Script module
+    /script list: list all possible scripts
+    /script script_name: execute the given script """
 
     def __init__(self, telegram_object, **kwargs):
         super().__init__(telegram_object, **kwargs)

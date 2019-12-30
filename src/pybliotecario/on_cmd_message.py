@@ -10,9 +10,30 @@
 import subprocess as sp
 import os
 import logging
+import importlib
 
 log = logging.getLogger(__name__)
 
+def import_component(module, cls):
+    module_path = "pybliotecario.components." + module
+    module = importlib.import_module(module_path)
+    return getattr(module, cls)
+
+def send_help(tele_api, chat_id):
+    log.info("Sending help msg")
+    components = [
+            ("pid", "ControllerPID"),
+            ("ip_lookup", "IpLookup"),
+            ("arxiv_mod", "Arxiv"),
+            ("scripts", "Script"),
+            ("dnd", "DnD"),
+            ("reactions", "Reactions"),
+            ]
+    for module, cls in components:
+        Actor = import_component(module, cls)
+        help_msg = Actor.help_msg()
+        tele_api.send_message(help_msg, chat_id)
+    return None
 
 def act_on_telegram_command(tele_api, message_obj, config):
     """
@@ -33,6 +54,8 @@ def act_on_telegram_command(tele_api, message_obj, config):
         from pybliotecario.components.dnd import DnD as Actor
     elif tg_command in ("reaction_save", "reaction", "reaction_list"):
         from pybliotecario.components.reactions import Reactions as Actor
+    elif tg_command == "help":
+        return send_help(tele_api, chat_id)
     else:
         log.info("No actor declared for this command: {0}".format(tg_command))
         return None

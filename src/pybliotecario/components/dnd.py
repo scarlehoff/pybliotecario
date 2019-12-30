@@ -83,6 +83,10 @@ def roll_dice(text):
 
 
 class DnD(Component):
+    help_text = """ > DnD module
+    /r, /roll dice [text]: roll a dice in the format NdM+Mod
+    """
+    
     section_name = "DnD"
     default_roll = "1d20"
 
