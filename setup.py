@@ -34,6 +34,7 @@ setup(
         'arxiv',
         'pyowm',
         'psutil',
+        'wikipedia',
     ],
 
     entry_points = {'console_scripts':
