@@ -4,16 +4,16 @@
 
 # TODO use one of the more advance API instead of the wikipedia module
 # TODO ask for default language during initialization
-# TODO ask for the size of the summary 
-# TODO get full length of the page
+# TODO ask for the size of the summary
 
 import regex
-import logging
 import wikipedia
 from pybliotecario.components.component_core import Component
 
-log = logging.getLogger(__name__)
-get_n = regex.compile("^\d+")
+# log = logging.getLogger(__name__)
+GET_N = regex.compile(r"^\d+")
+MAX_SIZE = 4000
+WIKI_NAME = "WIKIPEDIA"
 
 
 class WikiComponent(Component):
@@ -28,52 +28,96 @@ class WikiComponent(Component):
 
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
-        self.summary_size = 1024
+        wiki_config = self.read_config_section(WIKI_NAME)
+        self.summary_size = int(wiki_config.get("msg_size", 1024))
+
+    @classmethod
+    def configure_me(cls):
+        print("")
+        print(" # Wikipedia Module ")
+        print("This is the configuration helper for the wikipedia module")
+        print("Introduce the length of the msgs you want to obtain: ")
+        summary_size = 0
+        while summary_size > MAX_SIZE or summary_size < 1:
+            # The max msg in telegram is 4096 UTF char.
+            try:
+                summary_size = int(input(" Max: {0} > ".format(MAX_SIZE)))
+            except ValueError:
+                print("Please, write a number between 0 and {0}".format(MAX_SIZE))
+        dict_out = {WIKI_NAME: {"msg_size": summary_size}}
+        return dict_out
 
     def get_page(self, term):
+        """ Gets the wikipedia page given by `term`
+        If `term` returns a disambiguation page, returns a string with the options
+        """
         try:
             wiki_page = wikipedia.page(term)
             return wiki_page
         except wikipedia.exceptions.DisambiguationError:
             other_terms = wikipedia.search(term)
-            response = "Found disambiguation page, please try with one of these other terms: "
+            response = (
+                "Found disambiguation page, please try with one of these other terms: "
+            )
             response += ", ".join(other_terms)
         except wikipedia.exceptions.PageError:
-            response = "Sorry, no Wikipedia pages were found for this query: {0}".format(term)
+            response = "Sorry, no Wikipedia pages were found for this query: {0}".format(
+                term
+            )
         self.send_msg(response)
         return None
 
     def read_summary(self, term):
+        """ Gets the page given by `term` and returns a summary
+        The size of the summary is given by the `summary_size` variable
+        """
         wiki_page = self.get_page(term)
-        if wiki_page is None:
-            return None
-        summary = wiki_page.summary[:self.summary_size]
-        self.send_msg(summary)
+        if wiki_page is not None:
+            summary = wiki_page.summary[: self.summary_size]
+            number_of_msg = int(len(wiki_page.content) / self.summary_size)
+            summary += "\n\n This page will need {0} msgs for the whole content".format(
+                number_of_msg
+            )
+            self.send_msg(summary)
 
-    def read_whole_page(self, msg):
-        # First break the msg and the number of msgs we want
-        reg_n = get_n.search(msg)
+    def read_msg_fullpage(self, msg):
+        """ Breaks the msg = "N term to search for" into
+        a N (number) and the term to search for (string)
+        """
+        reg_n = GET_N.search(msg)
         if reg_n is None:
             error = """For a whole page, write the query in the form /wiki_full N search_term
-where N is the number of msgs of size {0} you want to receive""".format(self.summary_size)
+where N is the number of msgs of size {0} you want to receive""".format(
+                self.summary_size
+            )
             self.send_msg(error)
-            return None
+            return 0, None
         n_str = reg_n[0]
-        n = int(n_str)
-        term = msg.replace(n_str, '').strip()
+        n_int = int(n_str)
+        term = msg.replace(n_str, "").strip()
+        return n_int, term
+
+    def read_whole_page(self, term, n_msg):
+        """
+        Given a `term` to search for and a number of msgs to read `n_msg`
+        sends the first `n_msg`*`self.summary_size` of the
+        corresponding wikipedia page
+        """
         wiki_page = self.get_page(term)
-        if wiki_page is None:
-            return None
-        whole_page = wiki_page.content
-        total_length = len(whole_page)
-        final_length = min(total_length, n*self.summary_size)
-        for char in range(0, final_length, self.summary_size):
-            response = whole_page[char:char+self.summary_size]
-            self.send_msg(response)
+        if wiki_page is not None:
+            whole_page = wiki_page.content
+            total_length = len(whole_page)
+            final_length = min(total_length, n_msg * self.summary_size)
+            for char in range(0, final_length, self.summary_size):
+                response = whole_page[char : char + self.summary_size]
+                self.send_msg(response)
 
     def telegram_message(self, msg):
+        """ Digest the telegram msg """
         command = msg.command
         if command == "wiki":
             self.read_summary(msg.text.strip())
         elif command == "wiki_full":
-            self.read_whole_page(msg.text.strip())
+            n_msg, term = self.read_msg_fullpage(msg.text.strip())
+            if n_msg > 0:
+                self.read_whole_page(term, n_msg)
