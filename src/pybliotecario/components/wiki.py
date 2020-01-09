@@ -2,9 +2,7 @@
     Module to read and send content from wikipedia
 """
 
-# TODO use one of the more advance API instead of the wikipedia module
-# TODO ask for default language during initialization
-# TODO ask for the size of the summary
+# TODO use the selected language
 
 import regex
 import wikipedia
@@ -14,6 +12,7 @@ from pybliotecario.components.component_core import Component
 GET_N = regex.compile(r"^\d+")
 MAX_SIZE = 4000
 WIKI_NAME = "WIKIPEDIA"
+DEFAULT_LANGUAGE = "EN"
 
 
 class WikiComponent(Component):
@@ -30,6 +29,7 @@ class WikiComponent(Component):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
         wiki_config = self.read_config_section(WIKI_NAME)
         self.summary_size = int(wiki_config.get("msg_size", 1024))
+        self.language = wiki_config.get("language", DEFAULT_LANGUAGE)
 
     @classmethod
     def configure_me(cls):
@@ -44,7 +44,18 @@ class WikiComponent(Component):
                 summary_size = int(input(" Max: {0} > ".format(MAX_SIZE)))
             except ValueError:
                 print("Please, write a number between 0 and {0}".format(MAX_SIZE))
-        dict_out = {WIKI_NAME: {"msg_size": summary_size}}
+        possible_languages = ["EN", "ES", "IT"]
+        language = None
+        print("Introduce the default language for Wikipedia pages")
+        while language not in possible_languages:
+            print("Possible choices: {0}".format(", ".join(possible_languages)))
+            language = input(" > (default: {0}".format(DEFAULT_LANGUAGE))
+            if language == "":
+                language = DEFAULT_LANGUAGE
+        dict_out = {WIKI_NAME: {
+            "msg_size": summary_size,
+            "language": language,
+            }}
         return dict_out
 
     def get_page(self, term):
