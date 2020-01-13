@@ -28,6 +28,7 @@ def send_help(tele_api, chat_id):
             ("scripts", "Script"),
             ("dnd", "DnD"),
             ("reactions", "Reactions"),
+            ("wiki", "WikiComponent"),
             ]
     for module, cls in components:
         Actor = import_component(module, cls)
@@ -54,6 +55,8 @@ def act_on_telegram_command(tele_api, message_obj, config):
         from pybliotecario.components.dnd import DnD as Actor
     elif tg_command in ("reaction_save", "reaction", "reaction_list"):
         from pybliotecario.components.reactions import Reactions as Actor
+    elif tg_command[:4] == "wiki":
+        from pybliotecario.components.wiki import WikiComponent as Actor
     elif tg_command == "help":
         return send_help(tele_api, chat_id)
     else:
