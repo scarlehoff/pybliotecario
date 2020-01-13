@@ -30,6 +30,7 @@ class WikiComponent(Component):
         wiki_config = self.read_config_section(WIKI_NAME)
         self.summary_size = int(wiki_config.get("msg_size", 1024))
         self.language = wiki_config.get("language", DEFAULT_LANGUAGE)
+        wikipedia.set_lang(self.language)
 
     @classmethod
     def configure_me(cls):

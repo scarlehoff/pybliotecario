@@ -84,14 +84,14 @@ class Message:
             stickerData = message["sticker"]
             self.stickerSet = stickerData["set_name"]
         else:
-            self.text = message.get("text")
+            self.text = message.get("text", "")
             self.isFile = False
 
         # Check whether the msg comes from a group
         self.is_group = chatData["type"] is "group"
 
         #  Now check whether the msg has the structure of a command
-        if self.text[0] == "/":
+        if self.text and self.text[0] == "/":
             self.is_command = True
         else:
             self.is_command = False
