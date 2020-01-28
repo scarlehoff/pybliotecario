@@ -16,7 +16,7 @@ else:
 README = (pathlib.Path(__file__).parent / "readme.md").read_text()
 setup(
     name=pybliotecario_name,
-    version="1.1",
+    version="1.3",
 
     author="Scarlehoff",
     author_email="juacrumar@lairen.eu",
