@@ -31,6 +31,7 @@ setup(
     packages=find_packages('src'),
 
     install_requires=[
+        'regex',
         'arxiv',
         'pyowm',
         'psutil',
