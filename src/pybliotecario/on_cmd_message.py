@@ -31,10 +31,11 @@ def send_help(tele_api, chat_id):
             ("wiki", "WikiComponent"),
             ("system", "System"),
             ]
+    full_help = []
     for module, cls in components:
         Actor = import_component(module, cls)
-        help_msg = Actor.help_msg()
-        tele_api.send_message(help_msg, chat_id)
+        full_help.append(Actor.help_msg())
+    tele_api.send_message("\n".join(full_help), chat_id)
     return None
 
 def act_on_telegram_command(tele_api, message_obj, config):
@@ -69,5 +70,4 @@ def act_on_telegram_command(tele_api, message_obj, config):
     actor_instance = Actor(
         tele_api, chat_id=chat_id, configuration=config, interaction_chat=message_obj.chat_id, running_in_loop=True
     )
-
     return actor_instance.telegram_message(message_obj)
