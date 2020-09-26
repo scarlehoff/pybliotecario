@@ -38,13 +38,16 @@ setup(
         'wikipedia',
     ],
 
+    extra_requires={
+        'facebook' : ['flask']
+        },
+
     entry_points = {'console_scripts':
                     ['{0} = pybliotecario.pybliotecario:main'.format(pybliotecario_name),]
                     },
 )
 
 print("""
-
 ##############
 Installed pybliotecario as {0}
 

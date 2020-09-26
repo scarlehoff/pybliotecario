@@ -80,3 +80,19 @@ Example: if you send the command /ip, the bot will respond with the current ip o
 For instance, you can run the pybliotecario every morning at 7:15 a.m. to tell you what are the news in the arxiv today adding a cronjob:
 
     15 07 * * mon-fri /home/pi/Telegram/pybliotecario/pybliotecario.py --arxiv_new
+
+# Facebook
+It is possible to use pybliotecario with a facebook backend.
+
+In order to install the facebook backend we use flask to generate a server which will receive the messages
+from facebook.
+
+```bash
+  pip install .[facebook]
+```
+
+The first step is to create a new page and app from the [fb developers page](https://developers.facebook.com).
+
+TODO: add some information about how to enable the callback
+
+Then we have to ensure that at least the ``messages`` and ``messaging_postbacks`` are enabled int he subcriptions for your page.
