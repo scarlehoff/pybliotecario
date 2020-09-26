@@ -3,7 +3,7 @@ import configparser
 import sys
 import os
 
-from pybliotecario.TelegramUtil import TelegramUtil
+from pybliotecario.backend.TelegramUtil import TelegramUtil
 from pybliotecario.core_loop import main_loop
 
 # Modify argument_parser.py to read new arguments

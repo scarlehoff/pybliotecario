@@ -73,7 +73,7 @@ If you don't know how to get one, read here: https://core.telegram.org/bots#6-bo
     )
     token = input("Authorization token: ")
     print("Thanks, let's test this out. Say something to your bot")
-    from pybliotecario.TelegramUtil import TelegramUtil
+    from pybliotecario.backend.TelegramUtil import TelegramUtil
 
     teleAPI = TelegramUtil(token, timeout=20)
     while True:
