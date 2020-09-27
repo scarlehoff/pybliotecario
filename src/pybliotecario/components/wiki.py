@@ -53,14 +53,16 @@ class WikiComponent(Component):
             language = input(" > (default: {0}".format(DEFAULT_LANGUAGE))
             if language == "":
                 language = DEFAULT_LANGUAGE
-        dict_out = {WIKI_NAME: {
-            "msg_size": summary_size,
-            "language": language,
-            }}
+        dict_out = {
+            WIKI_NAME: {
+                "msg_size": summary_size,
+                "language": language,
+            }
+        }
         return dict_out
 
     def get_page(self, term):
-        """ Gets the wikipedia page given by `term`
+        """Gets the wikipedia page given by `term`
         If `term` returns a disambiguation page, returns a string with the options
         """
         try:
@@ -68,19 +70,15 @@ class WikiComponent(Component):
             return wiki_page
         except wikipedia.exceptions.DisambiguationError:
             other_terms = wikipedia.search(term)
-            response = (
-                "Found disambiguation page, please try with one of these other terms: "
-            )
+            response = "Found disambiguation page, please try with one of these other terms: "
             response += ", ".join(other_terms)
         except wikipedia.exceptions.PageError:
-            response = "Sorry, no Wikipedia pages were found for this query: {0}".format(
-                term
-            )
+            response = "Sorry, no Wikipedia pages were found for this query: {0}".format(term)
         self.send_msg(response)
         return None
 
     def read_summary(self, term):
-        """ Gets the page given by `term` and returns a summary
+        """Gets the page given by `term` and returns a summary
         The size of the summary is given by the `summary_size` variable
         """
         wiki_page = self.get_page(term)
@@ -93,7 +91,7 @@ class WikiComponent(Component):
             self.send_msg(summary)
 
     def read_msg_fullpage(self, msg):
-        """ Breaks the msg = "N term to search for" into
+        """Breaks the msg = "N term to search for" into
         a N (number) and the term to search for (string)
         """
         reg_n = GET_N.search(msg)

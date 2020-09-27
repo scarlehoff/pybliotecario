@@ -143,8 +143,10 @@ class InitAction(Action):
         # If it does you might not want to reconfigure Telegram, so let's ask
         initialize = True
         if config_exists:
-            print("""It seems pybliotecario's Telegram capabilities
-have already been configured in this computer""")
+            print(
+                """It seems pybliotecario's Telegram capabilities
+have already been configured in this computer"""
+            )
             yn = input("Do you want to configure it again? [y/n] ")
             if not yn.lower().startswith(("y", "s")):
                 initialize = False

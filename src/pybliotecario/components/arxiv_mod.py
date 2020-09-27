@@ -100,18 +100,20 @@ def arxiv_get_pdf(arxiv_id_raw):
     # First we recover the information about the paper
     paper = arxiv.query(id_list=[arxiv_id])[0]
     # Now download the pdf (the download command only needs a dictionary with the pdf_url, but that is given by the query)
-    file_name = arxiv.download(paper, dirpath='/tmp/')
+    file_name = arxiv.download(paper, dirpath="/tmp/")
     return file_name
 
 
 def arxiv_recent_filtered(categories, filter_dict, abstract=False):
-    """ Read all recent papers in each categories and save the ones matching the
-    requirements of filter_dict """
+    """Read all recent papers in each categories and save the ones matching the
+    requirements of filter_dict"""
     lines = []
     for category in categories:
         tmp = query_recent(category)
         results = filter_results(tmp, filter_dict)
-        line = "{0} new papers in {1}, {2} interesting ones: \n".format(len(tmp), category, len(results))
+        line = "{0} new papers in {1}, {2} interesting ones: \n".format(
+            len(tmp), category, len(results)
+        )
         for paper in results:
             authors = ", ".join(paper["authors"])
             title = paper["title"]
@@ -169,7 +171,9 @@ class Arxiv(Component):
         print("This is the configuration helper for the arxiv module")
         print("First introduce (comma-separated) the categories you are interested in: ")
         categories = input(" > ")
-        print("Now introduce (again, comma-separated) the keywords you want to check the titles for")
+        print(
+            "Now introduce (again, comma-separated) the keywords you want to check the titles for"
+        )
         title_keywords = input(" > ")
         print("Same for checking the abstract:")
         summary_keywords = input(" > ")
@@ -187,9 +191,9 @@ class Arxiv(Component):
 
     def cmdline_command(self, args):
         """
-            Reads the latests arrivals to the arxiv and
-            sends a notification if any of the entries fullfill any of
-            the requirements set in the config file
+        Reads the latests arrivals to the arxiv and
+        sends a notification if any of the entries fullfill any of
+        the requirements set in the config file
         """
         msg = arxiv_recent_filtered(self.categories, self.filter_dict)
         self.send_msg(msg)
