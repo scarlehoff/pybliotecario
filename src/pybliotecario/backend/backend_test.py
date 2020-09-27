@@ -43,9 +43,10 @@ def _create_fake_msg(text):
 class TestUtil:
     """"""
 
-    def __init__(self, communication_file, debug=True, timeout=None):
+    def __init__(self, communication_file, fake_msgs=None, debug=True, timeout=None):
         self.debug = debug
         self.comm_file = communication_file
+        self.fake_msgs = fake_msgs
 
     def get_updates(self, not_empty=False):
         """
@@ -54,7 +55,10 @@ class TestUtil:
         This test function creates a list of two mock messages which
         will be in turn parsed by the Message class
         """
-        msgs = ["This is onyl a test", "Another one"]
+        if self.fake_msgs is None:
+            msgs = ["This is onyl a test", "Another one"]
+        else:
+            msgs = self.fake_msgs
         return [_create_fake_msg(i) for i in msgs]
 
     def send_message(self, text, chat):
@@ -62,7 +66,7 @@ class TestUtil:
         Sends a message to the communication_file this class has been
         instantiated with
         """
-        with open(self.comm_file, 'w') as f:
+        with open(self.comm_file, "w") as f:
             f.write(text)
 
     def send_image(self, *args):

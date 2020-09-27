@@ -55,10 +55,26 @@ def logger_setup(filename, debug=False):
     logger.setLevel(logging.INFO)
 
 
-def main():
-    """ Driver of the pybliotecario """
+def main(cmdline_arg=None, tele_api=None):
+    """Driver of the pybliotecario
+
+    For debugging purposes,
+    If the arguments or the backend is inputted to this function
+    it will override any command line arguments.
+
+    >>> from pybliotecario.pybliotecario import main
+    >>> from pybliotecario.backend import TestUtil
+    >>> args = ["This is only a test"]
+    >>> tt = TestUtil("/tmp/test.txt")
+    >>> main(cmdline_arg=args, tele_api=tt)
+    """
+
     # Parse the input arguments and the configuration file
-    args = parse_args(sys.argv[1:])
+    if cmdline_arg is None:
+        cmdline_arg = sys.argv[1:]
+    args = parse_args(cmdline_arg)
+
+    # Parse the configuration file
     config = read_config(args.config_file)
     defaults = config.defaults()
     main_folder = defaults.get("main_folder")
@@ -68,16 +84,20 @@ def main():
     logger_setup(main_folder + "/info.log", debug=args.debug)
 
     logger.info("Initializing the pybliotecario")
-    api_token = defaults.get("token")
-    if not api_token:
-        logger.error("No 'default:token' option set in %s, run --init option", args.config_file)
-        sys.exit(-1)
 
-    # Now check the backend the pybliotecario is working with
-    if args.backend.lower() == "telegram":
-        tele_api = TelegramUtil(api_token, debug=args.debug)
-    elif args.backend.lower() == "test":
-        tele_api = TestUtil("/tmp/test_file.txt")
+    # Check the backend the pybliotecario should be using
+    if tele_api is None:
+        if args.backend.lower() == "telegram":
+            api_token = defaults.get("token")
+            if not api_token:
+                logger.error(
+                    "No 'default:token' option set in %s, run --init option", args.config_file
+                )
+                sys.exit(-1)
+
+            tele_api = TelegramUtil(api_token, debug=args.debug)
+        elif args.backend.lower() == "test":
+            tele_api = TestUtil("/tmp/test_file.txt")
 
     on_cmdline.run_command(args, tele_api, config)
 
