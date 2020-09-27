@@ -9,14 +9,16 @@ import logging
 
 log = logging.getLogger(__name__)
 
+
 def log_request(status_code, reason, content):
     """ Log the status of the send requests """
     result = "Request sent, status code: {0} - {1}: {2}".format(status_code, reason, content)
     log.info(result)
 
+
 class TelegramUtil:
-    """ This class handles all comunications with
-    Telegram """
+    """This class handles all comunications with
+    Telegram"""
 
     def __init__(self, TOKEN, debug=False, timeout=300):
         self.offset = None
@@ -32,7 +34,7 @@ class TelegramUtil:
         self.get_file = base_URL + "getFile"
 
     def __make_request(self, url):
-        """ Returns the response for a given url
+        """Returns the response for a given url
         In case of timeout, emulate an empty response
         """
         try:
@@ -48,7 +50,7 @@ class TelegramUtil:
         return json.loads(content_response)
 
     def __re_offset(self, updates):
-        """ Updates the offset
+        """Updates the offset
         i.e., resets don't ask Telegram server for old messages
         """
         if not updates:  # len(updates) == 0
@@ -59,7 +61,7 @@ class TelegramUtil:
         self.offset = max(li) + 1
 
     def get_filePath(self, fileId):
-        """ Given a file id, retrieve the URI of the file
+        """Given a file id, retrieve the URI of the file
         in the remote server
         """
         url = self.get_file + "?file_id={0}".format(fileId)
@@ -136,8 +138,8 @@ class TelegramUtil:
         log.info(blabla.status_code, blabla.reason, blabla.content)
 
     def download_file(self, fileId, file_name_raw):
-        """ Download file defined by fileId
-        to given file_name """
+        """Download file defined by fileId
+        to given file_name"""
         file_url = self.get_filePath(fileId)
         if not file_url:
             return None

@@ -3,3 +3,4 @@ data/
 *.egg-info/
 build/
 dist/
+*.ini
