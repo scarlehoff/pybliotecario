@@ -8,7 +8,7 @@ import logging
 import sys
 import os
 
-from pybliotecario.backend import TelegramUtil
+from pybliotecario.backend import TelegramUtil, TestUtil
 from pybliotecario.core_loop import main_loop
 
 # Modify argument_parser.py to read new arguments
@@ -73,7 +73,11 @@ def main():
         logger.error("No 'default:token' option set in %s, run --init option", args.config_file)
         sys.exit(-1)
 
-    tele_api = TelegramUtil(api_token, debug=args.debug)
+    # Now check the backend the pybliotecario is working with
+    if args.backend.lower() == "telegram":
+        tele_api = TelegramUtil(api_token, debug=args.debug)
+    elif args.backend.lower() == "test":
+        tele_api = TestUtil("/tmp/test_file.txt")
 
     on_cmdline.run_command(args, tele_api, config)
 
