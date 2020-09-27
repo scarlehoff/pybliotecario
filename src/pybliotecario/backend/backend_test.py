@@ -4,6 +4,7 @@
 """
 
 import copy
+import pathlib
 import numpy as np
 from datetime import datetime
 
@@ -45,7 +46,7 @@ class TestUtil:
 
     def __init__(self, communication_file, fake_msgs=None, debug=True, timeout=None):
         self.debug = debug
-        self.comm_file = communication_file
+        self.comm_file = pathlib.Path(communication_file)
         self.fake_msgs = fake_msgs
 
     def get_updates(self, not_empty=False):
@@ -66,8 +67,7 @@ class TestUtil:
         Sends a message to the communication_file this class has been
         instantiated with
         """
-        with open(self.comm_file, "w") as f:
-            f.write(text)
+        self.comm_file.write_text(text)
 
     def send_image(self, *args):
         """ Writes the img_path to the comm file """
@@ -76,6 +76,13 @@ class TestUtil:
     def send_file(self, *args):
         """ Writes the file_path to the comm file """
         return self.send_message(*args)
+
+    # Auxiliary
+    def is_msg_in_file(self, msg):
+        """ Check whether the given message is in the comms file
+        This is something that is only useful for the TestUtil backend"""
+        read_text = self.comm_file.read_text()
+        return msg in read_text
 
 
 if __name__ == "__main__":
