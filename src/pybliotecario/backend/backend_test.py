@@ -42,11 +42,30 @@ def _create_fake_msg(text):
 
 
 class TestUtil:
-    """"""
+    """
+    The test utility tries to behave as other backend would
 
-    def __init__(self, communication_file, fake_msgs=None, debug=True, timeout=None):
-        self.debug = debug
-        self.comm_file = pathlib.Path(communication_file)
+    It provides get_updates / send_message just as any other backend
+    but it writes/reads the update from a communication file.
+
+    If fake_msgs are given, it will read the messages from those instead
+    of from the communication_file
+    Likewise, if a communication_file is not given, it will return the message
+    instead of writting it down
+
+    Parameters
+    ----------
+        communication_file: str/pathlib
+            file to write/read from
+        fake_msg: list(str)
+            list of messages to generate
+    """
+
+    def __init__(self, communication_file=None, fake_msgs=None, **kwargs):
+        if communication_file is None:
+            self.comm_file = False
+        else:
+            self.comm_file = pathlib.Path(communication_file)
         self.fake_msgs = fake_msgs
 
     def get_updates(self, not_empty=False):
@@ -56,10 +75,12 @@ class TestUtil:
         This test function creates a list of two mock messages which
         will be in turn parsed by the Message class
         """
-        if self.fake_msgs is None:
-            msgs = ["This is onyl a test", "Another one"]
-        else:
+        if self.fake_msgs is not None:
             msgs = self.fake_msgs
+        elif self.comm_file:
+            msgs = self.comm_file.read_text().split("\n")
+        else:
+            msgs = ["This is onyl a test", "Another one"]
         return [_create_fake_msg(i) for i in msgs]
 
     def send_message(self, text, chat):
@@ -67,7 +88,9 @@ class TestUtil:
         Sends a message to the communication_file this class has been
         instantiated with
         """
-        self.comm_file.write_text(text)
+        if self.comm_file:
+            return self.comm_file.write_text(text)
+        return text
 
     def send_image(self, *args):
         """ Writes the img_path to the comm file """
@@ -79,7 +102,7 @@ class TestUtil:
 
     # Auxiliary
     def is_msg_in_file(self, msg):
-        """ Check whether the given message is in the comms file
+        """Check whether the given message is in the comms file
         This is something that is only useful for the TestUtil backend"""
         read_text = self.comm_file.read_text()
         return msg in read_text

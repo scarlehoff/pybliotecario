@@ -31,6 +31,7 @@ setup(
     packages=find_packages('src'),
 
     install_requires=[
+        'numpy',
         'regex',
         'arxiv',
         'pyowm',

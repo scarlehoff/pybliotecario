@@ -185,6 +185,11 @@ def parse_args(args):
         help="Clears incoming messages in case something has gone wrong",
         action="store_true",
     )
+    parser_dae.add_argument(
+        "--exit_on_msg",
+        help="Exit after receiving the first batch of messages",
+        action="store_true",
+    )
 
     parser_com = parser.add_argument_group("Pybliotecario's components")
     parser_com.add_argument(

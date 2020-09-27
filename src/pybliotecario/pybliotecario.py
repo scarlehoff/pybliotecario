@@ -105,6 +105,8 @@ def main(cmdline_arg=None, tele_api=None):
         logger.info("Activating main loop")
         while True:
             main_loop(tele_api, config=config, clear=args.clear_incoming)
+            if args.exit_on_msg:
+                break
 
 
 if __name__ == "__main__":
