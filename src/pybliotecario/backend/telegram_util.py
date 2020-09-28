@@ -104,7 +104,6 @@ class TelegramUtil:
             log.info(updates)
             return []
         self.__re_offset(result)
-        import ipdb; ipdb.set_trace()
         return result
 
     def send_message(self, text, chat):

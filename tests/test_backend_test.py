@@ -4,10 +4,7 @@
 
 from pybliotecario.backend import TestUtil
 
-_FAKEMSGS = [
-        "This is only a test",
-        "Hola, caracola"
-        ]
+_FAKEMSGS = ["This is only a test", "Hola, caracola"]
 
 
 def test_get_updates_fakemsg():
@@ -21,9 +18,9 @@ def test_get_updates_fakemsg():
     for update, msg in zip(updates, _FAKEMSGS):
         assert update["message"]["text"] == msg
 
+
 def test_get_updates_tmpfile(tmpfile):
-    """ Check that if we write updates to the temporary file we get them back
-    """
+    """Check that if we write updates to the temporary file we get them back"""
     test_util = TestUtil(communication_file=tmpfile)
     tmpfile.write_text("\n".join(_FAKEMSGS))
     updates = test_util.get_updates()
@@ -42,8 +39,6 @@ def test_is_msg_in_file(tmpfile):
     assert not test_util.is_msg_in_file("Something different")
 
 
-
-
 def test_send_msg():
     """Checks that upon sending a message it gets returned"""
     test_util = TestUtil()
@@ -51,6 +46,7 @@ def test_send_msg():
     # test util does not take a chat id for now
     ret = test_util.send_message(msg, None)
     assert ret == msg
+
 
 def test_send_msg_tmpfile(tmpfile):
     """Checks that upon sending a message it gets written to the

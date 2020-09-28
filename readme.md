@@ -1,4 +1,5 @@
 [![PyPI version](https://badge.fury.io/py/pybliotecario.svg)](https://badge.fury.io/py/pybliotecario)
+![Tests](https://github.com/scarlehoff/pybliotecario/workflows/pytest/badge.svg)
 
 # pybliotecario
 

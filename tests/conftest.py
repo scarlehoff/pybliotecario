@@ -8,8 +8,7 @@ from pybliotecario.backend.backend_test import TESTID
 
 
 def generate_fake_config(main_folder):
-    """ Generate a fake configuration
-    """
+    """Generate a fake configuration"""
     config = configparser.ConfigParser()
     config["DEFAULT"] = {
         "main_folder": main_folder,
