@@ -55,7 +55,7 @@ def logger_setup(filename, debug=False):
     logger.setLevel(logging.INFO)
 
 
-def main(cmdline_arg=None, tele_api=None):
+def main(cmdline_arg=None, tele_api=None, config=None):
     """Driver of the pybliotecario
 
     For debugging purposes,
@@ -75,13 +75,16 @@ def main(cmdline_arg=None, tele_api=None):
     args = parse_args(cmdline_arg)
 
     # Parse the configuration file
-    config = read_config(args.config_file)
-    defaults = config.defaults()
-    main_folder = defaults.get("main_folder")
-    if not main_folder:
-        logger.warning("No 'default:main_folder' option set in %s, using /tmp/", args.config_file)
-        main_folder = "/tmp/"
-    logger_setup(main_folder + "/info.log", debug=args.debug)
+    if config is None:
+        config = read_config(args.config_file)
+        defaults = config.defaults()
+        main_folder = defaults.get("main_folder")
+        if not main_folder:
+            logger.warning(
+                "No 'default:main_folder' option set in %s, using /tmp/", args.config_file
+            )
+            main_folder = "/tmp/"
+        logger_setup(main_folder + "/info.log", debug=args.debug)
 
     logger.info("Initializing the pybliotecario")
 

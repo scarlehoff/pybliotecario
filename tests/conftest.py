@@ -1,7 +1,23 @@
 """
     Configuration file for pytest
 """
+import configparser
 import pytest
+
+from pybliotecario.backend.backend_test import TESTID
+
+
+def generate_fake_config(main_folder):
+    """ Generate a fake configuration
+    """
+    config = configparser.ConfigParser()
+    config["DEFAULT"] = {
+        "main_folder": main_folder,
+        "token": "AAAaaa123",
+        "chat_id": TESTID,
+    }
+    return config
+
 
 @pytest.fixture
 def tmpfile(tmp_path):

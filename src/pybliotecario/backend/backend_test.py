@@ -10,7 +10,7 @@ from datetime import datetime
 
 from pybliotecario.Message import Message
 
-_TESTID = 1234  # chat id for the test backend
+TESTID = 1234  # chat id for the test backend
 _TESTUSER = "hiro"
 
 
@@ -20,7 +20,7 @@ def _create_fake_msg(text):
         "message": {
             "message_id": np.random.randint(1000),
             "from": {
-                "id": _TESTID,
+                "id": TESTID,
                 "is_bot": False,
                 "first_name": _TESTUSER,
                 "last_name": _TESTUSER,
@@ -28,7 +28,7 @@ def _create_fake_msg(text):
                 "language_code": "en",
             },
             "chat": {
-                "id": _TESTID,
+                "id": TESTID,
                 "first_name": _TESTUSER,
                 "last_name": _TESTUSER,
                 "username": _TESTUSER,
