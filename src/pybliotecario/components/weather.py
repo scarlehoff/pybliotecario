@@ -68,7 +68,7 @@ def check_for_rain_today_at(forecast, hour):
 
 def open_weather_wrapper(api_key, **kwargs):
     """
-        Extends OpenWeather main class to have an instance with the API key already defined
+    Extends OpenWeather main class to have an instance with the API key already defined
     """
     owm = OWM(api_key, **kwargs)
     owm.check_current_weather = MethodType(check_current_weather, owm)
@@ -79,9 +79,9 @@ def open_weather_wrapper(api_key, **kwargs):
 
 class Weather(Component):
     """
-        Checks the weather forecast at a given location
-        at some given times as well as the current forecast at the
-        given location and reports to Telegram the findings
+    Checks the weather forecast at a given location
+    at some given times as well as the current forecast at the
+    given location and reports to Telegram the findings
     """
 
     def __init__(self, telegram_object, configuration=None, **kwargs):
@@ -98,7 +98,9 @@ class Weather(Component):
         print(" # WEATHER MODULE # ")
         print("In order to configure the weather module, you need an API token from OpenWeatherMap")
         print("Go here in order to get one: https://openweathermap.org/appid")
-        print("Introduce below the API token, leave empty to skip the configuration of the weather module")
+        print(
+            "Introduce below the API token, leave empty to skip the configuration of the weather module"
+        )
         api = input(" > ")
         if api.strip() == "":
             return None

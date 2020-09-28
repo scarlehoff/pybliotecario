@@ -15,6 +15,7 @@ re_mod = re.compile(r"[+-]\d+")
 
 # TODO: write a syntax checker for the diceroll command
 
+
 def parse_roll(text):
     """
     Gets as input a line of text defining a diceroll command and parses
@@ -27,7 +28,7 @@ def parse_roll(text):
     # Now get all the modifiers (if any)
     nindex = re_pm.search(modifiers)
     if nindex:
-        mod = modifiers[nindex.start():]
+        mod = modifiers[nindex.start() :]
         dice = text.partition(mod)[0]
     else:
         mod = ""
@@ -35,7 +36,7 @@ def parse_roll(text):
     dice_list = re_pm.split(dice)
     pm_list_raw = re_pm.findall(dice)
     if len(pm_list_raw) < len(dice_list):
-        pm_list_raw.insert(0, '+')
+        pm_list_raw.insert(0, "+")
     # Make the signs into 1 or -1
     pm_list = []
     for i in pm_list_raw:
@@ -45,13 +46,15 @@ def parse_roll(text):
             pm_list.append(-1)
     return dice_list, pm_list, mod
 
+
 def parse_dice(text):
-    """ Receives a text in the form ndm and returns
-    the number of dice and the faces of the die """
-    split_dice = text.split('d')
+    """Receives a text in the form ndm and returns
+    the number of dice and the faces of the die"""
+    split_dice = text.split("d")
     n_dice = int(split_dice[0])
     n_face = int(split_dice[-1])
     return n_dice, n_face
+
 
 def roll_dice(text):
     """
@@ -65,11 +68,11 @@ def roll_dice(text):
     for dice, sign in zip(dice_list, pm_list):
         n_dice, n_face = parse_dice(dice)
         for i in range(n_dice):
-            result.append( sign*randint(1,n_face) )
+            result.append(sign * randint(1, n_face))
 
     # Now sum everything together and add any possible modifiers
     final_result = sum(result)
-    final_str = " + ".join( ["({0})".format(i) for i in result] )
+    final_str = " + ".join(["({0})".format(i) for i in result])
 
     # Evaluate the modifiers with ast
     if mod.strip():
@@ -86,7 +89,7 @@ class DnD(Component):
     help_text = """ > DnD module
     /r, /roll dice [text]: roll a dice in the format NdM+Mod
     """
-    
+
     section_name = "DnD"
     default_roll = "1d20"
 
@@ -95,7 +98,7 @@ class DnD(Component):
         text = msg.text.strip()
         username = msg.username.strip()
         # Separate possible extra msgs that go with the text
-        split_text = text.split(" ",1)
+        split_text = text.split(" ", 1)
         roll_cmd = split_text[0]
         if len(split_text) == 2:
             roll_text = " " + split_text[1]

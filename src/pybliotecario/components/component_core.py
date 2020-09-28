@@ -33,7 +33,14 @@ class Component:
 
     help_text = None
 
-    def __init__(self, telegram_object, chat_id=None, configuration=None, interaction_chat=None, running_in_loop=False):
+    def __init__(
+        self,
+        telegram_object,
+        chat_id=None,
+        configuration=None,
+        interaction_chat=None,
+        running_in_loop=False,
+    ):
         self.telegram = telegram_object
         self.chat_id = chat_id
         if interaction_chat is None:
@@ -73,7 +80,9 @@ class Component:
                 return {}
             log.warning("There is no section {0} in configuration file".format(section))
             yesno = input(
-                "Do you want to configure? (this will add a new section to $HOME/.{0} [yn] ".format(CONFIG_FILE)
+                "Do you want to configure? (this will add a new section to $HOME/.{0} [yn] ".format(
+                    CONFIG_FILE
+                )
             )
             if yesno.lower() in ("y", "s"):
                 self.update_config()
@@ -99,14 +108,14 @@ class Component:
 
     @classmethod
     def configure_me(cls):
-        """ In first initialization (--init or --config) this method will be called
-        if any configuration is needed for the child class, it should be done here """
+        """In first initialization (--init or --config) this method will be called
+        if any configuration is needed for the child class, it should be done here"""
         return None
 
     @staticmethod
     def split_list(comma_separated_str):
-        """ Receives a string representation of a comma separated list
-        and splits it, filters out empty spaces and returns a list """
+        """Receives a string representation of a comma separated list
+        and splits it, filters out empty spaces and returns a list"""
         list_str = comma_separated_str.strip().split(",")
         filtered_str = filter(lambda x: x, list_str)
         return list(filtered_str)
@@ -119,7 +128,7 @@ class Component:
             return False
 
     def telegram_message(self, msg):
-        """ Recevies a `msg` object and then
+        """Recevies a `msg` object and then
         decides what to do with it.
         The `msg` object includes the Telegram command"""
         self.act_on_message(msg.text.strip())
@@ -143,15 +152,15 @@ class Component:
 
     # Some useful wrappers
     def send_msg(self, msg, chat_id=None):
-        """ Wrapper around API send_msg, if chat_id is not defined
-        it will use the chat_id this class was instantiated to """
+        """Wrapper around API send_msg, if chat_id is not defined
+        it will use the chat_id this class was instantiated to"""
         if chat_id is None:
             chat_id = self.interaction_chat
         return self.telegram.send_message(msg, chat_id)
 
-    def send_img(self, imgpath, chat_id = None, delete = False):
-        """ Wrapper around API send_img, if chat_id is not defined
-        will use the chat id this class was instantiated to """
+    def send_img(self, imgpath, chat_id=None, delete=False):
+        """Wrapper around API send_img, if chat_id is not defined
+        will use the chat id this class was instantiated to"""
         if chat_id is None:
             chat_id = self.interaction_chat
         if not os.path.isfile(imgpath):
@@ -161,7 +170,7 @@ class Component:
             os.remove(imgpath)
 
     def send_file(self, filepath, chat_id=None, delete=False):
-        """ Wrapper around API send_file, if chat_id is not defined
+        """Wrapper around API send_file, if chat_id is not defined
         it will use the chat_id this class was instantiated to.
         It will check for existence of the file and will delete it afterwards if required
         """

@@ -101,7 +101,9 @@ def main_loop(teleAPI, config=None, clear=False):
                     log.info("File saved to {0}".format(file_path))
                 else:
                     teleAPI.send_message("There was some problem with this, sorry", chat_id)
-                    log.info("Since there was some problem, let's open a pdb console here and you decide what to do")
+                    log.info(
+                        "Since there was some problem, let's open a pdb console here and you decide what to do"
+                    )
 
             else:
                 # Otherwise just save the msg to the log and send a funny reply

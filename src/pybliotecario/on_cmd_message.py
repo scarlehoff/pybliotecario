@@ -14,29 +14,32 @@ import importlib
 
 log = logging.getLogger(__name__)
 
+
 def import_component(module, cls):
     module_path = "pybliotecario.components." + module
     module = importlib.import_module(module_path)
     return getattr(module, cls)
 
+
 def send_help(tele_api, chat_id):
     log.info("Sending help msg")
     components = [
-            ("pid", "ControllerPID"),
-            ("ip_lookup", "IpLookup"),
-            ("arxiv_mod", "Arxiv"),
-            ("scripts", "Script"),
-            ("dnd", "DnD"),
-            ("reactions", "Reactions"),
-            ("wiki", "WikiComponent"),
-            ("system", "System"),
-            ]
+        ("pid", "ControllerPID"),
+        ("ip_lookup", "IpLookup"),
+        ("arxiv_mod", "Arxiv"),
+        ("scripts", "Script"),
+        ("dnd", "DnD"),
+        ("reactions", "Reactions"),
+        ("wiki", "WikiComponent"),
+        ("system", "System"),
+    ]
     full_help = []
     for module, cls in components:
         Actor = import_component(module, cls)
         full_help.append(Actor.help_msg())
     tele_api.send_message("\n".join(full_help), chat_id)
     return None
+
 
 def act_on_telegram_command(tele_api, message_obj, config):
     """
@@ -68,6 +71,10 @@ def act_on_telegram_command(tele_api, message_obj, config):
         return None
 
     actor_instance = Actor(
-        tele_api, chat_id=chat_id, configuration=config, interaction_chat=message_obj.chat_id, running_in_loop=True
+        tele_api,
+        chat_id=chat_id,
+        configuration=config,
+        interaction_chat=message_obj.chat_id,
+        running_in_loop=True,
     )
     return actor_instance.telegram_message(message_obj)

@@ -1,11 +1,12 @@
 ###### Esta clase tiene que ser redefinida de forma uqe definamos un MessageParser con una serie de opciones y un Message
 ###### donde el message parser es algo en plan que define una serie de opciones y el message pues tiene todos los getters
 
+import json
 
 registeredCommands = []
 import logging
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class Message:
@@ -36,8 +37,8 @@ class Message:
         try:
             message = jsonDict[msg]
         except:
-            log.info("   >>>>> ")
-            log.info(jsonDict)
+            logger.info("   >>>>> ")
+            logger.info(jsonDict)
             raise Exception("Not a message or an edited message?")
         msgKeys = message.keys()
         if set(ign_keys) & set(msgKeys):
@@ -88,7 +89,7 @@ class Message:
             self.isFile = False
 
         # Check whether the msg comes from a group
-        self.is_group = chatData["type"] is "group"
+        self.is_group = chatData["type"] == "group"
 
         #  Now check whether the msg has the structure of a command
         if self.text and self.text[0] == "/":
@@ -110,3 +111,6 @@ class Message:
                 self.command = self.command.split("@")[0]
             self.text = all_text[-1]
             self.isRegisteredCommand = self.command in registeredCommands
+
+    def __str__(self):
+        return json.dumps(self.json)

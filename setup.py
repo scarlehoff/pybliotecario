@@ -31,6 +31,7 @@ setup(
     packages=find_packages('src'),
 
     install_requires=[
+        'numpy',
         'regex',
         'arxiv',
         'pyowm',
@@ -38,13 +39,16 @@ setup(
         'wikipedia',
     ],
 
+    extra_requires={
+        'facebook' : ['flask']
+        },
+
     entry_points = {'console_scripts':
                     ['{0} = pybliotecario.pybliotecario:main'.format(pybliotecario_name),]
                     },
 )
 
 print("""
-
 ##############
 Installed pybliotecario as {0}
 

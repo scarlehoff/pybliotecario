@@ -25,8 +25,8 @@ def list_content_folder_as_str(folder):
 
 
 def look_for_file(folder, filename):
-    """ Receives a `filename` without the extension and looks
-    whether it exists in `folder` (with any extension) """
+    """Receives a `filename` without the extension and looks
+    whether it exists in `folder` (with any extension)"""
     reaction_wild = "{0}/{1}.*".format(folder, filename)
     reaction_content = glob.glob(reaction_wild)
     return reaction_content
@@ -67,8 +67,8 @@ class Reactions(Component):
         self.send_msg("Reaction image {0} correctly saved".format(file_name))
 
     def send_reaction(self, name):
-        """ Check whether the file `name` is in the reaction folder and,
-        if it is, send it back. it can have any extension! """
+        """Check whether the file `name` is in the reaction folder and,
+        if it is, send it back. it can have any extension!"""
         files = look_for_file(self.reaction_folder, name)
         if not files:
             self.send_msg("Error: reaction '{0}' not found".format(name))

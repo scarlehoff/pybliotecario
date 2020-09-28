@@ -42,7 +42,9 @@ class Script(Component):
             sc_cmd = script_command.strip()
             if not sc_cmd:
                 break
-            script_file = input(" Introduce the path of the command to run with '{0}': ".format(sc_cmd))
+            script_file = input(
+                " Introduce the path of the command to run with '{0}': ".format(sc_cmd)
+            )
             dict_out[cls.section_name][sc_cmd] = script_file
         return dict_out
 
