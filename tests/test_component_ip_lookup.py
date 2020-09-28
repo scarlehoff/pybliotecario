@@ -5,7 +5,7 @@
 import socket
 from pybliotecario.pybliotecario import main
 from pybliotecario.backend import TestUtil
-from .conftest import generate_fake_config
+from conftest import generate_fake_config
 
 
 def test_cmdline_usage(tmpfile):

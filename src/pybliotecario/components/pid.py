@@ -10,7 +10,7 @@ from pybliotecario.components.component_core import Component
 
 import logging
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def get_process(pid):
@@ -24,14 +24,18 @@ def get_process(pid):
             pass
 
     if proc is None:
-        log.info("WARNING: Process {0} was not found".format(pid))
+        logger.warning("Process %s was not found", pid)
 
     return proc
 
 
 def wait_for_it_until_finished(pids):
     """ Receives a list of PIDs and wait for them """
-    processes = [get_process(i) for i in pids]
+    processes = []
+    for pid in pids:
+        proc = get_process(pid)
+        if proc is not None:
+            processes.append(proc)
     psutil.wait_procs(processes)
 
 
@@ -81,7 +85,7 @@ class ControllerPID(Component):
 
     def cmdline_command(self, args):
         """ Waits until the given PID(s) are finished """
-        log.info("Waiting for the given PIDs: {0}".format(args.pid))
+        logger.info("Waiting for the given PIDs: %s", args.pid)
         wait_for_it_until_finished(args.pid)
 
     @staticmethod

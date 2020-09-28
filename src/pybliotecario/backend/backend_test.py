@@ -89,7 +89,9 @@ class TestUtil:
         instantiated with
         """
         if self.comm_file:
-            return self.comm_file.write_text(text)
+            with open(self.comm_file, "a") as f:
+                f.write(f"{text}\n")
+            return None
         return text
 
     def send_image(self, *args):
