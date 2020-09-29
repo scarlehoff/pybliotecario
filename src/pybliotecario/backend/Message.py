@@ -1,116 +1,86 @@
-###### Esta clase tiene que ser redefinida de forma uqe definamos un MessageParser con una serie de opciones y un Message
-###### donde el message parser es algo en plan que define una serie de opciones y el message pues tiene todos los getters
+"""
+    Base/abstract backend class
 
-import json
+    Each backend should implement its own message type
+"""
 
-registeredCommands = []
+from abc import ABC, abstractmethod
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
 
-class Message:
-    # Variables that we are going to parse from json:
-    # chat_id              - Id of the chat the message came from
-    # username            - user who sent the message
-    # is_command           - t/f
-    # isRegisteredCommand - t/f
-    # has_arguments       - t/f
-    # is_group             - t/f
-    # isFile              - t/f
-    # fileId              - file id
-    # text                - actual content of the message (minus /command)
-    # command             - command given in /command (or "")
-    # ignore              - t/f (whether this message should be ignored)
+class Message(ABC):
+    """
+    Base message class
 
-    def __init__(self, jsonDict):
-        # ignore keys:
-        ign_keys = ["new_chat_participant", "left_chat_participant", "sticker", "game", "contact"]
-        msg = "message"
-        self.json = jsonDict
-        keys = jsonDict.keys()
-        if msg not in keys:
-            if "edited_message" in keys:
-                msg = "edited_message"
-            elif "edited_channel_post" in keys:
-                msg = "edited_channel_post"
-        try:
-            message = jsonDict[msg]
-        except:
-            logger.info("   >>>>> ")
-            logger.info(jsonDict)
-            raise Exception("Not a message or an edited message?")
-        msgKeys = message.keys()
-        if set(ign_keys) & set(msgKeys):
-            self.ignore = True
-            return
-        else:
-            self.ignore = False
-        self.has_arguments = False
-        chatData = message["chat"]
-        if "from" in message.keys():
-            fromData = message["from"]
-        else:
-            fromData = chatData  # something has changed or was this a special type of msg???
-        # Populate general fields
-        # Check whetehr username exists, otherwise use name, otherwise, unknown
-        if "username" in fromData:
-            self.username = fromData["username"]
-        elif "first_name" in fromData:
-            self.username = fromData["first_name"]
-        elif "last_name" in fromData:
-            self.username = fromData["last_name"]
-        else:
-            self.username = "unknown_user"
-        self.chat_id = chatData["id"]
+    Any implementation of the message should either save a dictionary
+    ``_message_dict`` with the following attributes (through _parse_update)
+    or implement its own way of getting the different values
+    """
 
-        # Check the filetyp of what we just received
-        if "photo" in msgKeys:
-            self.isFile = True
-            photoData = message["photo"][-1]
-            self.fileId = photoData["file_id"]
-            if "caption" in msgKeys:
-                self.text = message["caption"]
-            else:
-                self.text = "untitled"
-            if not self.text.endswith((".jpg", ".JPG", ".png", ".PNG")):
-                self.text += ".jpg"
-        elif "document" in msgKeys:
-            self.isFile = True
-            fileData = message["document"]
-            self.fileId = fileData["file_id"]
-            self.text = fileData["file_name"]
-        elif "sticker" in msgKeys:
-            self.isSticker = True
-            stickerData = message["sticker"]
-            self.stickerSet = stickerData["set_name"]
-        else:
-            self.text = message.get("text", "")
-            self.isFile = False
+    _type = "Abstract"
+    _original = None
 
-        # Check whether the msg comes from a group
-        self.is_group = chatData["type"] == "group"
+    _message_dict = {
+        "chat_id": None,
+        "username": None,
+        "command": None,
+        "file_id": None,
+        "text": None,
+        "ignore": False,
+    }
 
-        #  Now check whether the msg has the structure of a command
-        if self.text and self.text[0] == "/":
-            self.is_command = True
-        else:
-            self.is_command = False
-            self.command = ""
-            self.isRegisteredCommand = False
-
-        if self.is_command:
-            all_text = self.text.split(" ", 1)
-            # Check whether the command comes by itself or has arguments
-            if len(all_text) > 1:
-                self.has_arguments = True
-            # Remove the /
-            self.command = all_text[0][1:]
-            # Absorb the @ in case is it a directed command
-            if "@" in self.command:
-                self.command = self.command.split("@")[0]
-            self.text = all_text[-1]
-            self.isRegisteredCommand = self.command in registeredCommands
+    def __init__(self, update):
+        self._original = update
+        self._parse_update(update)
+        # After the information is parsed, log the message!
+        logger.info("New message: %s", self)
 
     def __str__(self):
-        return json.dumps(self.json)
+        return json.dumps(self._message_dict)
+
+    @abstractmethod
+    def _parse_update(self, update):
+        return None
+
+    @property
+    def chat_id(self):
+        return self._message_dict["chat_id"]
+
+    @property
+    def username(self):
+        return self._message_dict["username"]
+
+    @property
+    def text(self):
+        return self._message_dict.get("text")
+
+    @property
+    def is_command(self):
+        return self._message_dict.get("command") is not None
+
+    @property
+    def command(self):
+        return self._message_dict.get("command")
+
+    @property
+    def is_file(self):
+        return self._message_dict.get("file_id") is not None
+
+    @property
+    def file_id(self):
+        return self._message_dict.get("file_id")
+
+    @property
+    def has_arguments(self):
+        return self.is_command and self.text is not None
+
+    @property
+    def ignore(self):
+        return self._message_dict.get("ignore", False)
+
+    @ignore.setter
+    def ignore(self, val):
+        self._message_dict["ignore"] = val

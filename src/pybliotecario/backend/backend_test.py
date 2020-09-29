@@ -8,13 +8,14 @@ import pathlib
 import numpy as np
 from datetime import datetime
 
-from .Message import Message
+from .telegram_util import TelegramMessage
 
 TESTID = 1234  # chat id for the test backend
 _TESTUSER = "hiro"
 
 
-class TestMessage(Message):
+class TestMessage(TelegramMessage):
+    """ Copy of the TelegramMessage class """
     _type = "Test"
 
 

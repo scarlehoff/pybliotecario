@@ -10,14 +10,98 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Keys included in telegram chats that basically are telling you to ignore it
+IGNOREKEYS = set(["new_chat_participant", "left_chat_participant", "sticker", "game", "contact"])
+
 
 def log_request(status_code, reason, content):
     """ Log the status of the send requests """
     result = "Request sent, status code: {0} - {1}: {2}".format(status_code, reason, content)
     logger.info(result)
 
+
 class TelegramMessage(Message):
+    """ Telegram implementation of the Message class """
+
     _type = "Telegram"
+    _group_info = None
+
+    def _parse_update(self, update):
+        """Receives an update in the form of a dictionary (that came from a json)
+        and fills in the _message_dict dictionary
+        """
+        keys = update.keys()
+        # First check whether this is a message, edited message or a channel post
+        msg_types = ["message", "edited_message", "edited_channel_post"]
+        msg = None
+        for msg_type in msg_types:
+            if msg_type in keys:
+                msg = msg_types
+        if msg is None:
+            logger.warning(f"Message not in {msg_types}, ignoring")
+            logger.warning(update)
+            self.ignore = True
+            return
+        message = update[msg]
+        # Get the keys of the message (and check whether it should be ignored)
+        msg_keys = message.keys()
+        if set(msg_keys) & IGNOREKEYS:
+            self.ignore = True
+            return
+        # Now get the chat data and id
+        chat_data = message["chat"]
+        self._message_dict["username"] = chat_data["id"]
+        # TODO test this part of the parser as this 'from' was a legacy thing at some point
+        from_data = message.get("from", chat_data)
+
+        # Populate the user (in the list, last has more priority)
+        username = "unknown_user"
+        for user_naming in ["last_name", "first_name", "username"]:
+            username = from_data.get(user_naming, username)
+        self._message_dict["username"] = username
+
+        # Check the filetype
+        text = None
+        if "photo" in message:
+            # If it is a photo, get the file id and use the caption as the title
+            photo_data = message["photo"][-1]
+            self._message_dict["file_id"] = photo_data["file_id"]
+            text = message.get("caption", "untitled")
+            if not text.endswith((".jpg", ".JPG", ".png", ".PNG")):
+                text += ".jpg"
+            text = text
+        elif "document" in message:
+            # If it is a document, teleram gives you everything you need
+            file_dict = message["document"]
+            self._message_dict["file_id"] = file_dict["file_id"]
+            text = file_dict["file_name"]
+        else:
+            # Normal text message
+            text = message.get("text", "")
+
+        # In Telegram we can also have groups
+        if "group" in chat_data:
+            self._group_info = chat_data
+
+        # Finally check whether the message looks like a command
+        if text and text.startswith("/"):
+            separate_command = text.split(" ", 1)
+            # Remove the / from the command
+            command = separate_command[0][1:]
+            # Absorb the @ in case it is a directed command!
+            if "@" in command:
+                command.split("@")[0]
+            # Check whether the command comes alone or has arguments
+            if len(separate_command) == 1:
+                text = ""
+            else:
+                text = separate_command[1]
+            self._message_dict["command"] = command
+        self._message_dict["text"] = text
+
+    @property
+    def is_group(self):
+        return self._group_info is not None
 
 
 class TelegramUtil:
