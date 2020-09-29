@@ -3,7 +3,7 @@ import json
 import os.path
 import urllib
 import requests
-from .Message import Message
+from .basic_backend import Message
 
 TELEGRAM_URL = "https://api.telegram.org/"
 import logging
