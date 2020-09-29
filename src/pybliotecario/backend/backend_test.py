@@ -8,7 +8,7 @@ import pathlib
 import numpy as np
 from datetime import datetime
 
-from pybliotecario.Message import Message
+from .Message import Message
 
 TESTID = 1234  # chat id for the test backend
 _TESTUSER = "hiro"

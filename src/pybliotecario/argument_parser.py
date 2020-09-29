@@ -78,7 +78,7 @@ If you don't know how to get one, read here: https://core.telegram.org/bots#6-bo
     teleAPI = TelegramUtil(token, timeout=20)
     while True:
         all_updates = teleAPI.get_updates(not_empty=True)
-        from pybliotecario.Message import Message
+        from pybliotecario.backend.Message import Message
 
         update = Message(all_updates[0])
         print("Message received: {0}".format(update.text))
