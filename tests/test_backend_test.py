@@ -12,7 +12,7 @@ def test_get_updates_fakemsg():
     with the input message inside
     """
     test_util = TestUtil(fake_msgs=_FAKEMSGS)
-    updates = test_util.get_updates()
+    updates = test_util._get_updates()
     # Check that indeed the update contains only the given message
     assert len(updates) == len(_FAKEMSGS)
     for update, msg in zip(updates, _FAKEMSGS):
@@ -23,10 +23,22 @@ def test_get_updates_tmpfile(tmpfile):
     """Check that if we write updates to the temporary file we get them back"""
     test_util = TestUtil(communication_file=tmpfile)
     tmpfile.write_text("\n".join(_FAKEMSGS))
-    updates = test_util.get_updates()
+    updates = test_util._get_updates()
     assert len(updates) == len(_FAKEMSGS)
     for update, msg in zip(updates, _FAKEMSGS):
         assert update["message"]["text"] == msg
+
+def test_act_on_update():
+    """ Check that act on update works as expected """
+    test_util = TestUtil(fake_msgs=["/test command"])
+    
+    # Action function
+    def action(msg):
+        assert msg.text == "command"
+        assert msg.is_command
+        assert msg.command == "test"
+
+    test_util.act_on_updates(action)
 
 
 def test_is_msg_in_file(tmpfile):
