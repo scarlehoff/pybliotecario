@@ -12,7 +12,7 @@ def test_get_updates_fakemsg():
     with the input message inside
     """
     test_util = TestUtil(fake_msgs=_FAKEMSGS)
-    updates = test_util.get_updates()
+    updates = test_util._get_updates()
     # Check that indeed the update contains only the given message
     assert len(updates) == len(_FAKEMSGS)
     for update, msg in zip(updates, _FAKEMSGS):
@@ -23,7 +23,7 @@ def test_get_updates_tmpfile(tmpfile):
     """Check that if we write updates to the temporary file we get them back"""
     test_util = TestUtil(communication_file=tmpfile)
     tmpfile.write_text("\n".join(_FAKEMSGS))
-    updates = test_util.get_updates()
+    updates = test_util._get_updates()
     assert len(updates) == len(_FAKEMSGS)
     for update, msg in zip(updates, _FAKEMSGS):
         assert update["message"]["text"] == msg

@@ -14,6 +14,10 @@ TESTID = 1234  # chat id for the test backend
 _TESTUSER = "hiro"
 
 
+class TestMessage(Message):
+    _type = "Test"
+
+
 def _create_fake_msg(text):
     ret = {
         "update_id": np.random.randint(1000),
@@ -45,7 +49,7 @@ class TestUtil:
     """
     The test utility tries to behave as other backend would
 
-    It provides get_updates / send_message just as any other backend
+    It provides _get_updates / send_message just as any other backend
     but it writes/reads the update from a communication file.
 
     If fake_msgs are given, it will read the messages from those instead
@@ -68,7 +72,7 @@ class TestUtil:
             self.comm_file = pathlib.Path(communication_file)
         self.fake_msgs = fake_msgs
 
-    def get_updates(self, not_empty=False):
+    def _get_updates(self, not_empty=False):
         """
         Returns a json with the latest messages the bot has received
 
@@ -82,6 +86,16 @@ class TestUtil:
         else:
             msgs = ["This is onyl a test", "Another one"]
         return [_create_fake_msg(i) for i in msgs]
+
+    def act_on_updates(self, action_function, not_empty=False):
+        """
+        Receive the input using _get_updates, parse it with
+        the telegram message class and act in consequence
+        """
+        all_updates = self._get_updates(not_empty=not_empty)
+        for update in all_updates:
+            msg = TestMessage(update)
+            action_function(msg)
 
     def send_message(self, text, chat):
         """
@@ -112,5 +126,5 @@ class TestUtil:
 
 if __name__ == "__main__":
     cls = TestUtil("/tmp/test.txt")
-    res = cls.get_updates()
-    msgs = [Message(i) for i in res]
+    res = cls._get_updates()
+    msgs = [TestMessage(i) for i in res]

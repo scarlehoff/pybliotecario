@@ -3,17 +3,21 @@ import json
 import os.path
 import urllib
 import requests
+from pybliotecario import Message
 
 TELEGRAM_URL = "https://api.telegram.org/"
 import logging
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def log_request(status_code, reason, content):
     """ Log the status of the send requests """
     result = "Request sent, status code: {0} - {1}: {2}".format(status_code, reason, content)
-    log.info(result)
+    logger.info(result)
+
+class TelegramMessage(Message):
+    _type = "Telegram"
 
 
 class TelegramUtil:
@@ -71,13 +75,13 @@ class TelegramUtil:
             fpath = json["result"]["file_path"]
             return self.base_fileURL + fpath
         else:
-            log.info(json["error_code"])
-            log.info("Here's all the information we have on this request")
-            log.info("This is the url we have used")
-            log.info(url)
+            logger.info(json["error_code"])
+            logger.info("Here's all the information we have on this request")
+            logger.info("This is the url we have used")
+            logger.info(url)
             return None
 
-    def get_updates(self, not_empty=False):
+    def _get_updates(self, not_empty=False):
         """
         Returns a json with the last messages the bot has received
         when an offset is found, previous msg are not retrieved
@@ -90,21 +94,31 @@ class TelegramUtil:
             url += "&offset={0}".format(self.offset)
         updates = self.__get_json_from_url(url)
         if not updates and not_empty:
-            return self.get_updates(not_empty=True)
+            return self._get_updates(not_empty=True)
         if self.debug:
-            log.info("Request url: {0}".format(url))
-            log.info("Obtained updates: {0}".format(updates))
+            logger.info("Request url: {0}".format(url))
+            logger.info("Obtained updates: {0}".format(updates))
         try:
             result = updates["result"]
         except Exception as e:
-            # in case of ANY exception, just log.info it out and let the program run
-            log.info("Error: ")
-            log.info(str(e))
-            log.info("List of updates: ")
-            log.info(updates)
+            # in case of ANY exception, just logger.info it out and let the program run
+            logger.error("Error: ")
+            logger.error(str(e))
+            logger.error("List of updates: ")
+            logger.error(updates)
             return []
         self.__re_offset(result)
         return result
+
+    def act_on_updates(self, action_function, not_empty=False):
+        """
+        Receive the input using _get_updates, parse it with
+        the telegram message class and act in consequence
+        """
+        all_updates = self._get_updates(not_empty=not_empty)
+        for update in all_updates:
+            msg = TelegramMessage(update)
+            action_function(msg)
 
     def send_message(self, text, chat):
         """ Send a message to a given chat """
@@ -135,7 +149,7 @@ class TelegramUtil:
         """
         data = {"chat_id": chat, "document": file_url}
         blabla = requests.post(self.send_doc, data=data)
-        log.info(blabla.status_code, blabla.reason, blabla.content)
+        logger.info(blabla.status_code, blabla.reason, blabla.content)
 
     def download_file(self, fileId, file_name_raw):
         """Download file defined by fileId
@@ -154,17 +168,17 @@ class TelegramUtil:
 
 
 if __name__ == "__main__":
-    log.info("Testing TelegramUtil")
+    logger.info("Testing TelegramUtil")
     TOKEN = "must put a token here to test"
     ut = TelegramUtil(TOKEN, debug=True)
-    results = ut.get_updates()
+    results = ut._get_updates()
     for result in results:
-        log.info("Complete json:")
-        log.info(result)
+        logger.info("Complete json:")
+        logger.info(result)
         message = result["message"]
         chat_id = message["chat"]["id"]
         txt = message["text"]
-        log.info("Message from {0}: {1}".format(chat_id, txt))
+        logger.info("Message from {0}: {1}".format(chat_id, txt))
         ut.send_message("Message received", chat_id)
     ut.timeout = 1
-    ut.get_updates()  # Use the offset to confirm updates
+    ut._get_updates()  # Use the offset to confirm updates
