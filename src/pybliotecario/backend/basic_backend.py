@@ -1,7 +1,7 @@
 """
-    Base/abstract backend class
+    Base/abstract backend classes
 
-    Each backend should implement its own message type
+    Each backend should implement its own message type and inherit from backend
 """
 
 from abc import ABC, abstractmethod
@@ -84,3 +84,27 @@ class Message(ABC):
     @ignore.setter
     def ignore(self, val):
         self._message_dict["ignore"] = val
+
+
+class Backend(ABC):
+    """
+    Main backend class for inheritting.
+
+    All backends should define their own _message_class
+    """
+
+    _message_class = Message
+
+    @abstractmethod
+    def _get_updates(self, not_empty=False):
+        pass
+
+    def act_on_updates(self, action_function, not_empty=False):
+        """
+        Receive the input using _get_updates, parse it with
+        the telegram message class and act in consequence
+        """
+        all_updates = self._get_updates(not_empty=not_empty)
+        for update in all_updates:
+            msg = self._message_class(update)
+            action_function(msg)

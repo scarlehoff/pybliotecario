@@ -16,6 +16,7 @@ _TESTUSER = "hiro"
 
 class TestMessage(TelegramMessage):
     """ Copy of the TelegramMessage class """
+
     _type = "Test"
 
 

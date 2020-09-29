@@ -3,7 +3,7 @@ import json
 import os.path
 import urllib
 import requests
-from .basic_backend import Message
+from .basic_backend import Message, Backend
 
 TELEGRAM_URL = "https://api.telegram.org/"
 import logging
@@ -36,7 +36,7 @@ class TelegramMessage(Message):
         msg = None
         for msg_type in msg_types:
             if msg_type in keys:
-                msg = msg_types
+                msg = msg_type
         if msg is None:
             logger.warning(f"Message not in {msg_types}, ignoring")
             logger.warning(update)
@@ -50,7 +50,7 @@ class TelegramMessage(Message):
             return
         # Now get the chat data and id
         chat_data = message["chat"]
-        self._message_dict["username"] = chat_data["id"]
+        self._message_dict["chat_id"] = chat_data["id"]
         # TODO test this part of the parser as this 'from' was a legacy thing at some point
         from_data = message.get("from", chat_data)
 
@@ -101,12 +101,14 @@ class TelegramMessage(Message):
 
     @property
     def is_group(self):
+        """ Returns true if the message was from a group """
         return self._group_info is not None
 
 
-class TelegramUtil:
+class TelegramUtil(Backend):
     """This class handles all comunications with
     Telegram"""
+    _message_class = TelegramMessage
 
     def __init__(self, TOKEN, debug=False, timeout=300):
         self.offset = None
@@ -193,16 +195,6 @@ class TelegramUtil:
             return []
         self.__re_offset(result)
         return result
-
-    def act_on_updates(self, action_function, not_empty=False):
-        """
-        Receive the input using _get_updates, parse it with
-        the telegram message class and act in consequence
-        """
-        all_updates = self._get_updates(not_empty=not_empty)
-        for update in all_updates:
-            msg = TelegramMessage(update)
-            action_function(msg)
 
     def send_message(self, text, chat):
         """ Send a message to a given chat """
