@@ -1,22 +1,30 @@
+"""
+    Telegram backend
+"""
+
 #!/usr/bin/env python3
 import json
 import os.path
 import urllib
+import logging
 import requests
-from .basic_backend import Message, Backend
+from pybliotecario.backend.basic_backend import Message, Backend
 
 TELEGRAM_URL = "https://api.telegram.org/"
-import logging
 
 logger = logging.getLogger(__name__)
 
 # Keys included in telegram chats that basically are telling you to ignore it
-IGNOREKEYS = set(["new_chat_participant", "left_chat_participant", "sticker", "game", "contact"])
+IGNOREKEYS = set(
+    ["new_chat_participant", "left_chat_participant", "sticker", "game", "contact"]
+)
 
 
 def log_request(status_code, reason, content):
     """ Log the status of the send requests """
-    result = "Request sent, status code: {0} - {1}: {2}".format(status_code, reason, content)
+    result = "Request sent, status code: {0} - {1}: {2}".format(
+        status_code, reason, content
+    )
     logger.info(result)
 
 
@@ -69,7 +77,6 @@ class TelegramMessage(Message):
             text = message.get("caption", "untitled")
             if not text.endswith((".jpg", ".JPG", ".png", ".PNG")):
                 text += ".jpg"
-            text = text
         elif "document" in message:
             # If it is a document, teleram gives you everything you need
             file_dict = message["document"]
@@ -90,7 +97,7 @@ class TelegramMessage(Message):
             command = separate_command[0][1:]
             # Absorb the @ in case it is a directed command!
             if "@" in command:
-                command.split("@")[0]
+                command = command.split("@")[0]
             # Check whether the command comes alone or has arguments
             if len(separate_command) == 1:
                 text = ""
@@ -108,6 +115,7 @@ class TelegramMessage(Message):
 class TelegramUtil(Backend):
     """This class handles all comunications with
     Telegram"""
+
     _message_class = TelegramMessage
 
     def __init__(self, TOKEN, debug=False, timeout=300):
@@ -150,18 +158,18 @@ class TelegramUtil(Backend):
             li.append(int(update["update_id"]))
         self.offset = max(li) + 1
 
-    def _get_filepath(self, fileId):
+    def _get_filepath(self, file_id):
         """Given a file id, retrieve the URI of the file
         in the remote server
         """
-        url = self.get_file + "?file_id={0}".format(fileId)
-        json = self.__get_json_from_url(url)
+        url = self.get_file + "?file_id={0}".format(file_id)
+        jsonret = self.__get_json_from_url(url)
         # was it ok?
-        if json["ok"]:
-            fpath = json["result"]["file_path"]
+        if jsonret["ok"]:
+            fpath = jsonret["result"]["file_path"]
             return self.base_fileURL + fpath
         else:
-            logger.info(json["error_code"])
+            logger.info(jsonret["error_code"])
             logger.info("Here's all the information we have on this request")
             logger.info("This is the url we have used")
             logger.info(url)
@@ -227,10 +235,10 @@ class TelegramUtil(Backend):
         blabla = requests.post(self.send_doc, data=data)
         logger.info(blabla.status_code, blabla.reason, blabla.content)
 
-    def download_file(self, fileId, file_name_raw):
-        """Download file defined by fileId
+    def download_file(self, file_id, file_name_raw):
+        """Download file defined by file_id
         to given file_name"""
-        file_url = self._get_filepath(fileId)
+        file_url = self._get_filepath(file_id)
         if not file_url:
             return None
         file_name = file_name_raw
@@ -245,16 +253,16 @@ class TelegramUtil(Backend):
 
 if __name__ == "__main__":
     logger.info("Testing TelegramUtil")
-    TOKEN = "must put a token here to test"
-    ut = TelegramUtil(TOKEN, debug=True)
+    token = "must put a token here to test"
+    ut = TelegramUtil(token, debug=True)
     results = ut._get_updates()
-    for result in results:
+    for res in results:
         logger.info("Complete json:")
-        logger.info(result)
-        message = result["message"]
-        chat_id = message["chat"]["id"]
-        txt = message["text"]
-        logger.info("Message from {0}: {1}".format(chat_id, txt))
+        logger.info(res)
+        msg_example = res["message"]
+        chat_id = msg_example["chat"]["id"]
+        txt = msg_example["text"]
+        logger.info("Message from %s: %s", chat_id, txt)
         ut.send_message("Message received", chat_id)
     ut.timeout = 1
     ut._get_updates()  # Use the offset to confirm updates

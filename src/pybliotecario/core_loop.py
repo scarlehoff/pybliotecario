@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # After which number of continuous exceptions do we actually fail
-_FAILTHRESHOLD = 100
+_FAILTHRESHOLD = 20
 
 
 def monthly_folder(base_main_folder):
@@ -67,15 +67,9 @@ def main_loop(tele_api, config=None, clear=False):
     instance of the message as the argument.
     This allows the tele_api to do things asynchronously if needed be
     """
-    # Check whether we have an accepted user
-    if config:
-        accepted_user = config["DEFAULT"].get("chat_id")
-    else:
-        accepted_user = None
     main_folder = config["DEFAULT"]["main_folder"]
 
     except_counter = 0
-
     # Generate the function to act on Messages
     def act_on_message(message):
         """This function receives a pybliotecario.Message and
@@ -88,24 +82,12 @@ def main_loop(tele_api, config=None, clear=False):
             chat_id = message.chat_id
             if message.is_command:
                 # Call the selected command and act on the message
-                response = on_cmd_message.act_on_telegram_command(
-                    tele_api, message, config
-                )
-                # If response can be sent to the chat, do so
-                # TODO: make this part of a greater BACKEND class
-                if isinstance(response, str):
-                    tele_api.send_message(response, chat_id)
-                elif isinstance(response, dict):
-                    if response.get("isfile"):
-                        filepath = response.get("filename")
-                        tele_api.send_file(filepath, chat_id)
-                        if response.get("delete"):
-                            os.remove(filepath)
-            elif message.isFile:
+                on_cmd_message.act_on_telegram_command(tele_api, message, config)
+            elif message.is_file:
                 # If the message is a file, save the file and we are done
                 file_name = message.text.replace(" ", "")
                 file_path = "{0}/{1}".format(monthly_folder(main_folder), file_name)
-                result = tele_api.download_file(message.fileId, file_path)
+                result = tele_api.download_file(message.file_id, file_path)
                 if result:
                     tele_api.send_message("¡Archivo recibido y guardado!", chat_id)
                     logger.info("File saved to %s", file_path)
@@ -120,9 +102,11 @@ def main_loop(tele_api, config=None, clear=False):
                 write_to_daily_log(main_folder, message.text)
                 random_msg = still_alive()
                 tele_api.send_message(random_msg, chat_id)
+            except_counter = 0
         except Exception as e:
             logger.error(f"This message produced an exception: {e}")
             if clear and except_counter < _FAILTHRESHOLD:
+                except_counter += 1
                 # Ignore exceptions until we reach the threshold
                 logger.info(message)
                 logger.info("Going for the next message")
