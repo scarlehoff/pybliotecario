@@ -1,57 +1,60 @@
 import pathlib
 from setuptools import setup, find_packages
-from sys import argv
+import sys
 
-if len(argv) > 1 and argv[1] in ('develop', 'install'):
+pybliotecario_name = "pybliotecario"
+print(sys.argv)
+if "--with_name" in sys.argv:
     import socket
-# When installing with setup.py in develop/install mode
-# use hostname as the name of the script
-# with the first letter uppercased
-    hostname = socket.gethostname()
-    pybliotecario_name = hostname.capitalize()
-else:
-    pybliotecario_name = "pybliotecario"
+
+    # Use the hostname as the name of the pybliotecario
+    # executable
+    hostname = socket.gethostname().capitalize()
+    pybliotecario_name = hostname
+
+    # Remove it from the list of argument, nobody should know
+    sys.argv.remove("--with_name")
+
+print(sys.argv)
 
 # Readup the readme
 README = (pathlib.Path(__file__).parent / "readme.md").read_text()
 setup(
     name=pybliotecario_name,
     version="1.3",
-
     author="Scarlehoff",
     author_email="juacrumar@lairen.eu",
     url="https://github.com/scarlehoff/pybliotecario",
-
     description="Personal telegram bot to interact between your Telegram account and your computer",
     long_description=README,
     long_description_content_type="text/markdown",
     license="GNU GPLv3",
-
-    package_dir = {'':'src'},
-    packages=find_packages('src'),
-
+    package_dir={"": "src"},
+    packages=find_packages("src"),
     install_requires=[
-        'numpy',
-        'regex',
-        'arxiv',
-        'pyowm',
-        'psutil',
-        'wikipedia',
+        "numpy",
+        "regex",
+        "arxiv",
+        "pyowm",
+        "psutil",
+        "wikipedia",
     ],
-
-    extra_requires={
-        'facebook' : ['flask']
-        },
-
-    entry_points = {'console_scripts':
-                    ['{0} = pybliotecario.pybliotecario:main'.format(pybliotecario_name),]
-                    },
+    extra_requires={"facebook": ["flask"]},
+    entry_points={
+        "console_scripts": [
+            "{0} = pybliotecario.pybliotecario:main".format(pybliotecario_name),
+        ]
+    },
 )
 
-print("""
+print(
+    """
 ##############
 Installed pybliotecario as {0}
 
 IMPORTANT: Don't forget to run
       ~$ {0} --init
-for proper configuration of the pybliotecario""".format(pybliotecario_name))
+for proper configuration of the pybliotecario""".format(
+        pybliotecario_name
+    )
+)

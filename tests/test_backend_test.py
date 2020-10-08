@@ -28,10 +28,11 @@ def test_get_updates_tmpfile(tmpfile):
     for update, msg in zip(updates, _FAKEMSGS):
         assert update["message"]["text"] == msg
 
+
 def test_act_on_update():
     """ Check that act on update works as expected """
     test_util = TestUtil(fake_msgs=["/test command"])
-    
+
     # Action function
     def action(msg):
         assert msg.text == "command"
