@@ -1,24 +1,21 @@
 import pathlib
 from setuptools import setup, find_packages
-from sys import argv
+import sys
 
 pybliotecario_name = "pybliotecario"
-if __name__ == "__main__" and len(argv) > 1 and argv[1] in ("develop", "install"):
-    print("You are installing the pybliotecario via the repository")
-
+print(sys.argv)
+if "--with_name" in sys.argv:
     import socket
 
-    # When installing with setup.py in develop/install mode
-    # use hostname as the name of the script
-    # with the first letter uppercased
+    # Use the hostname as the name of the pybliotecario
+    # executable
     hostname = socket.gethostname().capitalize()
-    print("By default it will be installed with the name of your computer")
-    yn = input(f"Do you want the pybliotecario executable to be called: {hostname} (y/n) ")
-    if yn.lower() == "y" or yn.lower() == "yes":
-        pybliotecario_name = hostname
-    else:
-        print(f"You chose to use the name {pybliotecario_name} instead")
+    pybliotecario_name = hostname
 
+    # Remove it from the list of argument, nobody should know
+    sys.argv.remove("--with_name")
+
+print(sys.argv)
 
 # Readup the readme
 README = (pathlib.Path(__file__).parent / "readme.md").read_text()
