@@ -28,9 +28,14 @@ cd pybliotecario
 python3 setup.py install
 ```
 
-Note that when it is installed in this way, the name of the executable will be the hostname
-of the computer (with the first letter capitalized).
-For instance, if you computer is called `glados` you can invoke the program with `~$ Glados`.
+You can use the command line argument `with_name` to install the pybliotecario
+with your hostname (capitalized) as executable name.
+
+```bash
+python3 setup.py install --with_name
+```
+
+That way, for instance, if you computer is called `glados` you can invoke the program with `~$ Glados`.
 If you want to use a different name just modify the variable `pybliotecario_name` inside `setup.py`.
 
 A small `systemd_install.sh` script is included in the repository in order to daemonize it easily.
