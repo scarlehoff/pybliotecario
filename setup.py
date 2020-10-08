@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 from sys import argv
 
 pybliotecario_name = "pybliotecario"
-if len(argv) > 1 and argv[1] in ("develop", "install"):
+if __name__ == "__main__" and len(argv) > 1 and argv[1] in ("develop", "install"):
     print("You are installing the pybliotecario via the repository")
 
     import socket
