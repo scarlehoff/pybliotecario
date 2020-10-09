@@ -29,13 +29,13 @@ setup(
     package_dir={"": "src"},
     packages=find_packages("src"),
     install_requires=[
-        'numpy',
-        'requests',
-        'regex',
-        'arxiv',
-        'pyowm',
-        'psutil',
-        'wikipedia',
+        "numpy",
+        "requests",
+        "regex",
+        "arxiv",
+        "pyowm",
+        "psutil",
+        "wikipedia",
     ],
     entry_points={
         "console_scripts": [

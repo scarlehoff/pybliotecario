@@ -15,16 +15,12 @@ TELEGRAM_URL = "https://api.telegram.org/"
 logger = logging.getLogger(__name__)
 
 # Keys included in telegram chats that basically are telling you to ignore it
-IGNOREKEYS = set(
-    ["new_chat_participant", "left_chat_participant", "sticker", "game", "contact"]
-)
+IGNOREKEYS = set(["new_chat_participant", "left_chat_participant", "sticker", "game", "contact"])
 
 
 def log_request(status_code, reason, content):
     """ Log the status of the send requests """
-    result = "Request sent, status code: {0} - {1}: {2}".format(
-        status_code, reason, content
-    )
+    result = "Request sent, status code: {0} - {1}: {2}".format(status_code, reason, content)
     logger.info(result)
 
 

@@ -163,7 +163,9 @@ def parse_args(args):
     """ Wrapper for ArgumentParser """
     parser = ArgumentParser()
     parser.add_argument(
-        "--init", help="Wizard to configure the pybliotecario for the first time", action=InitAction
+        "--init",
+        help="Wizard to configure the pybliotecario for the first time",
+        action=InitAction,
     )
     parser.add_argument("--config_file", help="Define a custom configuration file")
     parser.add_argument("--backend", help="Choose backend", type=str, default="Telegram")

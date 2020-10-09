@@ -92,9 +92,7 @@ def main_loop(tele_api, config=None, clear=False):
                     tele_api.send_message("¡Archivo recibido y guardado!", chat_id)
                     logger.info("File saved to %s", file_path)
                 else:
-                    tele_api.send_message(
-                        "There was some problem with this, sorry", chat_id
-                    )
+                    tele_api.send_message("There was some problem with this, sorry", chat_id)
                     logger.info(message)
                     logger.warning("There was a problem with this update")
             else:
