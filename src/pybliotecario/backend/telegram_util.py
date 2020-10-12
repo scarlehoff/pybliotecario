@@ -1,14 +1,21 @@
+"""
+    Telegram backend
+"""
+
 #!/usr/bin/env python3
 import json
 import os.path
 import urllib
+import logging
 import requests
-from pybliotecario import Message
+from pybliotecario.backend.basic_backend import Message, Backend
 
 TELEGRAM_URL = "https://api.telegram.org/"
-import logging
 
 logger = logging.getLogger(__name__)
+
+# Keys included in telegram chats that basically are telling you to ignore it
+IGNOREKEYS = set(["new_chat_participant", "left_chat_participant", "sticker", "game", "contact"])
 
 
 def log_request(status_code, reason, content):
@@ -16,13 +23,96 @@ def log_request(status_code, reason, content):
     result = "Request sent, status code: {0} - {1}: {2}".format(status_code, reason, content)
     logger.info(result)
 
+
 class TelegramMessage(Message):
+    """ Telegram implementation of the Message class """
+
     _type = "Telegram"
+    _group_info = None
+
+    def _parse_update(self, update):
+        """Receives an update in the form of a dictionary (that came from a json)
+        and fills in the _message_dict dictionary
+        """
+        keys = update.keys()
+        # First check whether this is a message, edited message or a channel post
+        msg_types = ["message", "edited_message", "edited_channel_post"]
+        msg = None
+        for msg_type in msg_types:
+            if msg_type in keys:
+                msg = msg_type
+        if msg is None:
+            logger.warning(f"Message not in {msg_types}, ignoring")
+            logger.warning(update)
+            self.ignore = True
+            return
+        message = update[msg]
+        # Get the keys of the message (and check whether it should be ignored)
+        msg_keys = message.keys()
+        if set(msg_keys) & IGNOREKEYS:
+            self.ignore = True
+            return
+        # Now get the chat data and id
+        chat_data = message["chat"]
+        self._message_dict["chat_id"] = chat_data["id"]
+        # TODO test this part of the parser as this 'from' was a legacy thing at some point
+        from_data = message.get("from", chat_data)
+
+        # Populate the user (in the list, last has more priority)
+        username = "unknown_user"
+        for user_naming in ["last_name", "first_name", "username"]:
+            username = from_data.get(user_naming, username)
+        self._message_dict["username"] = username
+
+        # Check the filetype
+        text = None
+        if "photo" in message:
+            # If it is a photo, get the file id and use the caption as the title
+            photo_data = message["photo"][-1]
+            self._message_dict["file_id"] = photo_data["file_id"]
+            text = message.get("caption", "untitled")
+            if not text.endswith((".jpg", ".JPG", ".png", ".PNG")):
+                text += ".jpg"
+        elif "document" in message:
+            # If it is a document, teleram gives you everything you need
+            file_dict = message["document"]
+            self._message_dict["file_id"] = file_dict["file_id"]
+            text = file_dict["file_name"]
+        else:
+            # Normal text message
+            text = message.get("text", "")
+
+        # In Telegram we can also have groups
+        if "group" in chat_data:
+            self._group_info = chat_data
+
+        # Finally check whether the message looks like a command
+        if text and text.startswith("/"):
+            separate_command = text.split(" ", 1)
+            # Remove the / from the command
+            command = separate_command[0][1:]
+            # Absorb the @ in case it is a directed command!
+            if "@" in command:
+                command = command.split("@")[0]
+            # Check whether the command comes alone or has arguments
+            if len(separate_command) == 1:
+                text = ""
+            else:
+                text = separate_command[1]
+            self._message_dict["command"] = command
+        self._message_dict["text"] = text
+
+    @property
+    def is_group(self):
+        """ Returns true if the message was from a group """
+        return self._group_info is not None
 
 
-class TelegramUtil:
+class TelegramUtil(Backend):
     """This class handles all comunications with
     Telegram"""
+
+    _message_class = TelegramMessage
 
     def __init__(self, TOKEN, debug=False, timeout=300):
         self.offset = None
@@ -64,18 +154,18 @@ class TelegramUtil:
             li.append(int(update["update_id"]))
         self.offset = max(li) + 1
 
-    def _get_filepath(self, fileId):
+    def _get_filepath(self, file_id):
         """Given a file id, retrieve the URI of the file
         in the remote server
         """
-        url = self.get_file + "?file_id={0}".format(fileId)
-        json = self.__get_json_from_url(url)
+        url = self.get_file + "?file_id={0}".format(file_id)
+        jsonret = self.__get_json_from_url(url)
         # was it ok?
-        if json["ok"]:
-            fpath = json["result"]["file_path"]
+        if jsonret["ok"]:
+            fpath = jsonret["result"]["file_path"]
             return self.base_fileURL + fpath
         else:
-            logger.info(json["error_code"])
+            logger.info(jsonret["error_code"])
             logger.info("Here's all the information we have on this request")
             logger.info("This is the url we have used")
             logger.info(url)
@@ -110,16 +200,6 @@ class TelegramUtil:
         self.__re_offset(result)
         return result
 
-    def act_on_updates(self, action_function, not_empty=False):
-        """
-        Receive the input using _get_updates, parse it with
-        the telegram message class and act in consequence
-        """
-        all_updates = self._get_updates(not_empty=not_empty)
-        for update in all_updates:
-            msg = TelegramMessage(update)
-            action_function(msg)
-
     def send_message(self, text, chat):
         """ Send a message to a given chat """
         text = urllib.parse.quote_plus(text)
@@ -151,10 +231,10 @@ class TelegramUtil:
         blabla = requests.post(self.send_doc, data=data)
         logger.info(blabla.status_code, blabla.reason, blabla.content)
 
-    def download_file(self, fileId, file_name_raw):
-        """Download file defined by fileId
+    def download_file(self, file_id, file_name_raw):
+        """Download file defined by file_id
         to given file_name"""
-        file_url = self._get_filepath(fileId)
+        file_url = self._get_filepath(file_id)
         if not file_url:
             return None
         file_name = file_name_raw
@@ -169,16 +249,16 @@ class TelegramUtil:
 
 if __name__ == "__main__":
     logger.info("Testing TelegramUtil")
-    TOKEN = "must put a token here to test"
-    ut = TelegramUtil(TOKEN, debug=True)
+    token = "must put a token here to test"
+    ut = TelegramUtil(token, debug=True)
     results = ut._get_updates()
-    for result in results:
+    for res in results:
         logger.info("Complete json:")
-        logger.info(result)
-        message = result["message"]
-        chat_id = message["chat"]["id"]
-        txt = message["text"]
-        logger.info("Message from {0}: {1}".format(chat_id, txt))
+        logger.info(res)
+        msg_example = res["message"]
+        chat_id = msg_example["chat"]["id"]
+        txt = msg_example["text"]
+        logger.info("Message from %s: %s", chat_id, txt)
         ut.send_message("Message received", chat_id)
     ut.timeout = 1
     ut._get_updates()  # Use the offset to confirm updates

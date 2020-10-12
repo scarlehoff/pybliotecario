@@ -3,18 +3,19 @@
     without communication with any service
 """
 
-import copy
 import pathlib
-import numpy as np
 from datetime import datetime
+import numpy as np
 
-from pybliotecario.Message import Message
+from pybliotecario.backend.telegram_util import TelegramMessage
 
 TESTID = 1234  # chat id for the test backend
 _TESTUSER = "hiro"
 
 
-class TestMessage(Message):
+class TestMessage(TelegramMessage):
+    """ Copy of the TelegramMessage class """
+
     _type = "Test"
 
 
@@ -122,9 +123,3 @@ class TestUtil:
         This is something that is only useful for the TestUtil backend"""
         read_text = self.comm_file.read_text()
         return msg in read_text
-
-
-if __name__ == "__main__":
-    cls = TestUtil("/tmp/test.txt")
-    res = cls._get_updates()
-    msgs = [TestMessage(i) for i in res]

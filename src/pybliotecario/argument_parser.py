@@ -78,7 +78,7 @@ If you don't know how to get one, read here: https://core.telegram.org/bots#6-bo
     teleAPI = TelegramUtil(token, timeout=20)
     while True:
         all_updates = teleAPI.get_updates(not_empty=True)
-        from pybliotecario.Message import Message
+        from pybliotecario.backend.telegram_util import TelegramMessage
 
         update = Message(all_updates[0])
         print("Message received: {0}".format(update.text))
@@ -163,7 +163,9 @@ def parse_args(args):
     """ Wrapper for ArgumentParser """
     parser = ArgumentParser()
     parser.add_argument(
-        "--init", help="Wizard to configure the pybliotecario for the first time", action=InitAction
+        "--init",
+        help="Wizard to configure the pybliotecario for the first time",
+        action=InitAction,
     )
     parser.add_argument("--config_file", help="Define a custom configuration file")
     parser.add_argument("--backend", help="Choose backend", type=str, default="Telegram")

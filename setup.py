@@ -3,7 +3,6 @@ from setuptools import setup, find_packages
 import sys
 
 pybliotecario_name = "pybliotecario"
-print(sys.argv)
 if "--with_name" in sys.argv:
     import socket
 
@@ -14,8 +13,6 @@ if "--with_name" in sys.argv:
 
     # Remove it from the list of argument, nobody should know
     sys.argv.remove("--with_name")
-
-print(sys.argv)
 
 # Readup the readme
 README = (pathlib.Path(__file__).parent / "readme.md").read_text()
@@ -33,13 +30,13 @@ setup(
     packages=find_packages("src"),
     install_requires=[
         "numpy",
+        "requests",
         "regex",
         "arxiv",
         "pyowm",
         "psutil",
         "wikipedia",
     ],
-    extra_requires={"facebook": ["flask"]},
     entry_points={
         "console_scripts": [
             "{0} = pybliotecario.pybliotecario:main".format(pybliotecario_name),
