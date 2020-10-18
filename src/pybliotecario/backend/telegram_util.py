@@ -220,17 +220,16 @@ class TelegramUtil(Backend):
         blabla = requests.post(self.send_doc, data=data)
         logger.info(blabla.status_code, blabla.reason, blabla.content)
 
-    def download_file(self, file_id, file_name_raw):
+    def download_file(self, file_id, file_name):
         """Download file defined by file_id
         to given file_name"""
         file_url = self._get_filepath(file_id)
         if not file_url:
             return None
-        file_name = file_name_raw
         n = 0
         while os.path.isfile(file_name):
-            filedir = os.path.dirname(file_name_raw)
-            basename = os.path.basename(file_name_raw)
+            filedir = os.path.dirname(file_name)
+            basename = os.path.basename(file_name)
             file_name = "{0}/n{1}-{2}".format(filedir, n, basename)
             n += 1
         return urllib.request.urlretrieve(file_url, file_name)

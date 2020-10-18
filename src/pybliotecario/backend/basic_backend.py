@@ -9,6 +9,7 @@
 
 from abc import ABC, abstractmethod, abstractproperty
 import logging
+import urllib
 import json
 
 logger = logging.getLogger(__name__)
@@ -26,16 +27,15 @@ class Message(ABC):
     _type = "Abstract"
     _original = None
 
-    _message_dict = {
-        "chat_id": None,
-        "username": None,
-        "command": None,
-        "file_id": None,
-        "text": None,
-        "ignore": False,
-    }
-
     def __init__(self, update):
+        self._message_dict = {
+            "chat_id": None,
+            "username": None,
+            "command": None,
+            "file_id": None,
+            "text": None,
+            "ignore": False,
+        }
         self._original = update
         self._parse_update(update)
         # After the information is parsed, log the message!
@@ -164,6 +164,8 @@ class Backend(ABC):
         """ Sends a file """
         logger.error("This backend does not implement sending files")
 
-    def download_file(self, file_id, file_name_raw):
-        """ Downloads a file """
-        logger.error("This backend does not support downloading files")
+    def download_file(self, file_id, file_name):
+        """Downloads a file using urllib.
+        Understands file_id as the url
+        """
+        return urllib.request.urlretrieve(file_id, file_name)

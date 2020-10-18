@@ -5,6 +5,8 @@
     Using this backend will stat a flask server in the selected port
 """
 
+import json
+import pathlib
 import logging
 import requests
 from pybliotecario.backend.basic_backend import Message, Backend
@@ -19,12 +21,6 @@ except ModuleNotFoundError:
 logger = logging.getLogger(__name__)
 
 FB_API = "https://graph.facebook.com/v2.12/me/messages"
-
-
-def log_request(status_code, reason, content):
-    """ Log the status of the send requests """
-    result = "Request sent, status code: {0} - {1}: {2}".format(status_code, reason, content)
-    logger.info(result)
 
 
 class FacebookMessage(Message):
@@ -43,16 +39,27 @@ class FacebookMessage(Message):
             logger.warning(update)
             self.ignore = True
             return
-        msg = update["entry"][0]["messaging"][0]
+        print(update)
+        msg_info = update["entry"][0]["messaging"][0]
         # Check who sent it
-        sender_id = msg["sender"]["id"]
+        sender_id = msg_info["sender"]["id"]
         self._message_dict["chat_id"] = sender_id
-        # Get the text
-        text = msg["message"]["text"]
-        # and parse it if necessary
+        # Get the msg
+        msg = msg_info["message"]
+        # get the text and parse it if necessary
+        text = msg.get("text")
         self._message_dict["text"] = text
         if text and text.startswith("/"):
             self._parse_command(text)
+        # In facebook we have either text or image
+        # TODO: in facebook you can pass more than one img at once...
+        attachment = msg.get("attachments")
+        if attachment is not None:
+            at_info = attachment[0]
+            # Checked for images and files and seems to work
+            url = at_info["payload"]["url"]
+            self._message_dict["file_id"] = url
+            self._message_dict["text"] = url.split("?")[0].split("/")[-1]
 
 
 class FacebookUtil(Backend):
@@ -76,9 +83,16 @@ class FacebookUtil(Backend):
         self.flask_app = app
         self.debug = debug
         self.action_function = None
+        self.auth = {"access_token": self.page_access_token}
+
+    def validate_hook(self):
+        """Facebook needs to validate the webhook
+        This is a small utility to do so
+        """
 
     def listener(self):
         """ Main function flask will use to listen at the webhook endpoint """
+        print(request)
         if request.method == "GET":
             if request.args.get("hub.verify_token") == self.verify_token:
                 return request.args.get("hub.challenge")
@@ -105,14 +119,63 @@ class FacebookUtil(Backend):
 
     def send_message(self, text, chat):
         """ Sends a message response to facebook """
-        payload = {
-            "message": {"text": text},
-            "recipient": {"id": chat},
-            "notification_type": "regular",
-        }
-        auth = {"access_token": self.page_access_token}
-        response = requests.post(FB_API, params=auth, json=payload)
+        payload = {"message": {"text": text}, "recipient": {"id": chat}}
+        response = requests.post(FB_API, params=self.auth, json=payload)
         return response.json()
+
+    def send_data(self, payload):
+        """Sends data to facebook messenger.
+        This method uses MultipartEncoder: https://toolbelt.readthedocs.io/
+        to stream multipart form-data
+        """
+        try:
+            from requests_toolbelt import MultipartEncoder
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                "Install 'requests-toolbelt' to send images and files to facebook"
+            ) from e
+
+        encoded_payload = MultipartEncoder(payload)
+        header = {"Content-Type": encoded_payload.content_type}
+        response = requests.post(FB_API, params=self.auth, data=encoded_payload, headers=header)
+        return response.json()
+
+    def send_image(self, img_path, chat):
+        """Sends an image to facebook
+        Basically the requests form of the curl command here:
+        https://developers.facebook.com/docs/messenger-platform/send-messages#url
+        """
+        img = pathlib.Path(img_path)
+        payload = {
+            "recipient": json.dumps({"id": chat}),
+            "message": json.dumps(
+                {
+                    "attachment": {
+                        "type": "image",
+                        "payload": {"is_reusable": True},
+                    }
+                }
+            ),
+            "filedata": (img.stem, img.read_bytes(), f"image/{img.suffix[1:]}"),
+        }
+        return self.send_data(payload)
+
+    def send_file(self, file_path, chat):
+        """ Sends a file to fb, similar to send_image """
+        fff = pathlib.Path(file_path)
+        payload = {
+            "recipient": json.dumps({"id": chat}),
+            "message": json.dumps(
+                {
+                    "attachment": {
+                        "type": "file",
+                        "payload": {"is_reusable": True},
+                    }
+                }
+            ),
+            "filedata": (fff.name, fff.read_bytes()),
+        }
+        return self.send_data(payload)
 
 
 if __name__ == "__main__":

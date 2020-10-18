@@ -37,9 +37,7 @@ setup(
         "psutil",
         "wikipedia",
     ],
-    extras_require={
-        'facebook' : ['flask']
-        },
+    extras_require={"facebook": ["flask", "requests_toolbelt"]},
     entry_points={
         "console_scripts": [
             "{0} = pybliotecario.pybliotecario:main".format(pybliotecario_name),
