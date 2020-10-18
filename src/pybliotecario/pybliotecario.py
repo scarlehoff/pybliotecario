@@ -8,7 +8,7 @@ import logging
 import sys
 import os
 
-from pybliotecario.backend import TelegramUtil, TestUtil
+from pybliotecario.backend import TelegramUtil, TestUtil, FacebookUtil
 from pybliotecario.core_loop import main_loop
 
 # Modify argument_parser.py to read new arguments
@@ -103,6 +103,18 @@ def main(cmdline_arg=None, tele_api=None, config=None):
             tele_api = TelegramUtil(api_token, debug=args.debug)
         elif args.backend.lower() == "test":
             tele_api = TestUtil("/tmp/test_file.txt")
+        elif args.backend.lower() == "facebook":
+            try:
+                fb_config = config["FACEBOOK"]
+            except KeyError:
+                raise ValueError("No facebook section found for facebook in pybliotecario.ini")
+            verify_token = fb_config.get("verify")
+            app_token = fb_config.get("app_token")
+            tele_api = FacebookUtil(app_token, verify_token, debug=args.debug)
+            # Check whether we have chat id
+            chat_id = fb_config.get("chat_id")
+            if chat_id is not None:
+                config.set("DEFAULT", "chat_id", chat_id)
 
     on_cmdline.run_command(args, tele_api, config)
 

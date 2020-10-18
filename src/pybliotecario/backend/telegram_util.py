@@ -87,20 +87,9 @@ class TelegramMessage(Message):
             self._group_info = chat_data
 
         # Finally check whether the message looks like a command
-        if text and text.startswith("/"):
-            separate_command = text.split(" ", 1)
-            # Remove the / from the command
-            command = separate_command[0][1:]
-            # Absorb the @ in case it is a directed command!
-            if "@" in command:
-                command = command.split("@")[0]
-            # Check whether the command comes alone or has arguments
-            if len(separate_command) == 1:
-                text = ""
-            else:
-                text = separate_command[1]
-            self._message_dict["command"] = command
         self._message_dict["text"] = text
+        if text and text.startswith("/"):
+            self._parse_command(text)
 
     @property
     def is_group(self):
