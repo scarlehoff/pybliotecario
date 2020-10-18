@@ -92,7 +92,6 @@ class FacebookUtil(Backend):
 
     def listener(self):
         """ Main function flask will use to listen at the webhook endpoint """
-        print(request)
         if request.method == "GET":
             if request.args.get("hub.verify_token") == self.verify_token:
                 return request.args.get("hub.challenge")
@@ -160,9 +159,9 @@ class FacebookUtil(Backend):
         }
         return self.send_data(payload)
 
-    def send_file(self, file_path, chat):
+    def send_file(self, filepath, chat):
         """ Sends a file to fb, similar to send_image """
-        fff = pathlib.Path(file_path)
+        fff = pathlib.Path(filepath)
         payload = {
             "recipient": json.dumps({"id": chat}),
             "message": json.dumps(
