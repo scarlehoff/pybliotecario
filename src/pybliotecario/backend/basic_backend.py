@@ -9,6 +9,7 @@
 
 from abc import ABC, abstractmethod, abstractproperty
 import logging
+import urllib
 import json
 
 logger = logging.getLogger(__name__)
@@ -26,16 +27,15 @@ class Message(ABC):
     _type = "Abstract"
     _original = None
 
-    _message_dict = {
-        "chat_id": None,
-        "username": None,
-        "command": None,
-        "file_id": None,
-        "text": None,
-        "ignore": False,
-    }
-
     def __init__(self, update):
+        self._message_dict = {
+            "chat_id": None,
+            "username": None,
+            "command": None,
+            "file_id": None,
+            "text": None,
+            "ignore": False,
+        }
         self._original = update
         self._parse_update(update)
         # After the information is parsed, log the message!
@@ -43,6 +43,22 @@ class Message(ABC):
 
     def __str__(self):
         return json.dumps(self._message_dict)
+
+    def _parse_command(self, text):
+        """ Parse any msg starting with / """
+        separate_command = text.split(" ", 1)
+        # Remove the / from the command
+        command = separate_command[0][1:]
+        # Absorb the @ in case it is a directed command!
+        if "@" in command:
+            command = command.split("@")[0]
+        # Check whether the command comes alone or has arguments
+        if len(separate_command) == 1:
+            text = ""
+        else:
+            text = separate_command[1]
+        self._message_dict["command"] = command
+        self._message_dict["text"] = text
 
     @abstractmethod
     def _parse_update(self, update):
@@ -133,7 +149,7 @@ class Backend(ABC):
     def act_on_updates(self, action_function, not_empty=False):
         """
         Receive the input using _get_updates, parse it with
-        the telegram message class and act in consequence
+        the message class and act in consequence
         """
         all_updates = self._get_updates(not_empty=not_empty)
         for update in all_updates:
@@ -142,12 +158,14 @@ class Backend(ABC):
 
     def send_image(self, img_path, chat):
         """ Sends an image """
-        logger.error("This backend does not implement sending files")
+        logger.error("This backend does not implement sending images")
 
     def send_file(self, filepath, chat):
         """ Sends a file """
         logger.error("This backend does not implement sending files")
 
-    def download_file(self, file_id, file_name_raw):
-        """ Downloads a file """
-        logger.error("This backend does not support downloading files")
+    def download_file(self, file_id, file_name):
+        """Downloads a file using urllib.
+        Understands file_id as the url
+        """
+        return urllib.request.urlretrieve(file_id, file_name)

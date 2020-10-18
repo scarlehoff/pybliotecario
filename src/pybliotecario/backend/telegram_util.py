@@ -87,20 +87,9 @@ class TelegramMessage(Message):
             self._group_info = chat_data
 
         # Finally check whether the message looks like a command
-        if text and text.startswith("/"):
-            separate_command = text.split(" ", 1)
-            # Remove the / from the command
-            command = separate_command[0][1:]
-            # Absorb the @ in case it is a directed command!
-            if "@" in command:
-                command = command.split("@")[0]
-            # Check whether the command comes alone or has arguments
-            if len(separate_command) == 1:
-                text = ""
-            else:
-                text = separate_command[1]
-            self._message_dict["command"] = command
         self._message_dict["text"] = text
+        if text and text.startswith("/"):
+            self._parse_command(text)
 
     @property
     def is_group(self):
@@ -231,17 +220,16 @@ class TelegramUtil(Backend):
         blabla = requests.post(self.send_doc, data=data)
         logger.info(blabla.status_code, blabla.reason, blabla.content)
 
-    def download_file(self, file_id, file_name_raw):
+    def download_file(self, file_id, file_name):
         """Download file defined by file_id
         to given file_name"""
         file_url = self._get_filepath(file_id)
         if not file_url:
             return None
-        file_name = file_name_raw
         n = 0
         while os.path.isfile(file_name):
-            filedir = os.path.dirname(file_name_raw)
-            basename = os.path.basename(file_name_raw)
+            filedir = os.path.dirname(file_name)
+            basename = os.path.basename(file_name)
             file_name = "{0}/n{1}-{2}".format(filedir, n, basename)
             n += 1
         return urllib.request.urlretrieve(file_url, file_name)
