@@ -13,3 +13,7 @@ chat_id = <chat id> # optional
 [ARXIV]
 arxiv_filter_dict = {'title' : ["Higgs"], 'summary' : ["VBF"]}
 arxiv_categories = ['hep-ph']
+
+[SCRIPT]
+shell = False
+alias_script = /path/to/script
