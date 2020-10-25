@@ -5,7 +5,6 @@
 """
 import pathlib
 import logging
-from copy import deepcopy
 import subprocess as sp
 import shlex
 from pybliotecario.components.component_core import Component
@@ -23,20 +22,7 @@ def _parse_cmd_args(text, shell=False):
     return script, args
 
 
-def _bool_and_pop(section, key):
-    """Check whether a key exists, read it as a boolean
-    and pop-it-out"""
-    if key in section:
-        try:
-            val = section.getboolean(key)
-            section.pop(key)
-        except ValueError:
-            val = section.pop(key)
-            logger.warning("%s option %s in config file not understood, setting to False", key, val)
-            val = False
-    else:
-        val = False
-    return val
+
 
 
 class Script(Component):
@@ -77,14 +63,18 @@ class Script(Component):
     def __init__(self, telegram_object, **kwargs):
         super().__init__(telegram_object, **kwargs)
         self.blocked = False
-        self.scripts = deepcopy(self.read_config_section())
+        script_section = self.read_config_section()
+        self.scripts = dict(script_section)
 
         if not self.scripts:
             self.blocked = True
             return
 
-        self._run_in_shell = _bool_and_pop(self.scripts, "shell")
-        self._allow_everyone = _bool_and_pop(self.scripts, "everyone")
+        # Read the config section for the given keys
+        # and if they do exist, remove them from self.scripts
+        # I know it is confusing but the previous version was apparently python >3.7 only :(
+        self._run_in_shell = self._bool_and_pop(script_section, "shell")
+        self._allow_everyone = self._bool_and_pop(script_section, "everyone")
 
         if self._allow_everyone and self._run_in_shell:
             # Comment this for potentially destructive behaviour
@@ -94,6 +84,21 @@ class Script(Component):
 
         default_keys = set(self.configuration["DEFAULT"].keys())
         self.script_names = list(set(self.scripts.keys()) - default_keys)
+
+    def _bool_and_pop(self, section, key):
+        """Check whether a key exists, read it as a boolean
+        and pop-it-out"""
+        if key in section:
+            try:
+                val = section.getboolean(key)
+                self.scripts.pop(key)
+            except ValueError:
+                val = self.scripts.pop(key)
+                logger.warning("%s option %s in config file not understood, set to False", key, val)
+                val = False
+        else:
+            val = False
+        return val
 
     def available_commands(self):
         """ Sends a list with the available commands """
