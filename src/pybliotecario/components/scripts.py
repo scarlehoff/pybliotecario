@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def _parse_cmd_args(text, shell=False):
-    """ Separate script name and its arguments
+    """Separate script name and its arguments
     If shell == True, then we want to preserve quotations
     """
     split_text = shlex.split(text, posix=not shell)
@@ -22,9 +22,10 @@ def _parse_cmd_args(text, shell=False):
     args = split_text[1:]
     return script, args
 
+
 def _bool_and_pop(section, key):
-    """ Check whether a key exists, read it as a boolean
-    and pop-it-out """
+    """Check whether a key exists, read it as a boolean
+    and pop-it-out"""
     if key in section:
         try:
             val = section.getboolean(key)
@@ -67,6 +68,7 @@ class Script(Component):
     In order to avoid potentially destructive behaviour shell and everyone can not be set
     simultaneously. If you want to do so you will have to change the code manually.
     """
+
     section_name = "SCRIPT"
     help_text = """ > Script module
     /script list: list all possible scripts
