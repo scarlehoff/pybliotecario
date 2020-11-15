@@ -7,9 +7,16 @@ and, often, new ways to communicate with the remote server.
 ## Telegram backend
 For Telegram the process is quite simple and this program will guide you through the process
 of contacting the [botfather](https://t.me/botfather) and getting an API key.
-For Facebook instead the process is mre invovled.
+The `--init` option will guide you through the process.
+
+```
+pybliotecario --init
+```
 
 ## Facebook backend
+The facebook backend configuration is a bit more involved, since we need to set up a server that will be communicating with facebook.
+This is done in the pybliotecario with `flask`.
+
 The first step is to create an app in the [facebook's developer page](https://developers.facebook.com/),
 for this example we can create an app called `pybliotec_libro`.
 At the time of writing (13/11/2020) one has to log in, go to `My Apps` and click on `Create App`.
