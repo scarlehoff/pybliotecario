@@ -18,7 +18,7 @@ if "--with_name" in sys.argv:
 README = (pathlib.Path(__file__).parent / "readme.md").read_text()
 setup(
     name=pybliotecario_name,
-    version="2.0",
+    version="2.0.0",
     author="Scarlehoff",
     author_email="juacrumar@lairen.eu",
     url="https://github.com/scarlehoff/pybliotecario",
