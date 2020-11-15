@@ -7,7 +7,7 @@ pybliotecario is a simple messaging bot written in python.
 
 The goal of the program is to be as extensible as possible, both from the point of view of the possibilities it can offer
 (in the form of [components](https://github.com/scarlehoff/pybliotecario/tree/master/src/pybliotecario/components)) and
-the backends it can support (right now only Telegram).
+the backends it can support, which right now includes [Telegram and Facebook](https://github.com/scarlehoff/pybliotecario/tree/master/src/pybliotecario/backend)
 
 With this program one can effortlessly maintain an active connection between the computer in which it runs and your phone!
 
@@ -41,6 +41,7 @@ If you want to use a different name just modify the variable `pybliotecario_name
 A small `systemd_install.sh` script is included in the repository in order to daemonize it easily.
 
 ## How to connect the pybliotecario to Telegram
+The main backend for the pybliotecario is Telegram, although facebook can also be used (see [here](https://github.com/scarlehoff/pybliotecario/tree/master/src/pybliotecario/backend))
 In order to communicate with Telegram is necessary to request an API by talking with Telegram's BotFather bot.
 The `--init` option will guide you through the process.
 
