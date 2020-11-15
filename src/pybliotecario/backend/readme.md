@@ -18,12 +18,12 @@ Choose `Manage Business integration` (it includes the messaging API) and fill in
 In the dashboard of the app you just cread, you need to set up the messenger API.
 And here's where things start to get fun.
 First you will need to either create a Facebook Page to associate the bot with or associate one you already created.
-Once this association is performed you will have to create a Token and add a callback URL for your App, we will do that later.
+Once this association is performed you will have to create a Token and add a callback URL for your App.
+For the Token just generate it and make sure you copy it somewhere safe. We will use this later.
 
-The next step is to add the `messaging` and `messaging_postbacks` features to your App.
-These can be added in the Permissions and Features section.
-
-
+Now we need a webhook to comunicate with our app.
+For the purposes of this tutorial we will use ngrok so write here something along the lines of `https://123f2134t5.ngrok.io/webhook`.
+If you have your own server (with https!) you can use that instead.
 
 To start the process one has to create an app in the [facebook's developer page](https://developers.facebook.com/)
 it will have to be associated with a Facebook page (one would talk to the bot through the page messenger).
