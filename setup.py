@@ -35,6 +35,7 @@ setup(
         "arxiv",
         "pyowm",
         "psutil",
+        "yahoo-fin",
         "wikipedia",
     ],
     extras_require={"facebook": ["flask", "requests_toolbelt"]},
