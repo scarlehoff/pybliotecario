@@ -125,6 +125,8 @@ You can ask the pybliotecario at any point to send you a list of the available c
     /wiki_full N term: read the full article and return N times the defined summary_size
  > System component
     /system uptime: returns the uptime of the computer in which the bot lives
+ > Stocks component
+    /stock_price ticker: returns the current price for the given ticker
 ```
 
 
@@ -151,6 +153,7 @@ this will send the image named `test.img` to your defined Telegram chat
 - --check_repository: sends a msg to Telegram with the incoming changes to the repository
 - --my_ip: send the ip of the bot to the defined telegram user
 - --pid: Monitor a process by PID, run all other options after the process has finished.
+- --stock_watcher json.file: check information about stocks according to the definitions defined in the component [file](https://github.com/scarlehoff/pybliotecario/blob/master/src/pybliotecario/components/stocks.py)
 
 ## Some examples and ideas:
 For instance, you can run the pybliotecario every morning at 7:15 a.m. to tell you what are the news in the arxiv today adding a cronjob:
