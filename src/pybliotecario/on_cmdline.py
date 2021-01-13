@@ -46,6 +46,12 @@ def run_command(args, tele_api, config):
 
         actors.append(Arxiv)
 
+    if args.stock_watcher is not None:
+        # stock_watcher could be an empty list!
+        from pybliotecario.components.stocks import Stocks
+
+        actors.append(Stocks)
+
     for Actor in actors:
         actor_instance = Actor(tele_api, chat_id=chat_id, configuration=config)
         actor_instance.cmdline_command(args)

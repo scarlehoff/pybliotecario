@@ -32,6 +32,7 @@ def send_help(tele_api, chat_id):
         ("reactions", "Reactions"),
         ("wiki", "WikiComponent"),
         ("system", "System"),
+        ("stocks", "Stocks")
     ]
     full_help = []
     for module, cls in components:
@@ -64,6 +65,8 @@ def act_on_telegram_command(tele_api, message_obj, config):
         from pybliotecario.components.wiki import WikiComponent as Actor
     elif tg_command == "system":
         from pybliotecario.components.system import System as Actor
+    elif tg_command == "stock_price":
+        from pybliotecario.components.stocks import Stocks as Actor
     elif tg_command == "help":
         return send_help(tele_api, chat_id)
     else:

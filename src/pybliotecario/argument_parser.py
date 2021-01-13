@@ -219,4 +219,9 @@ def parse_args(args):
         help="Send to the default chat the current IP of the computer",
         action="store_true",
     )
+    parser_com.add_argument(
+        "--stock_watcher",
+        help="Looks at json file (can be given in config) to watch a number of stocks",
+        nargs="*"
+        )
     return parser.parse_args(args)
