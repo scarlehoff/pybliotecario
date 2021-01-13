@@ -110,7 +110,7 @@ class Stocks(Component):
 
 
 if __name__ == "__main__":
-    import tempfile
+    import tempfile, os
 
     json_example = {
         "AAPL": {"below": 140, "above": 110},
@@ -119,8 +119,8 @@ if __name__ == "__main__":
             "above": 200,
         },
     }
-    tmp = tempfile.mktemp()
-    with open(tmp, "w") as f:
+    fd, tmp = tempfile.mkstemp(suffix=".json", text=True)
+    with os.fdopen(fd, "w") as f:
         json.dump(json_example, f)
     msgs = check_stock(tmp)
     for i, msg in enumerate(msgs):
