@@ -36,6 +36,7 @@ setup(
         "pyowm",
         "psutil",
         "yahoo-fin",
+        "pandas", # used by yahoo-fin
         "wikipedia",
     ],
     extras_require={"facebook": ["flask", "requests_toolbelt"]},

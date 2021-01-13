@@ -12,7 +12,6 @@
 """
 import json
 import logging
-from dataclasses import dataclass
 from yahoo_fin import stock_info
 
 from pybliotecario.components.component_core import Component
@@ -20,33 +19,33 @@ from pybliotecario.components.component_core import Component
 logger = logging.getLogger(__name__)
 
 
-### All checks to be applied, take ticket name, current price and conditions dictionary
-def below(price, ticket, conditions):
+### All checks to be applied, take ticker name, current price and conditions dictionary
+def below(price, ticker, conditions):
     """ Check whether the price is below the threshold """
     thrs = conditions["below"]
     if price < thrs:
-        return f"{ticket} price is below the threshold: {price:.3f} < {thrs}"
+        return f"{ticker} price is below the threshold: {price:.3f} < {thrs}"
     return None
 
 
-def above(price, ticket, conditions):
+def above(price, ticker, conditions):
     """ Check whether the price is below the threshold """
     thrs = conditions["above"]
     if price > thrs:
-        return f"{ticket} price is above the threshold: {price:.3f} > {thrs}"
+        return f"{ticker} price is above the threshold: {price:.3f} > {thrs}"
     return None
 
 
 CHECKS = [below, above]
 
 
-def checking_conditions(price, ticket, conditions):
+def checking_conditions(price, ticker, conditions):
     """
     Check the price against the given conditions to decide on the msg to send (if any)
     """
     for check in CHECKS:
         if check.__name__ in conditions:
-            ret = check(price, ticket, conditions)
+            ret = check(price, ticker, conditions)
             if ret is not None:
                 # The first check that passes is sent
                 return ret
@@ -61,16 +60,16 @@ def check_stock(json_file):
     with open(json_file, "r") as f:
         information = json.load(f)
     results = []
-    for ticket, conditions in information.items():
+    for ticker, conditions in information.items():
         try:
-            current_price = stock_info.get_live_price(ticket)
-            ret = checking_conditions(current_price, ticket, conditions)
+            current_price = stock_info.get_live_price(ticker)
+            ret = checking_conditions(current_price, ticker, conditions)
             if ret is not None:
                 results.append(ret)
         except AssertionError:
-            logger.warning(f"Ticket {ticket} not found")
+            logger.warning(f"ticker {ticker} not found")
         except:  # yahoo-fin is not the most stable piece of software
-            logger.warning(f"There was a non-expected error with {ticket}")
+            logger.warning(f"There was a non-expected error with {ticker}")
     return results
 
 
@@ -78,7 +77,7 @@ class Stocks(Component):
 
     key_name = "STOCKS"
     help_text = """ > Stocks module
-    /stocks_value ticket: get the most recent information about the given ticket """
+    /stock_value ticker: get the most recent information about the given ticker """
 
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
@@ -99,19 +98,29 @@ class Stocks(Component):
                 for msg in msgs:
                     self.send_msg(msg)
 
+    def telegram_message(self, msg):
+        command = msg.command
+        ticker = msg.text.strip()
+        if command == "stock_price":
+            try:
+                pp = stock_info.get_live_price(ticker)
+                self.send_msg(f"{ticker} price: {pp:.3f}$")
+            except:  # yahoo-fin not very stable :(
+                self.send_msg(f"Unknown error trying to get information from {ticker}")
+
+
 if __name__ == "__main__":
     import tempfile
+
     json_example = {
-    "AAPL" : {
-        "below" : 140,
-        "above" : 110
-    },
-    "TSLA" : {
-        "below" : 1000,
-        "above" : 200,
-    }}
+        "AAPL": {"below": 140, "above": 110},
+        "TSLA": {
+            "below": 1000,
+            "above": 200,
+        },
+    }
     tmp = tempfile.mktemp()
-    with open(tmp, 'w') as f:
+    with open(tmp, "w") as f:
         json.dump(json_example, f)
     msgs = check_stock(tmp)
     for i, msg in enumerate(msgs):
