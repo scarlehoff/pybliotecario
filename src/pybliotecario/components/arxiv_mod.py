@@ -104,7 +104,7 @@ def arxiv_get_pdf(arxiv_id_raw):
     return file_name
 
 
-def arxiv_recent_filtered(categories, filter_dict, abstract=False):
+def arxiv_recent_filtered(categories, filter_dict, abstract=False, max_authors=50):
     """Read all recent papers in each categories and save the ones matching the
     requirements of filter_dict"""
     lines = []
@@ -115,7 +115,10 @@ def arxiv_recent_filtered(categories, filter_dict, abstract=False):
             len(tmp), category, len(results)
         )
         for paper in results:
-            authors = ", ".join(paper["authors"])
+            paper_authors = paper["authors"]
+            if len(paper_authors) > max_authors:
+                paper_authors = paper_authors[:max_authors] + ["et al"]
+            authors = ", ".join(paper_authors)
             title = paper["title"]
             arxiv_id = os.path.basename(paper["id"]).replace("v1", "")
             line += " > {2}: {0}\n     by {1}\n".format(title, authors, arxiv_id)
@@ -157,6 +160,7 @@ class Arxiv(Component):
         title = arxiv_config.get("title")
         abstract = arxiv_config.get("summary")
         authors = arxiv_config.get("authors")
+        self._max_authors = arxiv_config.get("max_authors", 20)
         self.filter_dict = {
             "title": self.split_list(title),
             "summary": self.split_list(abstract),
@@ -195,7 +199,7 @@ class Arxiv(Component):
         sends a notification if any of the entries fullfill any of
         the requirements set in the config file
         """
-        msg = arxiv_recent_filtered(self.categories, self.filter_dict)
+        msg = arxiv_recent_filtered(self.categories, self.filter_dict, max_authors=self._max_authors)
         self.send_msg(msg)
         log.info("Arxiv information sent")
 
@@ -211,13 +215,16 @@ class Arxiv(Component):
 
 
 if __name__ == "__main__":
+    from pybliotecario.pybliotecario import logger_setup
+    import tempfile
+    logger_setup(tempfile.TemporaryFile(), debug=True)
     log.info("Testing the arxiv component")
     log.info("Query a category")
-    category = "hep-ph"
-    recent_papers = query_recent(category)
+    categoria = "hep-ph"
+    recent_papers = query_recent(categoria)
     dict_search = {"title": ["Higgs"], "authors": ["Cruz-Martinez"], "summary": ["VBF"]}
     filter_papers = filter_results(recent_papers, dict_search)
-    tlg_msg = arxiv_recent_filtered([category], dict_search)
+    tlg_msg = arxiv_recent_filtered([categoria], dict_search)
     log.info(tlg_msg)
 
 #     log.info("Test download")
