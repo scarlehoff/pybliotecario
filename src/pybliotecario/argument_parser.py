@@ -3,11 +3,22 @@
 """
 import os
 import glob
+import pathlib
 import importlib
 import configparser
-from argparse import ArgumentParser, Action
+from argparse import ArgumentParser, Action, ArgumentTypeError
 
 CONFIG_FILE = "pybliotecario.ini"
+
+
+def validpath(value):
+    """ Check whether the received path is valid """
+    path = pathlib.Path(value)
+    if not path.exists():
+        raise ArgumentTypeError(f"The file '{value}' can't be found")
+    if path.is_dir():
+        raise ArgumentTypeError(f"'{value}' is a directory, only single files can be sent")
+    return path
 
 
 def write_config(config_dict, config_file, config_exists=False):
@@ -173,7 +184,7 @@ def parse_args(args):
     parser_cmd = parser.add_argument_group("Command line program")
     parser_cmd.add_argument("message", help="Message to send to Telegram", nargs="*")
     parser_cmd.add_argument("-i", "--image", help="Send image to Telegram")
-    parser_cmd.add_argument("-f", "--file", help="Send file to Telegram")
+    parser_cmd.add_argument("-f", "--file", help="Send file to Telegram", type=validpath)
 
     parser_dae = parser.add_argument_group("Pybliotecarion daemon")
     parser_dae.add_argument("-d", "--daemon", help="Activate the librarian", action="store_true")
