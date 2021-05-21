@@ -156,17 +156,17 @@ class Arxiv(Component):
 
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
-        arxiv_config = self.read_config_section("ARXIV")
-        title = arxiv_config.get("title")
-        abstract = arxiv_config.get("summary")
-        authors = arxiv_config.get("authors")
+        arxiv_config = self.read_config_section("ARXIV", telegram_error=False)
+        title = arxiv_config.get("title", "")
+        abstract = arxiv_config.get("summary", "")
+        authors = arxiv_config.get("authors", "")
         self._max_authors = arxiv_config.get("max_authors", 20)
         self.filter_dict = {
             "title": self.split_list(title),
             "summary": self.split_list(abstract),
             "authors": self.split_list(authors),
         }
-        self.categories = self.split_list(arxiv_config["categories"])
+        self.categories = self.split_list(arxiv_config.get("categories", ""))
 
     @classmethod
     def configure_me(cls):

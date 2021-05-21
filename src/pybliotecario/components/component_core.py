@@ -61,12 +61,14 @@ class Component:
         with open(default_config, "w") as f:
             self.configuration.write(f)
 
-    def read_config_section(self, section=None):
+    def read_config_section(self, section=None, telegram_error=True):
         """
         Checks whether section exists within the configuration file
         returns None if it doesn't
 
-        If the bot is running in daemon/receiving from Telegram mode, can't configure
+        If the bot is running in daemon/receiving from Telegram mode, can't configure.
+        By default, if the component is called from Telegram without being configured
+        it will send an error unless the argument `telegram_error` is set to False
         """
         if section is None:
             section = self.section_name
@@ -75,8 +77,9 @@ class Component:
             return section_dict
         except KeyError:
             if self.running_in_loop:
-                self.send_msg("Section {0} is not configured and will not work".format(section))
                 log.error("Section {0} is not configured, please run --init".format(section))
+                if telegram_error:
+                    self.send_msg("Section {0} is not configured and will not work".format(section))
                 return {}
             log.warning("There is no section {0} in configuration file".format(section))
             yesno = input(
