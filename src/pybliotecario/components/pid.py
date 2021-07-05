@@ -103,7 +103,7 @@ class ControllerPID(Component):
         if self.check_identity(msg):
             pid_string = msg.text.strip()
             if msg.command == "kill_pid":
-                if pid_string.isdigit:
+                if pid_string.isdigit():
                     return_msg = self.kill(int(pid_string))
                 else:
                     return_msg = "{0} is not a PID?".format(pid_string)
