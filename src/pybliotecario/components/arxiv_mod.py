@@ -6,22 +6,21 @@
 import os
 import time
 import logging
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 import arxiv
 from pybliotecario.components.component_core import Component
 
 log = logging.getLogger(__name__)
 
 
-def is_today(time_struct):
+def is_today(time_to_test):
     """
-    Checks whether the given time_struct corresponds to today
+    Checks whether the given time to test corresponds to today
     or to the previous day
     Remember, the previous day for arxiv purposes only starts at 19.00
     """
     # First we need to find out which day is today
-    today = datetime.now()
+    today = datetime.now(timezone.utc)
     wday = today.weekday()  # 0 == Monday
     base_hour = 18
 
@@ -32,26 +31,33 @@ def is_today(time_struct):
         base_today = today - timedelta(days=2)
     base_today = base_today.replace(hour=base_hour, minute=0, second=0, microsecond=0)
 
-    # Make the time struct into a datetime object
-    pdt = datetime.fromtimestamp(time.mktime(time_struct))
-
     # Now, if the paper date (pdt) is from before the base time (base_today), that means it is not from today
-    return pdt >= base_today
+    return time_to_test >= base_today
 
 
 def query_recent(category):
     """
     Query the arxiv for the updates of the last day for a given category
     """
-    update_key = "updated_parsed"
-    results = arxiv.query(query=category, max_results=75, sort_by="lastUpdatedDate")
+    results = arxiv.Search(
+        query=category, max_results=75, sort_by=arxiv.SortCriterion.LastUpdatedDate
+    ).results()
     indx = -1
+    elements = []
     for i, element in enumerate(results):
-        time_s = element[update_key]
+        time_s = element.updated
         if not is_today(time_s):
-            indx = i
             break
-    return results[:indx]
+        elements.append(element)
+    return elements
+
+
+def check_keyword(paper_value, keyword):
+    """Check whether the given keywords exists in the given paper value"""
+    if isinstance(paper_value, list):
+        return any([check_keyword(i, keyword) for i in paper_value])
+    str_value = str(paper_value)
+    return keyword.lower() in str_value.lower()
 
 
 def filter_results(result_list, filter_dictionary):
@@ -63,25 +69,19 @@ def filter_results(result_list, filter_dictionary):
     lista = []
     for paper in result_list:
         done = False
-        for key, item in filter_dictionary.items():
+        for key, keywords in filter_dictionary.items():
             if done:
                 break
-            val = paper[key]
-            for keyword in item:
-                if isinstance(val, str):
-                    if keyword.lower() in val.lower():
-                        lista.append(paper)
-                        done = True
-                        break
-                elif isinstance(val, list):
-                    if done:
-                        break
-                    for keyval in val:
-                        if keyword.lower() in keyval.lower():
-                            lista.append(paper)
-                            done = True
-                            break
-    # Ok, this might be very dangerous here
+            try:
+                val = getattr(paper, key)
+            except AttributeError:
+                log.error("Error trying to read key: %s", key)
+
+            for keyword in keywords:
+                if check_keyword(val, keyword):
+                    lista.append(paper)
+                    done = True
+                    break
     return lista
 
 
@@ -95,13 +95,11 @@ def url_to_id(arxiv_url):
 
 # Telegram-usable functions
 def arxiv_get_pdf(arxiv_id_raw):
-    """ Downloads a paper from the arxiv given an id """
+    """Downloads a paper from the arxiv given an id"""
     arxiv_id = url_to_id(arxiv_id_raw)
     # First we recover the information about the paper
-    paper = arxiv.query(id_list=[arxiv_id])[0]
-    # Now download the pdf (the download command only needs a dictionary with the pdf_url, but that is given by the query)
-    file_name = arxiv.download(paper, dirpath="/tmp/")
-    return file_name
+    paper = next(arxiv.Search(id_list=[arxiv_id]).results())
+    return paper.download_pdf("/tmp/")
 
 
 def arxiv_recent_filtered(categories, filter_dict, abstract=False, max_authors=50):
@@ -115,13 +113,13 @@ def arxiv_recent_filtered(categories, filter_dict, abstract=False, max_authors=5
             len(tmp), category, len(results)
         )
         for paper in results:
-            paper_authors = paper["authors"]
+            paper_authors = paper.authors
             if len(paper_authors) > max_authors:
                 paper_authors = paper_authors[:max_authors] + ["et al"]
-            authors = ", ".join(paper_authors)
-            title = paper["title"]
-            arxiv_id = os.path.basename(paper["id"]).replace("v1", "")
-            line += " > {2}: {0}\n     by {1}\n".format(title, authors, arxiv_id)
+            authors = ", ".join(str(i) for i in paper_authors)
+            title = paper.title
+            arxiv_id = paper.get_short_id().replace("v1", "")
+            line += f" > {title}: {title}\n     by {arxiv_id}\n"
             if abstract:
                 line += paper["summary"]
         lines.append(line)
@@ -133,18 +131,17 @@ def arxiv_query_info(arxiv_id_raw):
     Returns extra information about the queried paper
     """
     arxiv_id = url_to_id(arxiv_id_raw)
-    paper = arxiv.query(id_list=[arxiv_id])[0]
-    title = paper["title"]
-    authors = ", ".join(paper["authors"])
-    abstract = paper["summary"]
-    msg = """ > {0}
-Title: {1}
+    paper = next(arxiv.Search(id_list=[arxiv_id]).results())
+    title = paper.title
+    authors = [str(i) for i in paper.authors]
+    abstract = paper.summary.replace("\n", " ")
+    msg = f""" > {arxiv_id}
+Title: {paper.title}
 
-Authors: {2}
+Authors: {authors}
 
-Abstract: {3}""".format(
-        arxiv_id, title, authors, abstract
-    )
+Abstract: {abstract}
+    """
     return msg
 
 
@@ -199,7 +196,9 @@ class Arxiv(Component):
         sends a notification if any of the entries fullfill any of
         the requirements set in the config file
         """
-        msg = arxiv_recent_filtered(self.categories, self.filter_dict, max_authors=self._max_authors)
+        msg = arxiv_recent_filtered(
+            self.categories, self.filter_dict, max_authors=self._max_authors
+        )
         self.send_msg(msg)
         log.info("Arxiv information sent")
 
@@ -217,13 +216,19 @@ class Arxiv(Component):
 if __name__ == "__main__":
     from pybliotecario.pybliotecario import logger_setup
     import tempfile
+
     logger_setup(tempfile.TemporaryFile(), debug=True)
     log.info("Testing the arxiv component")
     log.info("Query a category")
     categoria = "hep-ph"
     recent_papers = query_recent(categoria)
-    dict_search = {"title": ["Higgs"], "authors": ["Cruz-Martinez"], "summary": ["VBF"]}
+    dict_search = {
+        "title": ["Higgs", "neutrinos"],
+        "authors": ["Cruz-Martinez"],
+        "summary": ["VBF"],
+    }
     filter_papers = filter_results(recent_papers, dict_search)
+    log.warning(filter_papers)
     tlg_msg = arxiv_recent_filtered([categoria], dict_search)
     log.info(tlg_msg)
 

@@ -10,7 +10,6 @@ import logging
 from pyowm import OWM
 from pybliotecario.components.component_core import Component
 
-logging.basicConfig()
 log = logging.getLogger(__name__)
 
 
@@ -120,7 +119,8 @@ class Weather(Component):
 
 
 if __name__ == "__main__":
-    log.setLevel(logging.DEBUG)
+    from pybliotecario.pybliotecario import logger_setup
+    logger_setup(tempfile.TemporaryFile(), debug=True)
     log.info("Testing weather")
     weather_api = "<weather API>"
     city = "Milano, IT"
