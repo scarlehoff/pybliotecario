@@ -205,6 +205,9 @@ class Arxiv(Component):
     def telegram_message(self, msg):
         command = msg.command
         arxiv_id = msg.text.strip()
+        if not arxiv_id:
+            self.send_msg("This commands needs an argument")
+            return
         if command in ("arxivget", "arxiv-get", "arxiv_get"):
             file_send = arxiv_get_pdf(arxiv_id)
             self.send_file(file_send, delete=True)
