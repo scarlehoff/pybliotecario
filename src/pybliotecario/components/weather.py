@@ -10,71 +10,66 @@ import logging
 from pyowm import OWM
 from pybliotecario.components.component_core import Component
 
+logging.basicConfig()
 log = logging.getLogger(__name__)
 
 
-def check_current_weather(self, location):
-    """ Checks the current weather at a specific location """
-    obs = self.weather_at_place(location)
-    weather = obs.get_weather()
+class MyOpenWeather:
+    """Wrapper to the pyowm 3 API"""
 
-    temp = weather.get_temperature(unit="celsius")["temp"]
-    stat = weather.get_detailed_status()
-    city = location.split(",")[0]
+    def __init__(self, weather_api, **kwargs):
+        owm = OWM(weather_api, **kwargs)
+        self._owm = owm
+        self._mgr = owm.weather_manager()
 
-    msg = "Right now we have {0} in {2}, the current temperature is {1}°C"
-    return msg.format(stat, temp, city)
+    def check_current_weather(self, location):
+        """Checks the current weather at a specific location"""
+        weather = self._mgr.weather_at_place(location).weather
 
+        temp = weather.temperature(unit="celsius")["temp"]
+        feels_like = weather.temperature(unit="celsius")["feels_like"]
+        stat = weather.detailed_status.lower()
+        humid = weather.humidity
+        city = location.split(",")[0]
 
-def get_forecast(self, location):
-    """ Gets the full forecast for a given location """
-    forecast = self.three_hours_forecast(location)
-    return forecast
-    # f = fc.get_forecast()
+        return f"""Right now we have {stat} in {city}
+the current temperature is {temp}°C (humidity={humid}%) and it feels like {feels_like}"""
 
+    def _get_forecast(self, location):
+        """Gets the full forecast for a given location"""
+        forecast = self._mgr.forecast_at_place(location, "3h")
+        return forecast.forecast
 
-# Telegram-usable wrapper
-def will_it_rain(self, location, hours=None):
-    """
-    Checks the forecast for rain today at the given times
-    """
-    if hours is None:
-        hours = ["10", "17"]
-    forecast = self.get_forecast(location)
-    rains = []
-    for hour in hours:
-        if check_for_rain_today_at(forecast, hour):
-            rains.append(hour)
-    if rains:
-        rain_times = ", ".join(rains)
-        msg = "I find rain at the following times: {0} ".format(rain_times)
-    else:
-        msg = "I can see no rain in my foreseeable future"
-    return msg
+    # Telegram-usable wrapper
+    def will_it_rain(self, location, hour_range=None):
+        """
+        Checks the forecast for rain today at the given time range
+        """
+        if hour_range is None:
+            hour_range = (0, 23)
+        now = datetime.now()
+        min_t = now.replace(hour=int(hour_range[0]))
+        max_t = now.replace(hour=int(hour_range[1]))
+        forecast = self._get_forecast(location)
+        # Loop over the weather we have
+        rain_h = []
+        rain_p = []
+        for weather in forecast:
+            if weather.precipitation_probability < 0.4:
+                continue
+            weather_time = datetime.fromtimestamp(weather.ref_time)
+            if weather_time < min_t or weather_time >= max_t:
+                continue
+            rain_h.append(weather_time.hour)
+            rain_p.append(int(weather.precipitation_probability * 100))
 
-
-def check_for_rain_today_at(forecast, hour):
-    """
-    Receives a forecast object
-    Returns true if rain is found at the given hour
-    """
-    now = datetime.now()
-    check = now.replace(hour=int(hour))
-    if check > now and forecast.will_be_rainy_at(check):
-        return True
-    else:
-        return False
-
-
-def open_weather_wrapper(api_key, **kwargs):
-    """
-    Extends OpenWeather main class to have an instance with the API key already defined
-    """
-    owm = OWM(api_key, **kwargs)
-    owm.check_current_weather = MethodType(check_current_weather, owm)
-    owm.get_forecast = MethodType(get_forecast, owm)
-    owm.will_it_rain = MethodType(will_it_rain, owm)
-    return owm
+        if rain_h:
+            rain_str = [f"{i}h ({j}%)" for i, j in zip(rain_h, rain_p)]
+            rain_times = ", ".join(rain_str)
+            msg = "I find possible rain at the following times: {0} ".format(rain_times)
+        else:
+            msg = "I can see no rain in my foreseeable future"
+        return msg
 
 
 class Weather(Component):
@@ -113,7 +108,7 @@ class Weather(Component):
 
     def cmdline_command(self, args):
         # instantiate open wather object
-        open_weather = open_weather_wrapper(self.api_key)
+        open_weather = MyOpenWeather(self.api_key)
         # ask whether it will rain in the future
         msg_rain = open_weather.will_it_rain(self.weather_location, self.check_times)
         # ask what is the current weather
@@ -125,12 +120,12 @@ class Weather(Component):
 
 
 if __name__ == "__main__":
+    log.setLevel(logging.DEBUG)
     log.info("Testing weather")
-    weather_api = "<weather api>"
+    weather_api = "<weather API>"
     city = "Milano, IT"
-    msg = will_it_rain(city, weather_api)
-    log.info("Check of the forecast")
-    log.info(msg)
-    log.info("Check current weather")
-    msg = check_current_weather(city, weather_api)
+    owm = MyOpenWeather(weather_api)
+    crw = owm.check_current_weather(city)
+    log.info(crw)
+    msg = owm.will_it_rain(city)
     log.info(msg)
