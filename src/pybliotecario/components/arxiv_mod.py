@@ -119,7 +119,7 @@ def arxiv_recent_filtered(categories, filter_dict, abstract=False, max_authors=5
             authors = ", ".join(str(i) for i in paper_authors)
             title = paper.title
             arxiv_id = paper.get_short_id().replace("v1", "")
-            line += f" > {title}: {title}\n     by {arxiv_id}\n"
+            line += f" > {title}: {authors}\n     by {arxiv_id}\n"
             if abstract:
                 line += paper["summary"]
         lines.append(line)
