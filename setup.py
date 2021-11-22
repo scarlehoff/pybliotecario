@@ -38,6 +38,7 @@ setup(
         "yahoo-fin",
         "pandas", # used by yahoo-fin
         "wikipedia",
+        "pygithub"
     ],
     extras_require={"facebook": ["flask", "requests_toolbelt"]},
     entry_points={

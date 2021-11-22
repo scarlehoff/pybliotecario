@@ -41,6 +41,11 @@ def run_command(args, tele_api, config):
 
         actors.append(Repository)
 
+    if args.check_github_issues:
+        from pybliotecario.components.github_component import Github
+
+        actors.append(Github)
+
     if args.arxiv_new:
         from pybliotecario.components.arxiv_mod import Arxiv
 
