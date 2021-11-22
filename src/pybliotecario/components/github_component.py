@@ -61,7 +61,8 @@ class Github(Component):
         since_datetime = datetime.datetime.now() - datetime.timedelta(hours=self._hours)
         all_issues = repo.get_issues(since=since_datetime)
         titles = [issue.title for issue in all_issues if issue.pull_request is None]
-        self.send_msg("\n".join(titles))
+        if titles:
+            self.send_msg("New github issues: \n" + "\n".join(titles))
 
     def cmdline_command(self, args):
         repository = args.check_github_issues
