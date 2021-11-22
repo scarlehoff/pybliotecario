@@ -62,7 +62,7 @@ class Github(Component):
         all_issues = repo.get_issues(since=since_datetime)
         titles = [issue.title for issue in all_issues if issue.pull_request is None]
         if titles:
-            self.send_msg("New github issues: \n" + "\n".join(titles))
+            self.send_msg(f"New github issues in {repo_name}: \n" + "\n".join(titles))
 
     def cmdline_command(self, args):
         repository = args.check_github_issues
