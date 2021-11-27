@@ -14,7 +14,7 @@ _TESTUSER = "hiro"
 
 
 class TestMessage(TelegramMessage):
-    """ Copy of the TelegramMessage class """
+    """Copy of the TelegramMessage class"""
 
     _type = "Test"
 
@@ -110,11 +110,11 @@ class TestUtil:
         return text
 
     def send_image(self, *args):
-        """ Writes the img_path to the comm file """
+        """Writes the img_path to the comm file"""
         return self.send_message(*args)
 
     def send_file(self, *args):
-        """ Writes the file_path to the comm file """
+        """Writes the file_path to the comm file"""
         return self.send_message(*args)
 
     # Auxiliary

@@ -16,7 +16,7 @@ REACTIONS = "reactions"
 
 
 def list_content_folder_as_str(folder):
-    """ List the stem of all the files of a folder as a str """
+    """List the stem of all the files of a folder as a str"""
     reaction_wild = "{0}/*".format(folder)
     reaction_content = glob.glob(reaction_wild)
     files_found = [pathlib.Path(i).stem for i in reaction_content]
@@ -53,13 +53,13 @@ class Reactions(Component):
         os.makedirs(self.reaction_folder, exist_ok=True)
 
     def list_reactions(self):
-        """ List the reaction pictures saved in the computer """
+        """List the reaction pictures saved in the computer"""
         files_str = list_content_folder_as_str(self.reaction_folder)
         out_msg = "Reaction pics: {0}".format(files_str)
         self.send_msg(out_msg)
 
     def save_reactions(self, msg):
-        """ Saves the raction within msg to the reaciton folder """
+        """Saves the raction within msg to the reaciton folder"""
         file_name = msg.text.replace(" ", "")
         file_path = "{0}/{1}".format(self.reaction_folder, file_name)
         file_id = msg.fileId

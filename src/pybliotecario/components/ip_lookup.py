@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 
 def ip_lookup():
-    """ Uses ident.me to find out the current ip of the host """
+    """Uses ident.me to find out the current ip of the host"""
     external_ip = urllib.request.urlopen("https://ident.me").read().decode("utf8")
     return external_ip
 
@@ -31,7 +31,7 @@ class IpLookup(Component):
         self.telegram.send_message(send_msg, msg.chat_id)
 
     def cmdline_command(self, args):
-        """ Sends the current ip to self.chatid """
+        """Sends the current ip to self.chatid"""
         # First look for the IP
         my_ip = ip_lookup()
         # Then append it to the text and send it to Telegram

@@ -45,7 +45,7 @@ class Message(ABC):
         return json.dumps(self._message_dict)
 
     def _parse_command(self, text):
-        """ Parse any msg starting with / """
+        """Parse any msg starting with /"""
         separate_command = text.split(" ", 1)
         # Remove the / from the command
         command = separate_command[0][1:]
@@ -62,52 +62,52 @@ class Message(ABC):
 
     @abstractmethod
     def _parse_update(self, update):
-        """ Parse the update and fill in _message_dict """
+        """Parse the update and fill in _message_dict"""
         return None
 
     @property
     def chat_id(self):
-        """ Returns the chat id """
+        """Returns the chat id"""
         return self._message_dict["chat_id"]
 
     @property
     def username(self):
-        """ Returns the username """
+        """Returns the username"""
         return self._message_dict["username"]
 
     @property
     def text(self):
-        """ Returns the content of the message """
+        """Returns the content of the message"""
         return self._message_dict.get("text")
 
     @property
     def is_command(self):
-        """ Returns true if the message is a command """
+        """Returns true if the message is a command"""
         return self._message_dict.get("command") is not None
 
     @property
     def command(self):
-        """ Returns the command contained in the message """
+        """Returns the command contained in the message"""
         return self._message_dict.get("command")
 
     @property
     def is_file(self):
-        """ Returns true if the message is a file """
+        """Returns true if the message is a file"""
         return self._message_dict.get("file_id") is not None
 
     @property
     def file_id(self):
-        """ Returns the id of the file """
+        """Returns the id of the file"""
         return self._message_dict.get("file_id")
 
     @property
     def has_arguments(self):
-        """ Returns true if the message is a command with arguments """
+        """Returns true if the message is a command with arguments"""
         return self.is_command and self.text is not None
 
     @property
     def ignore(self):
-        """ Returns true if the message is to be ignored """
+        """Returns true if the message is to be ignored"""
         return self._message_dict.get("ignore", False)
 
     @ignore.setter
@@ -136,11 +136,11 @@ class Backend(ABC):
 
     @abstractmethod
     def _get_updates(self, not_empty=False):
-        """ Retrieve updates """
+        """Retrieve updates"""
 
     @abstractmethod
     def send_message(self, text, chat, **kwargs):
-        """ Sends a message to the chat """
+        """Sends a message to the chat"""
 
     @abstractproperty
     def _message_class(self):
@@ -157,11 +157,11 @@ class Backend(ABC):
             action_function(msg)
 
     def send_image(self, img_path, chat):
-        """ Sends an image """
+        """Sends an image"""
         logger.error("This backend does not implement sending images")
 
     def send_file(self, filepath, chat):
-        """ Sends a file """
+        """Sends a file"""
         logger.error("This backend does not implement sending files")
 
     def download_file(self, file_id, file_name):

@@ -20,7 +20,7 @@ logger = logging.getLogger()
 
 
 def read_config(config_file=None):
-    """ Reads the pybliotecario config file and uploads the global configuration """
+    """Reads the pybliotecario config file and uploads the global configuration"""
     config_files = ["{0}/.{1}".format(os.environ.get("HOME"), CONFIG_FILE), CONFIG_FILE]
     if config_file is not None:
         config_files.append(config_file)

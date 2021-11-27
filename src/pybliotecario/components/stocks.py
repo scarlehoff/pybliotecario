@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 ### All checks to be applied, take ticker name, current price and conditions dictionary
 def below(price, ticker, conditions):
-    """ Check whether the price is below the threshold """
+    """Check whether the price is below the threshold"""
     thrs = conditions["below"]
     if price < thrs:
         return f"{ticker} price is below the threshold: {price:.3f} < {thrs}"
@@ -29,7 +29,7 @@ def below(price, ticker, conditions):
 
 
 def above(price, ticker, conditions):
-    """ Check whether the price is below the threshold """
+    """Check whether the price is below the threshold"""
     thrs = conditions["above"]
     if price > thrs:
         return f"{ticker} price is above the threshold: {price:.3f} > {thrs}"
