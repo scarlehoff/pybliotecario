@@ -154,12 +154,12 @@ class Component:
         self.telegram.send_message("Comand line argument invoked", self.chat_id)
 
     # Some useful wrappers
-    def send_msg(self, msg, chat_id=None):
+    def send_msg(self, msg, chat_id=None, markdown=False):
         """Wrapper around API send_msg, if chat_id is not defined
         it will use the chat_id this class was instantiated to"""
         if chat_id is None:
             chat_id = self.interaction_chat
-        return self.telegram.send_message(msg, chat_id)
+        return self.telegram.send_message(msg, chat_id, markdown=markdown)
 
     def send_img(self, imgpath, chat_id=None, delete=False):
         """Wrapper around API send_img, if chat_id is not defined

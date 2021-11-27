@@ -139,7 +139,7 @@ class Backend(ABC):
         """ Retrieve updates """
 
     @abstractmethod
-    def send_message(self, text, chat):
+    def send_message(self, text, chat, **kwargs):
         """ Sends a message to the chat """
 
     @abstractproperty

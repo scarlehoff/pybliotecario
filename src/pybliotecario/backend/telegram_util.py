@@ -189,10 +189,12 @@ class TelegramUtil(Backend):
         self.__re_offset(result)
         return result
 
-    def send_message(self, text, chat):
+    def send_message(self, text, chat, markdown = False, **kwargs):
         """ Send a message to a given chat """
         text = urllib.parse.quote_plus(text)
-        url = self.send_msg + "?text={}&chat_id={}".format(text, chat)
+        url = f"{self.send_msg}?text={text}&chat_id={chat}"
+        if markdown:
+            url += f"&parse_mode=markdown"
         self.__make_request(url)
 
     def send_image(self, img_path, chat):

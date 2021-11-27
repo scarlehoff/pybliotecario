@@ -67,9 +67,10 @@ class Github(Component):
             pr = ""
             if issue.pull_request is not None:
                 pr = "PR"
-            titles.append(f"    > {pr}#{issue.number}: {issue.title}")
+            url = f"https://github.com/{repo_name}/issues/{issue.number}"
+            titles.append(f"    > {pr}#{issue.number}: [{issue.title}]({url})")
         if titles:
-            self.send_msg(f"New github issues/PR in {repo_name}: \n" + "\n".join(titles))
+            self.send_msg(f"New github issues/PR in {repo_name}: \n" + "\n".join(titles), markdown=True)
 
     def cmdline_command(self, args):
         repository = args.check_github_issues
