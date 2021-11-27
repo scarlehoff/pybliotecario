@@ -98,7 +98,7 @@ class TestUtil:
             msg = TestMessage(update)
             action_function(msg)
 
-    def send_message(self, text, chat):
+    def send_message(self, text, chat, **keywords):
         """
         Sends a message to the communication_file this class has been
         instantiated with
