@@ -25,7 +25,7 @@ def read_config(config_file=None):
     if config_file is not None:
         config_files.append(config_file)
     config = configparser.ConfigParser()
-    config.read(config_files)
+    config.read(config_files, encoding="UTF-8")
     if config and config.defaults():
         return config
     print("Before using this program you need to run the --init option in order to configure it")
@@ -49,7 +49,7 @@ def logger_setup(filename, debug=False):
         error_handler.setLevel(logging.WARNING)
         logger.addHandler(error_handler)
         # Default handler
-        file_handler = logging.FileHandler(filename, "a")
+        file_handler = logging.FileHandler(filename, "a", encoding="UTF-8")
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
     logger.setLevel(logging.INFO)
