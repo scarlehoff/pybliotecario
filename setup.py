@@ -35,11 +35,12 @@ setup(
         "arxiv",
         "pyowm",
         "psutil",
-        "yahoo-fin",
-        "pandas", # used by yahoo-fin
         "wikipedia",
     ],
-    extras_require={"facebook": ["flask", "requests_toolbelt"]},
+    extras_require={
+            "facebook": ["flask", "requests_toolbelt"],
+            "stonks": ["yahoo-fin", "pandas"],
+            },
     entry_points={
         "console_scripts": [
             "{0} = pybliotecario.pybliotecario:main".format(pybliotecario_name),

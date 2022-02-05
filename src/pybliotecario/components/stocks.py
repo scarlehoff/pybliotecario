@@ -12,16 +12,23 @@
 """
 import json
 import logging
-from yahoo_fin import stock_info
 
 from pybliotecario.components.component_core import Component
 
 logger = logging.getLogger(__name__)
 
 
+def _get_live_price(ticker):
+    """Wrapper around stock_info.get_live_price to avoid
+    importing yahoo_fin if not explicitly called"""
+    from yahoo_fin import stock_info
+
+    return stock_info.get_live_price(ticker)
+
+
 ### All checks to be applied, take ticker name, current price and conditions dictionary
 def below(price, ticker, conditions):
-    """ Check whether the price is below the threshold """
+    """Check whether the price is below the threshold"""
     thrs = conditions["below"]
     if price < thrs:
         return f"{ticker} price is below the threshold: {price:.3f} < {thrs}"
@@ -29,7 +36,7 @@ def below(price, ticker, conditions):
 
 
 def above(price, ticker, conditions):
-    """ Check whether the price is below the threshold """
+    """Check whether the price is below the threshold"""
     thrs = conditions["above"]
     if price > thrs:
         return f"{ticker} price is above the threshold: {price:.3f} > {thrs}"
@@ -62,7 +69,7 @@ def check_stock(json_file):
     results = []
     for ticker, conditions in information.items():
         try:
-            current_price = stock_info.get_live_price(ticker)
+            current_price = _get_live_price(ticker)
             ret = checking_conditions(current_price, ticker, conditions)
             if ret is not None:
                 results.append(ret)
@@ -103,7 +110,7 @@ class Stocks(Component):
         ticker = msg.text.strip()
         if command == "stock_price":
             try:
-                pp = stock_info.get_live_price(ticker)
+                pp = _get_live_price(ticker)
                 self.send_msg(f"{ticker} price: {pp:.3f}$")
             except:  # yahoo-fin not very stable :(
                 self.send_msg(f"Unknown error trying to get information from {ticker}")
