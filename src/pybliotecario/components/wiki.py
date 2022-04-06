@@ -123,7 +123,7 @@ where N is the number of msgs of size {0} you want to receive""".format(
                 self.send_msg(response)
 
     def telegram_message(self, msg):
-        """ Digest the telegram msg """
+        """Digest the telegram msg"""
         command = msg.command
         if command == "wiki":
             self.read_summary(msg.text.strip())

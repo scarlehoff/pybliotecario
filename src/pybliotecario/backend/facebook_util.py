@@ -34,7 +34,7 @@ FB_API = "https://graph.facebook.com/v2.12/me/messages"
 
 
 class FacebookMessage(Message):
-    """ Facebook implementation of the Message class """
+    """Facebook implementation of the Message class"""
 
     _type = "facebook"
     _group_info = None
@@ -101,7 +101,7 @@ class FacebookUtil(Backend):
         """
 
     def listener(self):
-        """ Main function flask will use to listen at the webhook endpoint """
+        """Main function flask will use to listen at the webhook endpoint"""
         if request.method == "GET":
             if request.args.get("hub.verify_token") == self.verify_token:
                 return request.args.get("hub.challenge")
@@ -123,11 +123,11 @@ class FacebookUtil(Backend):
         self.flask_app.run(host=self.host, port=self.port, debug=self.debug)
 
     def _get_updates(self, not_empty=False):
-        """ This class skips get_updates and uses act_on_updates directly """
+        """This class skips get_updates and uses act_on_updates directly"""
         pass
 
     def send_message(self, text, chat):
-        """ Sends a message response to facebook """
+        """Sends a message response to facebook"""
         payload = {"message": {"text": text}, "recipient": {"id": chat}}
         response = requests.post(FB_API, params=self.auth, json=payload)
         return response.json()
@@ -170,7 +170,7 @@ class FacebookUtil(Backend):
         return self.send_data(payload)
 
     def send_file(self, filepath, chat):
-        """ Sends a file to fb, similar to send_image """
+        """Sends a file to fb, similar to send_image"""
         fff = pathlib.Path(filepath)
         payload = {
             "recipient": json.dumps({"id": chat}),

@@ -17,3 +17,7 @@ arxiv_categories = ['hep-ph']
 [SCRIPT]
 shell = False
 alias_script = /path/to/script
+
+[GITHUB]
+token = "<github token>"
+since_hours = 2

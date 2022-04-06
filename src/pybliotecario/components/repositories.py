@@ -20,7 +20,7 @@ re_git_msg = re.compile("(?<=Subject:).*(?=\n\n)")
 
 
 def mercurial_incoming():
-    """ Performs mercurial incoming and prettifies it """
+    """Performs mercurial incoming and prettifies it"""
     cmd = ["hg", "incoming"]
     cmd_ran = sp.run(cmd, stdout=sp.PIPE)
     out = cmd_ran.stdout
@@ -35,13 +35,13 @@ def mercurial_incoming():
 
 
 def mercurial_pull():
-    """ Performs mercurial pull """
+    """Performs mercurial pull"""
     cmd = ["hg", "pull"]
     sp.run(cmd)
 
 
 def git_incoming():
-    """ Performs a hg incoming-like function using git own methods"""
+    """Performs a hg incoming-like function using git own methods"""
     # TODO: use one of the git apis instead of this, but maybe this is the cleanest way to do it?
     cmd = ["git", "fetch"]
     sp.run(cmd)
@@ -61,13 +61,13 @@ def git_incoming():
 
 
 def git_pull():
-    """ Performs git pull """
+    """Performs git pull"""
     cmd = ["git", "pull", "-f"]
     sp.run(cmd)
 
 
 def repo_check_incoming(repo_path, max_log_n=4):
-    """ Wrapper around git incoming / hg incoming """
+    """Wrapper around git incoming / hg incoming"""
     os.chdir(repo_path)
     if os.path.isdir(".hg"):
         commits = mercurial_incoming()

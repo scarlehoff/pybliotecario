@@ -12,7 +12,7 @@ CONFIG_FILE = "pybliotecario.ini"
 
 
 def validpath(value):
-    """ Check whether the received path is valid """
+    """Check whether the received path is valid"""
     path = pathlib.Path(value)
     if not path.exists():
         raise ArgumentTypeError(f"The file '{value}' can't be found")
@@ -75,7 +75,7 @@ def config_module(module):
 
 
 def configure_telegram(main_folder):
-    """ Configure Telegram """
+    """Configure Telegram"""
     # Initialize the bot in telegram
     print(
         """Welcome to The Wizard!
@@ -171,7 +171,7 @@ have already been configured in this computer"""
 
 
 def parse_args(args):
-    """ Wrapper for ArgumentParser """
+    """Wrapper for ArgumentParser"""
     parser = ArgumentParser()
     parser.add_argument(
         "--init",
@@ -179,7 +179,12 @@ def parse_args(args):
         action=InitAction,
     )
     parser.add_argument("--config_file", help="Define a custom configuration file")
-    parser.add_argument("--backend", help="Choose backend: telegram (default), facebook", type=str, default="Telegram")
+    parser.add_argument(
+        "--backend",
+        help="Choose backend: telegram (default), facebook",
+        type=str,
+        default="Telegram",
+    )
 
     parser_cmd = parser.add_argument_group("Command line program")
     parser_cmd.add_argument("message", help="Message to send to Telegram", nargs="*")
@@ -219,6 +224,7 @@ def parse_args(args):
         "--check_repository",
         help="Sends a msg to telegram with the incoming information for the given repository",
     )
+    parser_com.add_argument("--check_github_issues", help="Get the latest github issues")
     parser_com.add_argument(
         "--pid",
         help="Monitor a PID and sends a message when the PID is finished",
@@ -233,6 +239,6 @@ def parse_args(args):
     parser_com.add_argument(
         "--stock_watcher",
         help="Looks at json file (can be given in config) to watch a number of stocks",
-        nargs="*"
-        )
+        nargs="*",
+    )
     return parser.parse_args(args)

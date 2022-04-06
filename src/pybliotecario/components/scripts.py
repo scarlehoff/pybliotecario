@@ -22,9 +22,6 @@ def _parse_cmd_args(text, shell=False):
     return script, args
 
 
-
-
-
 class Script(Component):
     """
     Run scripts in the remote system using subprocess.run
@@ -101,7 +98,7 @@ class Script(Component):
         return val
 
     def available_commands(self):
-        """ Sends a list with the available commands """
+        """Sends a list with the available commands"""
         msg_str = "Available commands: " + ", ".join(self.script_names)
         self.send_msg(msg_str)
 

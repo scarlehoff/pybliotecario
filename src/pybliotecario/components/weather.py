@@ -120,6 +120,7 @@ class Weather(Component):
 
 if __name__ == "__main__":
     from pybliotecario.pybliotecario import logger_setup
+
     logger_setup(tempfile.TemporaryFile(), debug=True)
     log.info("Testing weather")
     weather_api = "<weather API>"

@@ -32,7 +32,7 @@ def send_help(tele_api, chat_id):
         ("reactions", "Reactions"),
         ("wiki", "WikiComponent"),
         ("system", "System"),
-        ("stocks", "Stocks")
+        ("stocks", "Stocks"),
     ]
     full_help = []
     for module, cls in components:

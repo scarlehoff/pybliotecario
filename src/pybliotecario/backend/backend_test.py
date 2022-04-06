@@ -14,7 +14,7 @@ _TESTUSER = "hiro"
 
 
 class TestMessage(TelegramMessage):
-    """ Copy of the TelegramMessage class """
+    """Copy of the TelegramMessage class"""
 
     _type = "Test"
 
@@ -98,7 +98,7 @@ class TestUtil:
             msg = TestMessage(update)
             action_function(msg)
 
-    def send_message(self, text, chat):
+    def send_message(self, text, chat, **keywords):
         """
         Sends a message to the communication_file this class has been
         instantiated with
@@ -110,11 +110,11 @@ class TestUtil:
         return text
 
     def send_image(self, *args):
-        """ Writes the img_path to the comm file """
+        """Writes the img_path to the comm file"""
         return self.send_message(*args)
 
     def send_file(self, *args):
-        """ Writes the file_path to the comm file """
+        """Writes the file_path to the comm file"""
         return self.send_message(*args)
 
     # Auxiliary

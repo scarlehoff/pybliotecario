@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_process(pid):
-    """ Returns a process object for the given PID """
+    """Returns a process object for the given PID"""
     exists = psutil.pid_exists(pid)
     proc = None
     if exists:
@@ -30,7 +30,7 @@ def get_process(pid):
 
 
 def wait_for_it_until_finished(pids):
-    """ Receives a list of PIDs and wait for them """
+    """Receives a list of PIDs and wait for them"""
     processes = []
     for pid in pids:
         proc = get_process(pid)
@@ -67,7 +67,7 @@ def is_it_alive(data):
 
 
 def kill_pid(pid):
-    """ Kills the given pid """
+    """Kills the given pid"""
     process = get_process(pid)
     if process is not None:
         process.kill()
@@ -84,13 +84,13 @@ class ControllerPID(Component):
     /is_pid_alive pid/name_of_program: looks for the given pid or program to check whether it is still alive"""
 
     def cmdline_command(self, args):
-        """ Waits until the given PID(s) are finished """
+        """Waits until the given PID(s) are finished"""
         logger.info("Waiting for the given PIDs: %s", args.pid)
         wait_for_it_until_finished(args.pid)
 
     @staticmethod
     def kill(pid):
-        """ Kills the received PID """
+        """Kills the received PID"""
         return kill_pid(pid)
 
     @staticmethod

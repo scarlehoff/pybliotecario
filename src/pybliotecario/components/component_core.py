@@ -53,7 +53,7 @@ class Component:
         self.running_in_loop = running_in_loop
 
     def update_config(self):
-        """ Updates default ($HOME/.CONFIG_FILE) configuration file """
+        """Updates default ($HOME/.CONFIG_FILE) configuration file"""
         default_config = "{0}/.{1}".format(os.environ.get("HOME"), CONFIG_FILE)
         new_section = self.configure_me()
         for key, item in new_section.items():
@@ -96,12 +96,12 @@ class Component:
 
     @classmethod
     def whoamI(cls):
-        """ Name """
+        """Name"""
         return cls.__name__
 
     @classmethod
     def help_msg(cls):
-        """ Help msg to send to telegram """
+        """Help msg to send to telegram"""
         if cls.help_text:
             return cls.help_text
         else:
@@ -124,7 +124,7 @@ class Component:
         return list(filtered_str)
 
     def check_identity(self, msg):
-        """ Checks that the user asking is the correct one """
+        """Checks that the user asking is the correct one"""
         if int(self.chat_id) == int(msg.chat_id):
             return True
         else:
@@ -146,20 +146,20 @@ class Component:
         self.act_on_command()
 
     def act_on_message(self, content=None):
-        """ Acts on a received msg """
+        """Acts on a received msg"""
         self.telegram.send_message("Msg received", self.chat_id)
 
     def act_on_command(self, content=None):
-        """ Acts on a received command """
+        """Acts on a received command"""
         self.telegram.send_message("Comand line argument invoked", self.chat_id)
 
     # Some useful wrappers
-    def send_msg(self, msg, chat_id=None):
+    def send_msg(self, msg, chat_id=None, markdown=False):
         """Wrapper around API send_msg, if chat_id is not defined
         it will use the chat_id this class was instantiated to"""
         if chat_id is None:
             chat_id = self.interaction_chat
-        return self.telegram.send_message(msg, chat_id)
+        return self.telegram.send_message(msg, chat_id, markdown=markdown)
 
     def send_img(self, imgpath, chat_id=None, delete=False):
         """Wrapper around API send_img, if chat_id is not defined

@@ -19,13 +19,13 @@ IGNOREKEYS = set(["new_chat_participant", "left_chat_participant", "sticker", "g
 
 
 def log_request(status_code, reason, content):
-    """ Log the status of the send requests """
+    """Log the status of the send requests"""
     result = "Request sent, status code: {0} - {1}: {2}".format(status_code, reason, content)
     logger.info(result)
 
 
 class TelegramMessage(Message):
-    """ Telegram implementation of the Message class """
+    """Telegram implementation of the Message class"""
 
     _type = "Telegram"
     _group_info = None
@@ -93,7 +93,7 @@ class TelegramMessage(Message):
 
     @property
     def is_group(self):
-        """ Returns true if the message was from a group """
+        """Returns true if the message was from a group"""
         return self._group_info is not None
 
 
@@ -128,7 +128,7 @@ class TelegramUtil(Backend):
         return content
 
     def __get_json_from_url(self, url):
-        """ Return the json response of a given url """
+        """Return the json response of a given url"""
         content_response = self.__make_request(url)
         return json.loads(content_response)
 
@@ -189,14 +189,16 @@ class TelegramUtil(Backend):
         self.__re_offset(result)
         return result
 
-    def send_message(self, text, chat):
-        """ Send a message to a given chat """
+    def send_message(self, text, chat, markdown=False, **kwargs):
+        """Send a message to a given chat"""
         text = urllib.parse.quote_plus(text)
-        url = self.send_msg + "?text={}&chat_id={}".format(text, chat)
+        url = f"{self.send_msg}?text={text}&chat_id={chat}"
+        if markdown:
+            url += f"&parse_mode=markdown"
         self.__make_request(url)
 
     def send_image(self, img_path, chat):
-        """ Send an image to a given chat """
+        """Send an image to a given chat"""
         data = {"chat_id": chat}
         img = open(img_path, "rb")
         files = {"photo": ("picture.jpg", img)}  # Here, the ,"rb" thing
