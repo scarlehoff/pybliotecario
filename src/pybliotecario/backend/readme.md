@@ -1,13 +1,11 @@
 # Pybliotecario Backends
 
-There are some subtleties involved when implementing new backends.
-The main thing to take into account is that a new backend will require new API keys
-and, often, new ways to communicate with the remote server.
+Using different backend requires usually two things: API Keys and an API.
 
 ## Telegram backend
-For Telegram the process is quite simple and this program will guide you through the process
+For Telegram the process is quite simple, `pybliotecario` will guide you through the process
 of contacting the [botfather](https://t.me/botfather) and getting an API key.
-The `--init` option will guide you through the process.
+The `--init` option will start the guide.
 
 ```
 pybliotecario --init
@@ -17,43 +15,17 @@ pybliotecario --init
 The facebook backend configuration is a bit more involved, since we need to set up a server that will be communicating with facebook.
 This is done in the pybliotecario with `flask`.
 
-The first step is to create an app in the [facebook's developer page](https://developers.facebook.com/),
-for this example we can create an app called `pybliotec_libro`.
-At the time of writing (13/11/2020) one has to log in, go to `My Apps` and click on `Create App`.
-Choose `Manage Business integration` (it includes the messaging API) and fill in the details.
+The first step is to create an app in the [facebook's developer page](https://developers.facebook.com/).
+The process has changed several times in the past, the guide below has been last updated the 6th of April of 2022.
 
-In the dashboard of the app you just created, you need to set up the messenger API.
-And here's where things start to get fun.
-First you will need to either create a Facebook Page to associate the bot with or associate one you already created.
-Once this association is performed you will have to create a Token and add a callback URL for your App.
-For the Token just generate it and make sure you copy it somewhere safe. We will use this later.
+There's also a guide on how to [set up a facebook app](https://developers.facebook.com/docs/messenger-platform/getting-started/app-setup)
+to use the messenger platform (for which it is necessary also to create a [facebook page](https://www.facebook.com/pages/create)).
 
-Before continuing we need to set up the server for our app (since we need to verify the callback URL when we set it up).
-Since the server needs to communicate with Facebook through a SSL-secured connection, a good option for this is [ngrok](https://ngrok.com/).
-Since the default pybliotecario setup for facebook is set up to the port 3000, ensure it is accessible from outside
-(for instance `iptables -A INPUT -p tcp --dport 3000  -j ACCEPT`) and then fire up `ngrok` and the pybliotecario.
+The main steps are summarized here in case the guides change address in the future:
 
-```bash
-ngrok http <my ip or server>:3000
-pybliotecario --debug -d -b facebook
-```
-
-Now paste the app TOKEN you generated previously in the `pybliotecario.ini` and make up a verification token (I'll use `SuzumiyaHaruhi`):
-```config
-[FACEBOOK]
-app_token = <your token>
-verify = SuzumiyaHaruhi
-```
-
-Now go back to the point we were in the Facebook Developer page and add a new callback url, `Add Callback URL`.
-You will need to fill in two fields, `Callback URL` should be the https address provided by ngrok followed by webhook:
-for instance `https://123f2134t5.ngrok.io/webhook`.
-`Verify Token` should be `SuzumiyaHaruhi`.
-
-If everything is done correctly, the webhook should now be validated.
-Only one step is left to start using it.
-In the webhook you just created, now there is the `Add Subscriptions` buttons,
-ensure that both `messages` and `messaging_postbacks` are ticked.
+1. Find `PRODUCTS` in the app settings and add a new one for `messenger`.
+2. Then you need to associate the app you just created with the page. The idea is that this bot will be the bot of the created page.
+3. In the `messenger` settings, add the callback URL of the weebhook and enter the verify token. Ensure that the webhook has `messages` and `messaging_postbacks` active as `subscription fields`.
 
 If everything has been done correctly, try to open a conversation with the page you just created!
 You should receive the messages in the terminal you opened the pybliotecario before (that's why we used the --debug option!).
@@ -73,3 +45,44 @@ chat_id = <long number you just copied>
 ```
 
 And you are ready to go!
+
+In order to verify the callback URL we need to have a server active.
+`pybliotecario` offers a facility for that, in our `pybliotecario.ini` we can start filling up the `facebook` section with the verification key:
+
+```ini
+[FACEBOOK]
+verify = SuzumiyaHaruhi
+```
+
+And then we can start the facebook backend: `pybliotecario --debug -d -b facebook`.
+Now we can add a callback URL. Since facebook requires SSL a very easy option is to use ngrok.io, which will basically create a reverse proxy.
+For instance if we are using port 3000 (the default for flask in `pybliotecario`) we can do:
+
+```bash
+sudo iptables -A INPUT -p tcp --dport 3000 -j ACCEPT # or the equivalent in your router
+ngrok http <my ip or server>:3000
+```
+
+This is already enough to receive messages but at the moment the bot cannot interact with anyone.
+
+4. Create a token (`Generate token`) and copy it to `pybliotecario.ini`
+
+```ini
+[FACEBOOK]
+app_token = <my very long token>
+```
+
+5. In order to interact with people you need to be approved by Facebook. Since the `pybliotecario` is intended for personal usage (and I didn't want to bother with Facebook approval) we just add the users that we want to use the App in `Roles`. To check what our user ID is the easiest thing is to simply send a message to the `pybliotecario --debug` (i.e., with our user in facebook to the message box in the page we created), in the console we should see a field called `chat_id` with a very long number in it. We can copy it and add it to the `.ini` file:
+
+```ini
+[FACEBOOK]
+app_token = <my very long token>
+user_id = 1919191919191919
+```
+
+Great! Now we have everything we need.
+Test that the messages that you send using the `facebook` backend are indeed arriving to your user in facebook.
+
+```bash
+pybliotecario --backend facebook "Hello, again, friend of a friend"
+```

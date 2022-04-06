@@ -25,6 +25,7 @@ _HAS_FLASK = True
 try:
     from flask import Flask, request
 except ModuleNotFoundError:
+    # Don't raise the error until this is not actually used
     _HAS_FLASK = False
 
 
@@ -80,7 +81,7 @@ class FacebookUtil(Backend):
 
     def __init__(self, PAGE_TOKEN, VERIFY_TOKEN, host="0.0.0.0", port=3000, debug=False):
         if not _HAS_FLASK:
-            # Do the error now
+            # Raise the error now
             raise ModuleNotFoundError("No module named 'flask'")
 
         self.page_access_token = PAGE_TOKEN
