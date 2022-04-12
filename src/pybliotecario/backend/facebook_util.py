@@ -127,7 +127,7 @@ class FacebookUtil(Backend):
         """This class skips get_updates and uses act_on_updates directly"""
         pass
 
-    def send_message(self, text, chat):
+    def send_message(self, text, chat, **kwargs):
         """Sends a message response to facebook"""
         payload = {"message": {"text": text}, "recipient": {"id": chat}}
         response = requests.post(FB_API, params=self.auth, json=payload)
