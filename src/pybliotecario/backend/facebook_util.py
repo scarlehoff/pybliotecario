@@ -32,6 +32,7 @@ except ModuleNotFoundError:
 logger = logging.getLogger(__name__)
 
 FB_API = "https://graph.facebook.com/v2.12/me/messages"
+MAX_SIZE = 2000
 
 
 class FacebookMessage(Message):
@@ -78,6 +79,7 @@ class FacebookUtil(Backend):
     Telegram"""
 
     _message_class = FacebookMessage
+    _max_size = MAX_SIZE
 
     def __init__(self, PAGE_TOKEN, VERIFY_TOKEN, host="0.0.0.0", port=3000, debug=False):
         if not _HAS_FLASK:
@@ -128,9 +130,14 @@ class FacebookUtil(Backend):
         pass
 
     def send_message(self, text, chat, **kwargs):
-        """Sends a message response to facebook"""
-        payload = {"message": {"text": text}, "recipient": {"id": chat}}
+        """Sends a message response to facebook
+        If the message is greater than MAX_SIZE characters it gets broken into several msgs
+        """
+        break_char = self._break_msg(text)
+        payload = {"message": {"text": text[:break_char]}, "recipient": {"id": chat}}
         response = requests.post(FB_API, params=self.auth, json=payload)
+        if len(text) > break_char:
+            return self.send_message(text[break_char:], chat, **kwargs)
         return response.json()
 
     def send_data(self, payload):

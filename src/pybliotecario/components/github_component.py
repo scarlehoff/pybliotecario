@@ -5,7 +5,7 @@
     https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
     and follow the instructions
 """
-import datetime 
+import datetime
 import github as pygithub
 
 from pybliotecario.components.component_core import Component
@@ -75,7 +75,8 @@ class Github(Component):
             titles.append(f"    > {pr}#{issue.number}: [{issue.title}]({url})")
         if titles:
             self.send_msg(
-                f"New github issues/PR in {repo_name}: \n" + "\n".join(titles), markdown=True
+                f"New github issues/PR in {repo_name}: \n" + "\n".join(titles),
+                markdown=True,
             )
 
     def cmdline_command(self, args):
