@@ -38,6 +38,34 @@ def _prepare_tweet_list(list_of_tweets):
     return "\n-\n".join(all_tweets)
 
 
+def _parse_tl_command(command_data):
+    """Parase the command data from a TL
+    This can be:
+        @user N
+        N @user
+        @user
+        N
+
+    Returns
+    -------
+        user: username
+        N: number of tweets to retrieve
+    """
+    if "@" in command_data:
+        data = command_data.split()
+        # If there are extra stuff we don't care
+        if len(data) < 2:
+            return data[0], None
+        if data[0].startswith("@"):
+            username = data[0][1:]
+            N = data[1]
+        else:
+            username = data[1][1:]
+            N = data[0]
+        return username, N
+    return None, command_data
+
+
 class TwitterComponent(Component):
     """
     Interact with twitter
@@ -45,7 +73,7 @@ class TwitterComponent(Component):
 
     help_text = """
     > Twitter module
-    /twitter_tl [N=20]: send the last N tweets from the TL
+    /twitter_tl [@user] [N=20]: send the last N tweets from the TL [of user @user]
     /twitter_mentions [N=5]: send the last N mentions
     /twitter_tweet <text>: send a tweet
     """
@@ -66,6 +94,12 @@ class TwitterComponent(Component):
             n = 20
         return _prepare_tweet_list(self._api.home_timeline(count=n))
 
+    def _get_timeline_from_user(self, user, n=None):
+        """Send the last ``n`` tweets from @user"""
+        if n is None:
+            n = 10
+        return _prepare_tweet_list(self._api.user_timeline(screen_name=user, count=n))
+
     def _get_mentions(self, n=None):
         """Send the last ``n`` mentions of the user"""
         if n is None:
@@ -83,13 +117,17 @@ class TwitterComponent(Component):
     def telegram_message(self, msg):
         """Digest the telegram msg"""
         command = msg.command
-        n = msg.text.strip()
+        data = msg.text.strip()
         if command == "twitter_tl":
-            msg = self._get_timeline(n)
+            user, n = _parse_tl_command(data)
+            if user is None:
+                response = self._get_timeline(n)
+            else:
+                response = self._get_timeline_from_user(user, n)
         elif command == "twitter_mentions":
-            msg = self._get_mentions(n)
+            response = self._get_mentions(data)
         elif command == "twitter_tweet":
-            msg = self._send_tweet(msg.text)
+            response = self._send_tweet(data)
         else:
-            msg = "Command not recognized"
-        self.send_msg(msg)
+            response = "Command not recognized"
+        self.send_msg(response)
