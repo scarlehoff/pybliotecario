@@ -127,6 +127,11 @@ You can ask the pybliotecario at any point to send you a list of the available c
     /system uptime: returns the uptime of the computer in which the bot lives
  > Stocks component
     /stock_price ticker: returns the current price for the given ticker
+ > Twitter component:
+    /twitter_tl [@user] [N=20]: send the last N tweets from the TL [of user @user]
+    /twitter_mentions [N=5]: send the last N mentions
+    /twitter_tweet <text>: send a tweet
+
 ```
 
 
