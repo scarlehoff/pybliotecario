@@ -190,7 +190,7 @@ def parse_args(args):
     parser_cmd.add_argument("message", help="Message to send to Telegram", nargs="*")
     parser_cmd.add_argument("-i", "--image", help="Send image to Telegram")
     parser_cmd.add_argument("-f", "--file", help="Send file to Telegram", type=validpath)
-    parser_cmd.add_argument("--chat_id", help="Chat id to send the message to")
+    parser_cmd.add_argument("--chat_id", help="Chat id to send the message to", default='')
 
     parser_dae = parser.add_argument_group("Pybliotecarion daemon")
     parser_dae.add_argument("-d", "--daemon", help="Activate the librarian", action="store_true")
