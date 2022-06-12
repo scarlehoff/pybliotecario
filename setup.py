@@ -36,7 +36,8 @@ setup(
         "pyowm",
         "psutil",
         "wikipedia",
-        "pygithub"
+        "pygithub",
+        "tweepy"
     ],
     extras_require={
             "facebook": ["flask", "requests_toolbelt"],
