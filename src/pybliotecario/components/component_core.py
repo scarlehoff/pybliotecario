@@ -125,10 +125,10 @@ class Component:
 
     def check_identity(self, msg):
         """Checks that the user asking is the correct one"""
-        if int(self.chat_id) == int(msg.chat_id):
+        accepted_ids = [int(i) for i in self.chat_id.split(',')]
+        if int(msg.chat_id) in accepted_ids:
             return True
-        else:
-            return False
+        return False
 
     def telegram_message(self, msg):
         """Recevies a `msg` object and then
