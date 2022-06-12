@@ -14,10 +14,16 @@ With this program one can effortlessly maintain an active connection between the
 ## Installing the pybliotecario
 
 The pybliotecario program is in [pip](https://pypi.org/project/pybliotecario/)
-and can be installed with:
+and the base program can be installed with:
 
 ```bash
 pip install pybliotecario
+```
+
+If you want to install all dependencies for [all components](https://github.com/scarlehoff/pybliotecario/blob/master/setup.py#L17) do
+
+```bash
+pip install pybliotecario[full]
 ```
 
 You can also install it using the development version:
