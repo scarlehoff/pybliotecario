@@ -1,5 +1,16 @@
 """
     Module to interact with twitter
+
+    In order to use this module, create a new application in the [twitter developers portal](https://developer.twitter.com/)
+    and fill in `.pybliotecarion.ini` the keys requested by `_authenticate`:
+
+    ```ini
+    [TWITTER]
+    access_token = <acces_token>
+    access_token_secret = <access_token_secret>
+    consumer_key = <consumer_key>
+    consumer_secret = <consumer_secret>
+    ```
 """
 import logging
 
