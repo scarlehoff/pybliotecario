@@ -42,8 +42,9 @@ def query_recent(category):
     results = arxiv.Search(
         query=category, max_results=75, sort_by=arxiv.SortCriterion.LastUpdatedDate
     ).results()
+    indx = -1
     elements = []
-    for _, element in enumerate(results):
+    for i, element in enumerate(results):
         time_s = element.updated
         if not is_today(time_s):
             break
@@ -148,7 +149,7 @@ class Arxiv(Component):
 
     help_text = """ > Arxiv module
     /arxiv arxiv_id: sends information about the given id
-    /arxiv_get arxiv_id: sends the PDF for the given id"""
+    /arxiv_get arxiv_id: sends the PDF for the given id """
 
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)

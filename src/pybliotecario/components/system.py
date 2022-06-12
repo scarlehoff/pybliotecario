@@ -23,7 +23,8 @@ ACCEPTED_COMMANDS = {"uptime": "uptime"}
 
 class System(Component):
     help_text = """ > System component
-    /system uptime: returns the uptime of the computer in which the bot lives"""
+    /system uptime: returns the uptime of the computer in which the bot lives
+    """
 
     def __init__(self, telegram_object, **kwargs):
         super().__init__(telegram_object, **kwargs)

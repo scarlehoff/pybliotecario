@@ -5,6 +5,7 @@
 
 import pathlib
 from datetime import datetime
+import numpy as np
 
 from pybliotecario.backend.telegram_util import TelegramMessage
 
@@ -19,9 +20,6 @@ class TestMessage(TelegramMessage):
 
 
 def _create_fake_msg(text):
-    """Create fake messages for testing"""
-    import numpy as np
-
     ret = {
         "update_id": np.random.randint(1000),
         "message": {
