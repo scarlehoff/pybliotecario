@@ -41,4 +41,4 @@ def test_msg_roll(tmpfile):
     results = re.findall(r"(?<==\s)\d*", messages)
     assert 0 < int(results[0]) < 21
     assert 7 < int(results[1]) < 85
-    assert -1 < int(results[2]) < 29
+    assert -1 < int(results[2]) < 31
