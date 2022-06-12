@@ -19,6 +19,8 @@ def run_command(args, tele_api, config):
     Receives the whole batch of arguments and acts accordingly
     """
     chat_id = config["DEFAULT"]["chat_id"]
+    if args.chat_id is not None:
+        chat_id = args.chat_id
     actors = []
 
     if args.my_ip:
