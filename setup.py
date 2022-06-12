@@ -22,6 +22,7 @@ target_dependencies = {
     "wiki": ["wikipedia"],
     "github": ["pygithub"],
     "twitter": ["tweepy"],
+    "tests": ["numpy"]
 }
 
 # Create a special target for full
@@ -42,9 +43,7 @@ setup(
     package_dir={"": "src"},
     packages=find_packages("src"),
     install_requires=[
-        "numpy",
         "requests",
-        "regex",
         "psutil",
     ],
     extras_require=target_dependencies,
