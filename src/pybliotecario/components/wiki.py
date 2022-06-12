@@ -4,12 +4,12 @@
 
 # TODO use the selected language
 
-import regex
+import re
 import wikipedia
 from pybliotecario.components.component_core import Component
 
 # log = logging.getLogger(__name__)
-GET_N = regex.compile(r"^\d+")
+GET_N = re.compile(r"^\d+")
 MAX_SIZE = 4000
 WIKI_NAME = "WIKIPEDIA"
 DEFAULT_LANGUAGE = "EN"
@@ -22,8 +22,7 @@ class WikiComponent(Component):
 
     help_text = """ > Wikipedia module
     /wiki term: search for term in wikipedia, return the summary
-    /wiki_full N term: read the full article and return N times the defined summary_size
-    """
+    /wiki_full N term: read the full article and return N times the defined summary_size"""
 
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)

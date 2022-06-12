@@ -86,8 +86,7 @@ class TwitterComponent(Component):
     > Twitter module
     /twitter_tl [@user] [N=20]: send the last N tweets from the TL [of user @user]
     /twitter_mentions [N=5]: send the last N mentions
-    /twitter_tweet <text>: send a tweet
-    """
+    /twitter_tweet <text>: send a tweet"""
 
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
