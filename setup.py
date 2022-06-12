@@ -14,6 +14,19 @@ if "--with_name" in sys.argv:
     # Remove it from the list of argument, nobody should know
     sys.argv.remove("--with_name")
 
+target_dependencies = {
+    "facebook": ["flask", "requests_toolbelt"],
+    "stonks": ["yahoo-fin", "pandas"],
+    "arxiv": ["arxiv"],
+    "weather": ["pyowm"],
+    "wiki": ["wikipedia"],
+    "github": ["pygithub"],
+    "twitter": ["tweepy"],
+}
+
+# Create a special target for full
+target_dependencies["full"] = set().union(*target_dependencies.values())
+
 # Readup the readme
 README = (pathlib.Path(__file__).parent / "readme.md").read_text()
 setup(
@@ -32,17 +45,9 @@ setup(
         "numpy",
         "requests",
         "regex",
-        "arxiv",
-        "pyowm",
         "psutil",
-        "wikipedia",
-        "pygithub",
-        "tweepy"
     ],
-    extras_require={
-            "facebook": ["flask", "requests_toolbelt"],
-            "stonks": ["yahoo-fin", "pandas"],
-            },
+    extras_require=target_dependencies,
     entry_points={
         "console_scripts": [
             "{0} = pybliotecario.pybliotecario:main".format(pybliotecario_name),

@@ -116,7 +116,10 @@ def main(cmdline_arg=None, tele_api=None, config=None):
             if chat_id is not None:
                 config.set("DEFAULT", "chat_id", chat_id)
 
-    on_cmdline.run_command(args, tele_api, config)
+    try:
+        on_cmdline.run_command(args, tele_api, config)
+    except ModuleNotFoundError as e:
+        logger.error("In order to use this option you need to install the module '%s'", e.name)
 
     if args.daemon:
         logger.info("Activating main loop")
