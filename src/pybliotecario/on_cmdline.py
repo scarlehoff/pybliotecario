@@ -18,7 +18,17 @@ def run_command(args, tele_api, config):
     """
     Receives the whole batch of arguments and acts accordingly
     """
-    chat_id = config["DEFAULT"]["chat_id"]
+    chat_id = args.chat_id
+    if not chat_id.isnumeric():
+        # If the id is not numeric maybe is an alias that we have
+        try:
+            chat_id = config["ALIAS"][chat_id]
+        except KeyError:
+            chat_id = ''
+    # If after everything, chat_id is still empty:
+    if not chat_id:
+        chat_id = config["DEFAULT"]["chat_id"]
+
     actors = []
 
     if args.my_ip:

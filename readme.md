@@ -157,8 +157,9 @@ this will send the image named `test.img` to your defined Telegram chat
 ### Available cmd_line options:
 
 - msg: sends msg to Telegram
-- -i: sends a image to Telegram
-- -f: sends a file to Telegram
+- -i: sends a image to Telegram (or other backend)
+- -f: sends a file to Telegram (or other backend)
+- --chat_id: target a specific chat ID (e.g.: `~$ pybliotecario "test" --chat_id 12312` will send the msg "test" to 12312 instead of the`chat_id` defined in the `.ini` file.
 - --arxiv_new: sends a msg to Telegram with the latest submissions to arxiv, filtered as you see fit (uses https://github.com/lukasschwab/arxiv.py as API)
 - --weather: sends a msg to Telegram with the current weather and some information about the forecast (uses https://github.com/csparpa/pyowm as OpenWeatherMap API, which needs an API key)
 - --check_repository: sends a msg to Telegram with the incoming changes to the repository
