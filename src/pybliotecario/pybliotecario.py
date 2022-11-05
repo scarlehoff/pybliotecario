@@ -76,23 +76,22 @@ def main(cmdline_arg=None, tele_api=None, config=None):
     # Parse the configuration file
     if config is None:
         config = read_config(args.config_file)
-
-    defaults = config.defaults()
-    main_folder = defaults.get("main_folder")
-    if not main_folder:
-        logger.warning(
-            "No 'default:main_folder' option set in %s, using /tmp/",
-            args.config_file,
-        )
-        main_folder = "/tmp/"
-    logger_setup(main_folder + "/info.log", debug=args.debug)
+        defaults = config.defaults()
+        main_folder = defaults.get("main_folder")
+        if not main_folder:
+            logger.warning(
+                "No 'default:main_folder' option set in %s, using /tmp/",
+                args.config_file,
+            )
+            main_folder = "/tmp/"
+        logger_setup(main_folder + "/info.log", debug=args.debug)
 
     logger.info("Initializing the pybliotecario")
 
     # Check the backend the pybliotecario should be using
     if tele_api is None:
         if args.backend.lower() == "telegram":
-            api_token = defaults.get("token")
+            api_token = config.defaults().get("token")
             if not api_token:
                 logger.error(
                     "No 'default:token' option set in %s, run --init option",
