@@ -70,6 +70,7 @@ def main_loop(tele_api, config=None, clear=False):
     main_folder = config["DEFAULT"]["main_folder"]
 
     except_counter = 0
+
     # Generate the function to act on Messages
     def act_on_message(message):
         """This function receives a pybliotecario.Message and

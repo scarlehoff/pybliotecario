@@ -28,7 +28,6 @@ except ModuleNotFoundError:
     # Don't raise the error until this is not actually used
     _HAS_FLASK = False
 
-
 logger = logging.getLogger(__name__)
 
 FB_API = "https://graph.facebook.com/v2.12/me/messages"

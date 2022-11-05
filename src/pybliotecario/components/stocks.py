@@ -81,7 +81,6 @@ def check_stock(json_file):
 
 
 class Stocks(Component):
-
     key_name = "STOCKS"
     help_text = """ > Stocks module
     /stock_value ticker: get the most recent information about the given ticker """
@@ -131,4 +130,4 @@ if __name__ == "__main__":
         json.dump(json_example, f)
     msgs = check_stock(tmp)
     for i, msg in enumerate(msgs):
-        print(f"Message #{i+1}: {msg}")
+        print(f"Message #{i + 1}: {msg}")

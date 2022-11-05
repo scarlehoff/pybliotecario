@@ -145,7 +145,6 @@ Abstract: {abstract}
 
 
 class Arxiv(Component):
-
     help_text = """ > Arxiv module
     /arxiv arxiv_id: sends information about the given id
     /arxiv_get arxiv_id: sends the PDF for the given id"""

@@ -15,7 +15,6 @@ from pybliotecario.core_loop import main_loop
 from pybliotecario.argument_parser import parse_args, CONFIG_FILE
 import pybliotecario.on_cmdline as on_cmdline
 
-
 logger = logging.getLogger()
 
 

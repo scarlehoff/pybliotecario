@@ -24,7 +24,7 @@ def run_command(args, tele_api, config):
         try:
             chat_id = config["ALIAS"][chat_id]
         except KeyError:
-            chat_id = ''
+            chat_id = ""
     # If after everything, chat_id is still empty:
     if not chat_id:
         chat_id = config["DEFAULT"]["chat_id"]

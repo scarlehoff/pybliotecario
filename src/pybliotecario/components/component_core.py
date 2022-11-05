@@ -125,7 +125,7 @@ class Component:
 
     def check_identity(self, msg):
         """Checks that the user asking is the correct one"""
-        accepted_ids = [int(i) for i in self.chat_id.split(',')]
+        accepted_ids = [int(i) for i in self.chat_id.split(",")]
         if int(msg.chat_id) in accepted_ids:
             return True
         return False

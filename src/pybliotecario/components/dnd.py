@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 re_pm = re.compile(r"\+|-")
 re_mod = re.compile(r"[+-]\d+")
 
+
 # TODO: write a syntax checker for the diceroll command
 
 

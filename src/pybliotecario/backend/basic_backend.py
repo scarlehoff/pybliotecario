@@ -133,6 +133,7 @@ class Backend(ABC):
         - download_file
 
     """
+
     _max_size = 99999
 
     @abstractmethod
@@ -154,10 +155,10 @@ class Backend(ABC):
         """
         if len(msg) < self._max_size:
             return self._max_size
-        available_msg = msg[:self._max_size]
+        available_msg = msg[: self._max_size]
         for break_char in ["\n", " "]:
             last_break = available_msg.rindex(break_char)
-            if last_break > int(self._max_size/2):
+            if last_break > int(self._max_size / 2):
                 return last_break
         return self._max_size
 
