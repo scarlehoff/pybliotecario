@@ -5,7 +5,6 @@
 """
 
 from datetime import datetime
-from types import MethodType
 import logging
 from pyowm import OWM
 from pybliotecario.components.component_core import Component
@@ -106,7 +105,7 @@ class Weather(Component):
         return dict_out
 
     def cmdline_command(self, args):
-        # instantiate open wather object
+        # instantiate open weather object
         open_weather = MyOpenWeather(self.api_key)
         # ask whether it will rain in the future
         msg_rain = open_weather.will_it_rain(self.weather_location, self.check_times)
@@ -120,6 +119,7 @@ class Weather(Component):
 
 if __name__ == "__main__":
     from pybliotecario.pybliotecario import logger_setup
+    import tempfile
 
     logger_setup(tempfile.TemporaryFile(), debug=True)
     log.info("Testing weather")

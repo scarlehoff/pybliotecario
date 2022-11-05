@@ -52,13 +52,13 @@ class TestUtil:
     """
     The test utility tries to behave as other backend would
 
-    It provides _get_updates / send_message just as any other backend
+    It provides _get_updates / send_message just as any other backend,
     but it writes/reads the update from a communication file.
 
     If fake_msgs are given, it will read the messages from those instead
     of from the communication_file
     Likewise, if a communication_file is not given, it will return the message
-    instead of writting it down
+    instead of writing it down
 
     Parameters
     ----------
@@ -87,7 +87,7 @@ class TestUtil:
         elif self.comm_file:
             msgs = self.comm_file.read_text().split("\n")
         else:
-            msgs = ["This is onyl a test", "Another one"]
+            msgs = ["This is only a test", "Another one"]
         return [_create_fake_msg(i) for i in msgs]
 
     def act_on_updates(self, action_function, not_empty=False):

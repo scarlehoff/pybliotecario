@@ -16,7 +16,7 @@ The facebook backend configuration is a bit more involved, since we need to set 
 This is done in the pybliotecario with `flask`.
 
 The first step is to create an app in the [facebook's developer page](https://developers.facebook.com/).
-The process has changed several times in the past, the guide below has been last updated the 6th of April of 2022.
+The process has changed several times in the past, the guide below has been last updated the 6th of April 2022.
 
 There's also a guide on how to [set up a facebook app](https://developers.facebook.com/docs/messenger-platform/getting-started/app-setup)
 to use the messenger platform (for which it is necessary also to create a [facebook page](https://www.facebook.com/pages/create)).
@@ -25,7 +25,7 @@ The main steps are summarized here in case the guides change address in the futu
 
 1. Find `PRODUCTS` in the app settings and add a new one for `messenger`.
 2. Then you need to associate the app you just created with the page. The idea is that this bot will be the bot of the created page.
-3. In the `messenger` settings, add the callback URL of the weebhook and enter the verify token. Ensure that the webhook has `messages` and `messaging_postbacks` active as `subscription fields`.
+3. In the `messenger` settings, add the callback URL of the weebhook and enter the verification token. Ensure that the webhook has `messages` and `messaging_postbacks` active as `subscription fields`.
 
 If everything has been done correctly, try to open a conversation with the page you just created!
 You should receive the messages in the terminal you opened the pybliotecario before (that's why we used the --debug option!).
@@ -34,7 +34,7 @@ You should receive the messages in the terminal you opened the pybliotecario bef
 One of the nice features of the pybliotecario is to set up automatic communications with your telegram account.
 For telegram there was an automatic fill in for the user id.
 Eventually I will do the same for facebook, but since this is a bit more of a niche user, for now it has to be done manually.
-Luckily it quite easy to do, just send a message from the user you want to set as default.
+Luckily it is quite easy to do, just send a message from the user you want to set as default.
 Among the many different fields, there will be the `chat_id` field, which will be a long number.
 
 ```config

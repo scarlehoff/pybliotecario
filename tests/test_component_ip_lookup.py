@@ -10,7 +10,7 @@ from .conftest import generate_fake_config
 
 def test_cmdline_usage(tmpfile):
     """Tests that upon --my_ip
-    the pybliotecario does sent the ip
+    the pybliotecario does send the ip
     """
     test_util = TestUtil(communication_file=tmpfile)
     args = ["--my_ip"]

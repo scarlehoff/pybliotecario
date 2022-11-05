@@ -76,7 +76,7 @@ def main_loop(tele_api, config=None, clear=False):
         """This function receives a pybliotecario.Message and
         an actor object and calls act_on_telegram_command as required"""
         # Check whether the message should be ignored
-        try:  # Wrap everything on a try-except block wich will not crash if clear=True
+        try:  # Wrap everything on a try-except block which will not crash if clear=True
             if message.ignore:
                 except_counter = 0
                 return

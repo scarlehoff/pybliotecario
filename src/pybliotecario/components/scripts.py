@@ -1,5 +1,5 @@
 """
-    Module to run scripts from Telegrma by calling custom commands
+    Module to run scripts from Telegram by calling custom commands
     For instant, good_morning will call the command defined in
     /script good_morning will call the command defined in [SCRIPTS] good_morning
 """
@@ -24,10 +24,10 @@ def _parse_cmd_args(text, shell=False):
 
 class Script(Component):
     """
-    Run scripts in the remote system using subprocess.run
+    Run scripts in the remote system using `subprocess.run`
 
-    This is a security-critical feature of the pybliotecario so you should
-    be very careful on how you use it. By default only the `chat_id` accepted
+    This is a security-critical feature of the pybliotecario, so you should
+    be very careful on how you use it. By default, only the `chat_id` accepted
     chat is able to run scripts in order to avoid any person to run scripts in your server.
 
     In order to add scripts that you want to run to the pybliotecario you have

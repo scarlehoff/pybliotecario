@@ -39,7 +39,7 @@ class Reactions(Component):
     which will be stored in the folder .pybliotecario/reactions/blabla.png
     and then two options:
         /reaction blabla (which would return the blabla.png image
-    and /reaction-list (which would list all files in the reactions folder)
+    and /reaction-list (which would list all files in the reactions' folder)
     """
 
     help_text = """ > Reactions module
@@ -59,7 +59,7 @@ class Reactions(Component):
         self.send_msg(out_msg)
 
     def save_reactions(self, msg):
-        """Saves the raction within msg to the reaciton folder"""
+        """Saves the reaction within msg to the reaction folder"""
         file_name = msg.text.replace(" ", "")
         file_path = "{0}/{1}".format(self.reaction_folder, file_name)
         file_id = msg.fileId

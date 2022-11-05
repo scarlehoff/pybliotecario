@@ -1,10 +1,8 @@
 """
     Module implementing some functions useful for playing DnD over the internet
 """
-import os
 import re
 import logging
-import subprocess as sp
 from random import randint
 from pybliotecario.components.component_core import Component
 
@@ -29,7 +27,7 @@ def parse_roll(text):
     # Now get all the modifiers (if any)
     nindex = re_pm.search(modifiers)
     if nindex:
-        mod = modifiers[nindex.start() :]
+        mod = modifiers[nindex.start():]
         dice = text.partition(mod)[0]
     else:
         mod = ""

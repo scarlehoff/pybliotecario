@@ -75,6 +75,8 @@ def repo_check_incoming(repo_path, max_log_n=4):
     elif os.path.isdir(".git"):
         commits = git_incoming()
         git_pull()
+    else:
+        return "Repository type not understood!"
 
     n_commits = len(commits)
     repo_name = os.path.basename(repo_path)

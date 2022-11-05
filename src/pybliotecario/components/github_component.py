@@ -1,5 +1,5 @@
 """
-    Wrapper around the Github API
+    Wrapper around the GitHub API
 
     To get an API key go to 
     https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 class Github(Component):
     """
-    Checks what has happend in the given repository
+    Checks what has happened in the given repository
     """
 
     key_name = "GITHUB"

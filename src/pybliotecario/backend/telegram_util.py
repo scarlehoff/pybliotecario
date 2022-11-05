@@ -1,8 +1,8 @@
+#!/usr/bin/env python3
 """
     Telegram backend
 """
 
-#!/usr/bin/env python3
 import json
 import os.path
 import urllib
@@ -15,7 +15,7 @@ TELEGRAM_URL = "https://api.telegram.org/"
 logger = logging.getLogger(__name__)
 
 # Keys included in telegram chats that basically are telling you to ignore it
-IGNOREKEYS = set(["new_chat_participant", "left_chat_participant", "sticker", "game", "contact"])
+IGNOREKEYS = {"new_chat_participant", "left_chat_participant", "sticker", "game", "contact"}
 
 
 def log_request(status_code, reason, content):
@@ -74,7 +74,7 @@ class TelegramMessage(Message):
             if not text.endswith((".jpg", ".JPG", ".png", ".PNG")):
                 text += ".jpg"
         elif "document" in message:
-            # If it is a document, teleram gives you everything you need
+            # If it is a document, telegram gives you everything you need
             file_dict = message["document"]
             self._message_dict["file_id"] = file_dict["file_id"]
             text = file_dict["file_name"]
@@ -98,7 +98,7 @@ class TelegramMessage(Message):
 
 
 class TelegramUtil(Backend):
-    """This class handles all comunications with
+    """This class handles all communications with
     Telegram"""
 
     _message_class = TelegramMessage
@@ -201,7 +201,7 @@ class TelegramUtil(Backend):
         """Send an image to a given chat"""
         data = {"chat_id": chat}
         img = open(img_path, "rb")
-        files = {"photo": ("picture.jpg", img)}  # Here, the ,"rb" thing
+        files = {"photo": ("picture.jpg", img)}  # Here, the "rb" thing
         blabla = requests.post(self.send_img, data=data, files=files)
         log_request(blabla.status_code, blabla.reason, blabla.content)
 
@@ -241,6 +241,7 @@ if __name__ == "__main__":
     logger.info("Testing TelegramUtil")
     token = "must put a token here to test"
     ut = TelegramUtil(token, debug=True)
+    # noinspection PyProtectedMember
     results = ut._get_updates()
     for res in results:
         logger.info("Complete json:")
@@ -251,4 +252,5 @@ if __name__ == "__main__":
         logger.info("Message from %s: %s", chat_id, txt)
         ut.send_message("Message received", chat_id)
     ut.timeout = 1
+    # noinspection PyProtectedMember
     ut._get_updates()  # Use the offset to confirm updates

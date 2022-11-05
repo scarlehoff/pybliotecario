@@ -1,8 +1,9 @@
 """
     Module to interact with twitter
 
-    In order to use this module, create a new application in the [twitter developers portal](https://developer.twitter.com/)
-    and fill in `.pybliotecarion.ini` the keys requested by `_authenticate`:
+    In order to use this module, create a new application in the
+    [twitter developers portal](https://developer.twitter.com/)
+    and fill in `.pybliotecario.ini` the keys requested by `_authenticate`:
 
     ```ini
     [TWITTER]
@@ -23,7 +24,7 @@ COMP_NAME = "TWITTER"
 
 
 def _authenticate(config):
-    """Authenticate an user using a consumer key and consumer secret"""
+    """Authenticate a user using a consumer key and consumer secret"""
     at = config["access_token"]
     ats = config["access_token_secret"]
     ck = config["consumer_key"]
@@ -42,7 +43,7 @@ def _parse_tweet(tweet):
 
 
 def _prepare_tweet_list(list_of_tweets):
-    """Make a list of tweets into a string that can be send"""
+    """Make a list of tweets into a string that can be sent"""
     all_tweets = []
     for tweet in list_of_tweets:
         all_tweets.append(_parse_tweet(tweet))
@@ -50,7 +51,7 @@ def _prepare_tweet_list(list_of_tweets):
 
 
 def _parse_tl_command(command_data):
-    """Parase the command data from a TL
+    """Parse the command data from a TL
     This can be:
         @user N
         N @user
@@ -119,7 +120,7 @@ class TwitterComponent(Component):
     def _send_tweet(self, tweet_msg):
         """Sends tweet_msg as a tweet"""
         if len(tweet_msg) > 280:
-            self.send_msg("The tweet is too long! Please limite yourself to 280 characters!")
+            self.send_msg("The tweet is too long! Please limit yourself to 280 characters!")
             return
         self._api.update_status(tweet_msg)
         return "tweet sent"

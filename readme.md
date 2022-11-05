@@ -41,7 +41,7 @@ with your hostname (capitalized) as executable name.
 python3 setup.py install --with_name
 ```
 
-That way, for instance, if you computer is called `glados` you can invoke the program with `~$ Glados`.
+That way, for instance, if your computer is called `glados` you can invoke the program with `~$ Glados`.
 If you want to use a different name just modify the variable `pybliotecario_name` inside `setup.py`.
 
 A small `systemd_install.sh` script is included in the repository in order to daemonize it easily.
@@ -157,9 +157,9 @@ this will send the image named `test.img` to your defined Telegram chat
 ### Available cmd_line options:
 
 - msg: sends msg to Telegram
-- -i: sends a image to Telegram (or other backend)
+- -i: sends an image to Telegram (or other backend)
 - -f: sends a file to Telegram (or other backend)
-- --chat_id: target a specific chat ID (e.g.: `~$ pybliotecario "test" --chat_id 12312` will send the msg "test" to 12312 instead of the`chat_id` defined in the `.ini` file.
+- --chat_id: target a specific chat ID (e.g.: `~$ pybliotecario "test" --chat_id 12312` will send the msg "test" to 12312 instead of the`chat_id` defined in the `.ini` file).
 - --arxiv_new: sends a msg to Telegram with the latest submissions to arxiv, filtered as you see fit (uses https://github.com/lukasschwab/arxiv.py as API)
 - --weather: sends a msg to Telegram with the current weather and some information about the forecast (uses https://github.com/csparpa/pyowm as OpenWeatherMap API, which needs an API key)
 - --check_repository: sends a msg to Telegram with the incoming changes to the repository
@@ -174,4 +174,4 @@ For instance, you can run the pybliotecario every morning at 7:15 a.m. to tell y
 
 ## Contributing
 If you have any new ideas for enhancements or have noticed any bugs, feel free to open an issue or a Pull Request :)
-This is a toy-project I am maintaining but I will do my best to help.
+This is a toy-project I am maintaining, but I will do my best to help.

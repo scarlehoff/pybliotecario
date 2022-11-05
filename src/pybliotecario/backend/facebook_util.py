@@ -6,7 +6,7 @@
     Testing this backend is a bit of a pain as one has to be in a server
     which facebook should be able to access with a valid SSL certificate.
 
-    For quick testing, I am using hthe following setup:
+    For quick testing, I am using the following setup:
     ~$ iptables -A INPUT -p tcp --dport 3000  -j ACCEPT
     ~$ ngrok http <my_personal_server>:3000
 
@@ -35,7 +35,7 @@ MAX_SIZE = 2000
 
 
 class FacebookMessage(Message):
-    """Facebook implementation of the Message class"""
+    """Facebook implementation's of the Message class"""
 
     _type = "facebook"
     _group_info = None
@@ -74,7 +74,7 @@ class FacebookMessage(Message):
 
 
 class FacebookUtil(Backend):
-    """This class handles all comunications with
+    """This class handles all communications with
     Telegram"""
 
     _message_class = FacebookMessage

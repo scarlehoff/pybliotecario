@@ -91,7 +91,7 @@ class WikiComponent(Component):
 
     def read_msg_fullpage(self, msg):
         """Breaks the msg = "N term to search for" into
-        a N (number) and the term to search for (string)
+        N (number) and the term to search for (string)
         """
         reg_n = GET_N.search(msg)
         if reg_n is None:
@@ -118,7 +118,7 @@ where N is the number of msgs of size {0} you want to receive""".format(
             total_length = len(whole_page)
             final_length = min(total_length, n_msg * self.summary_size)
             for char in range(0, final_length, self.summary_size):
-                response = whole_page[char : char + self.summary_size]
+                response = whole_page[char: char + self.summary_size]
                 self.send_msg(response)
 
     def telegram_message(self, msg):

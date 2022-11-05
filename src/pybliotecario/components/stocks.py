@@ -68,6 +68,7 @@ def check_stock(json_file):
         information = json.load(f)
     results = []
     for ticker, conditions in information.items():
+        # noinspection PyPep8
         try:
             current_price = _get_live_price(ticker)
             ret = checking_conditions(current_price, ticker, conditions)
@@ -108,6 +109,7 @@ class Stocks(Component):
         command = msg.command
         ticker = msg.text.strip()
         if command == "stock_price":
+            # noinspection PyPep8
             try:
                 pp = _get_live_price(ticker)
                 self.send_msg(f"{ticker} price: {pp:.3f}$")
@@ -116,7 +118,8 @@ class Stocks(Component):
 
 
 if __name__ == "__main__":
-    import tempfile, os
+    import tempfile
+    import os
 
     json_example = {
         "AAPL": {"below": 140, "above": 110},

@@ -4,7 +4,6 @@
 """
 
 import os
-import time
 import logging
 from datetime import datetime, timedelta, timezone
 import arxiv
@@ -52,7 +51,7 @@ def query_recent(category):
 
 
 def check_keyword(paper_value, keyword):
-    """Check whether the given keywords exists in the given paper value"""
+    """Check whether the given keywords exist in the given paper value"""
     if isinstance(paper_value, list):
         return any([check_keyword(i, keyword) for i in paper_value])
     str_value = str(paper_value)
@@ -75,6 +74,7 @@ def filter_results(result_list, filter_dictionary):
                 val = getattr(paper, key)
             except AttributeError:
                 log.error("Error trying to read key: %s", key)
+                continue
 
             for keyword in keywords:
                 if check_keyword(val, keyword):
@@ -102,7 +102,7 @@ def arxiv_get_pdf(arxiv_id_raw):
 
 
 def arxiv_recent_filtered(categories, filter_dict, abstract=False, max_authors=50):
-    """Read all recent papers in each categories and save the ones matching the
+    """Read all recent papers in each category and save the ones matching the
     requirements of filter_dict"""
     lines = []
     for category in categories:
@@ -190,8 +190,8 @@ class Arxiv(Component):
 
     def cmdline_command(self, args):
         """
-        Reads the latests arrivals to the arxiv and
-        sends a notification if any of the entries fullfill any of
+        Reads the latest arrivals to the arxiv and
+        sends a notification if any of the entries fulfill any of
         the requirements set in the config file
         """
         msg = arxiv_recent_filtered(

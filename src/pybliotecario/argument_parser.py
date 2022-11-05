@@ -91,7 +91,7 @@ If you don't know how to get one, read here: https://core.telegram.org/bots#6-bo
         all_updates = teleAPI.get_updates(not_empty=True)
         from pybliotecario.backend.telegram_util import TelegramMessage
 
-        update = Message(all_updates[0])
+        update = TelegramMessage(all_updates[0])
         print("Message received: {0}".format(update.text))
         yn = input("Was this your msg? [y/n] ")
         if yn.lower() in ("y", "s"):
@@ -131,7 +131,7 @@ class InitAction(Action):
     This class performs the initialization.
 
     Everything is only imported exactly where it is needed because that way
-    also serves a a sort of documentation? I think. It looks instructive...
+    also serves as a sort of documentation? I think. It looks instructive...
     """
 
     def __init__(self, nargs=0, **kwargs):
@@ -151,7 +151,7 @@ class InitAction(Action):
         config_file = home + "/." + CONFIG_FILE
         # Check whether a config file already exists
         config_exists = os.path.isfile(config_file)
-        # If it does you might not want to reconfigure Telegram, so let's ask
+        # If it does, you might not want to reconfigure Telegram, so let's ask
         initialize = True
         if config_exists:
             print(
@@ -192,7 +192,7 @@ def parse_args(args):
     parser_cmd.add_argument("-f", "--file", help="Send file to Telegram", type=validpath)
     parser_cmd.add_argument("--chat_id", help="Chat id to send the message to", default="")
 
-    parser_dae = parser.add_argument_group("Pybliotecarion daemon")
+    parser_dae = parser.add_argument_group("Pybliotecario daemon")
     parser_dae.add_argument("-d", "--daemon", help="Activate the librarian", action="store_true")
     parser_dae.add_argument(
         "--debug",

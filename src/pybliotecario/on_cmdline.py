@@ -2,7 +2,7 @@
     This module contains a mapping between the command line arguments
     and the components which run them.
 
-    Note that the components are only imported when/if the appropiate command is invoked
+    Note that the components are only imported when/if the appropriate command is invoked
     This is a design choice as this way it is not necessary to have all dependencies
     if you want to run only some submodules of the pybliotecario.
 

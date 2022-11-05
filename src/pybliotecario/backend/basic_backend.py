@@ -7,7 +7,7 @@
     Each backend should implement its own message type and inherit from backend
 """
 
-from abc import ABC, abstractmethod, abstractproperty
+from abc import ABC, abstractmethod
 import logging
 import urllib
 import json
@@ -117,7 +117,7 @@ class Message(ABC):
 
 class Backend(ABC):
     """
-    Main backend class for inheritting.
+    Main backend class for inheriting.
 
     It provides a number of base functions and wrappers
 
@@ -144,7 +144,8 @@ class Backend(ABC):
     def send_message(self, text, chat, **kwargs):
         """Sends a message to the chat"""
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def _message_class(self):
         pass
 

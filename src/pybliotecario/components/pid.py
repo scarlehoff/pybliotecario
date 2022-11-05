@@ -109,6 +109,8 @@ class ControllerPID(Component):
                     return_msg = "{0} is not a PID?".format(pid_string)
             elif msg.command == "is_pid_alive":
                 return_msg = self.alive(pid_string)
+            else:
+                return_msg = f"Command {msg.command} not understood?"
         else:
             return_msg = "You are not allowed to use this"
         self.send_msg(return_msg)

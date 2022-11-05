@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-    Main script for the pybliotecairo program
-    for command line invokation
+    Main script for the pybliotecario program
+    for command line invocation
 """
 import configparser
 import logging
@@ -76,15 +76,16 @@ def main(cmdline_arg=None, tele_api=None, config=None):
     # Parse the configuration file
     if config is None:
         config = read_config(args.config_file)
-        defaults = config.defaults()
-        main_folder = defaults.get("main_folder")
-        if not main_folder:
-            logger.warning(
-                "No 'default:main_folder' option set in %s, using /tmp/",
-                args.config_file,
-            )
-            main_folder = "/tmp/"
-        logger_setup(main_folder + "/info.log", debug=args.debug)
+
+    defaults = config.defaults()
+    main_folder = defaults.get("main_folder")
+    if not main_folder:
+        logger.warning(
+            "No 'default:main_folder' option set in %s, using /tmp/",
+            args.config_file,
+        )
+        main_folder = "/tmp/"
+    logger_setup(main_folder + "/info.log", debug=args.debug)
 
     logger.info("Initializing the pybliotecario")
 

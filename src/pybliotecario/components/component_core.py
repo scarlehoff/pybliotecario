@@ -27,7 +27,7 @@ class Component:
     Instantiate the class requires a messeger object able to talk with the telegram API
     optionally it can receive a configuration object and a chat_id object.
     In general chat_id will be contained already in the configuration
-    however we want to be able to comunicate with chats not included in the comunication,
+    however we want to be able to communicate with chats not included in the communication,
     that's why it is left as a separate option
     """
 
@@ -131,7 +131,7 @@ class Component:
         return False
 
     def telegram_message(self, msg):
-        """Recevies a `msg` object and then
+        """Receives a `msg` object and then
         decides what to do with it.
         The `msg` object includes the Telegram command"""
         self.act_on_message(msg.text.strip())
@@ -151,7 +151,7 @@ class Component:
 
     def act_on_command(self, content=None):
         """Acts on a received command"""
-        self.telegram.send_message("Comand line argument invoked", self.chat_id)
+        self.telegram.send_message("Command line argument invoked", self.chat_id)
 
     # Some useful wrappers
     def send_msg(self, msg, chat_id=None, markdown=False):
