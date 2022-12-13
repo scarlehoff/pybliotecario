@@ -71,8 +71,6 @@ class TelegramMessage(Message):
             photo_data = message["photo"][-1]
             self._message_dict["file_id"] = photo_data["file_id"]
             text = message.get("caption", "untitled")
-            if not text.endswith((".jpg", ".JPG", ".png", ".PNG")):
-                text += ".jpg"
         elif "document" in message:
             # If it is a document, telegram gives you everything you need
             file_dict = message["document"]
