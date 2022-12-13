@@ -62,7 +62,7 @@ class Reactions(Component):
         """Saves the reaction within msg to the reaction folder"""
         file_name = msg.text.replace(" ", "")
         file_path = "{0}/{1}".format(self.reaction_folder, file_name)
-        file_id = msg.fileId
+        file_id = msg.file_id
         self.telegram.download_file(file_id, file_path)
         self.send_msg("Reaction image {0} correctly saved".format(file_name))
 

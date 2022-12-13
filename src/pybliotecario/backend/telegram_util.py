@@ -77,7 +77,10 @@ class TelegramMessage(Message):
             # If it is a document, telegram gives you everything you need
             file_dict = message["document"]
             self._message_dict["file_id"] = file_dict["file_id"]
-            text = file_dict["file_name"]
+            text = message.get("caption", None)
+            if text is None:
+                # Use the file name
+                text = file_dict["file_name"]
         else:
             # Normal text message
             text = message.get("text", "")
