@@ -31,6 +31,7 @@ def send_help(tele_api, chat_id):
         ("system", "System"),
         ("stocks", "Stocks"),
         ("twitter", "TwitterComponent"),
+        ("photocol", "PhotoCol")
     ]
     full_help = []
     for module, cls in components:
@@ -71,10 +72,13 @@ def act_on_telegram_command(tele_api, message_obj, config):
             from pybliotecario.components.stocks import Stocks as Actor
         elif tg_command.startswith("twitter_"):
             from pybliotecario.components.twitter import TwitterComponent as Actor
+        elif tg_command.startswith("photocol"):
+            from pybliotecario.components.photocol import PhotoCol as Actor
 
         elif tg_command == "help":
             return send_help(tele_api, chat_id)
         else:
+            import ipdb; ipdb.set_trace()
             log.info("No actor declared for this command: {0}".format(tg_command))
             return None
 

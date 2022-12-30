@@ -22,6 +22,7 @@ target_dependencies = {
     "wiki": ["wikipedia"],
     "github": ["pygithub"],
     "twitter": ["tweepy"],
+    "image": ["pillow"],
     "tests": ["numpy"]
 }
 
