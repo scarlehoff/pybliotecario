@@ -78,7 +78,6 @@ def act_on_telegram_command(tele_api, message_obj, config):
         elif tg_command == "help":
             return send_help(tele_api, chat_id)
         else:
-            import ipdb; ipdb.set_trace()
             log.info("No actor declared for this command: {0}".format(tg_command))
             return None
 
