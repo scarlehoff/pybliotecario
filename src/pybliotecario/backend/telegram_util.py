@@ -148,7 +148,7 @@ class TelegramUtil(Backend):
         """Given a file id, retrieve the URI of the file
         in the remote server
         """
-        url = self.get_file + "?file_id={0}".format(file_id)
+        url = self.get_file + f"?file_id={file_id}"
         jsonret = self.__get_json_from_url(url)
         # was it ok?
         if jsonret["ok"]:
@@ -223,19 +223,18 @@ class TelegramUtil(Backend):
         blabla = requests.post(self.send_doc, data=data)
         logger.info(blabla.status_code, blabla.reason, blabla.content)
 
-    def download_file(self, file_id, file_name):
-        """Download file defined by file_id
-        to given file_name"""
+    def download_file(self, file_id, file_path):
+        """Download file defined by file_id to given file_path"""
         file_url = self._get_filepath(file_id)
         if not file_url:
             return None
         n = 0
-        while os.path.isfile(file_name):
-            filedir = os.path.dirname(file_name)
-            basename = os.path.basename(file_name)
-            file_name = "{0}/n{1}-{2}".format(filedir, n, basename)
+        while file_path.exists():
+            # If the file already exist, iterate it
+            new_name = f"n{n}-{file_path.name}"
+            file_path = file_path.parent / new_name
             n += 1
-        return urllib.request.urlretrieve(file_url, file_name)
+        return urllib.request.urlretrieve(file_url, file_path)
 
 
 if __name__ == "__main__":
