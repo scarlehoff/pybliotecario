@@ -22,8 +22,8 @@ def _parse_main_chat_id(value):
 class CustomConfigParser(ConfigParser):
     """Equal to ConfigParser with a number of predefined converters"""
 
-    def __init__(self, *args, converters={}, **kwargs):
+    def __init__(self, *args, converters={}, allow_no_value=True, **kwargs):
         new_converters = copy(converters)
         new_converters.setdefault("idlist", _parse_chat_id)
         new_converters.setdefault("mainid", _parse_main_chat_id)
-        super().__init__(*args, converters=new_converters, **kwargs)
+        super().__init__(*args, converters=new_converters, allow_no_value=allow_no_value, **kwargs)

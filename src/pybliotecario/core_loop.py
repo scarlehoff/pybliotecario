@@ -76,7 +76,7 @@ def main_loop(tele_api, config=None, clear=False):
     main_folder = Path(config["DEFAULT"]["main_folder"])
     accepted_ids = config.getidlist("DEFAULT", "chat_id")
     main_id = config.getmainid("DEFAULT", "chat_id")
-    chivato = config.getboolean("DEFAULT", "chivato")
+    chivato = config.getboolean("DEFAULT", "chivato", fallback=False)
 
     except_counter = 0
 
