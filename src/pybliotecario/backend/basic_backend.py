@@ -19,33 +19,47 @@ class Message(ABC):
     """
     Base message class
 
-    Any implementation of the message should either save a dictionary
-    ``_message_dict`` with the following attributes (through _parse_update)
-    or implement its own way of getting the different values
+    Any implementation of the message should read the incoming update
+    and save the following information in the appropiate attributes:
+     - chat id
+     - username of the sender
+     - text of the msg
+     - command (if any)
+     - file id (if any)
+     - ignore (if the msg is to be ignored)
+    through the ``_parse_update`` method.
     """
 
     _type = "Abstract"
     _original = None
 
     def __init__(self, update):
-        self._message_dict = {
-            "chat_id": None,
-            "username": None,
-            "command": None,
-            "file_id": None,
-            "text": None,
-            "ignore": False,
-        }
+        self._chat_id = None
+        self._username = None
+        self._command = None
+        self._file_id = None
+        self._text = None
+        self._ignore = False
+        self._raw = None
         self._original = update
         self._parse_update(update)
         # After the information is parsed, log the message!
         logger.info("New message: %s", self)
 
     def __str__(self):
-        return json.dumps(self._message_dict)
+        rep = ["chat_id", "username", "command", "file_id", "text", "ignore"]
+        msg_dict = {}
+        for r in rep:
+            msg_dict[r] = getattr(self, r)
+        return json.dumps(msg_dict)
 
     def _parse_command(self, text):
-        """Parse any msg starting with /"""
+        """Separate messages containing commands into the command and text attributes
+        a command is a message which starts with /"""
+        if not text.startswith("/"):
+            self._command = None
+            self._text = text
+            return
         separate_command = text.split(" ", 1)
         # Remove the / from the command
         command = separate_command[0][1:]
@@ -57,48 +71,60 @@ class Message(ABC):
             text = ""
         else:
             text = separate_command[1]
-        self._message_dict["command"] = command
-        self._message_dict["text"] = text
+        self._command = command
+        self._text = text
 
     @abstractmethod
     def _parse_update(self, update):
-        """Parse the update and fill in _message_dict"""
+        """Parse the update and fill in all entries"""
         return None
+
+    @property
+    def raw(self):
+        """Return the raw message, understood as command + text"""
+        original = ""
+        if self.is_command:
+            original += f"/{self.command}"
+        if self.text is not None:
+            original += self.text
+        if self.is_file:
+            original += " (contains file)"
+        return original
 
     @property
     def chat_id(self):
         """Returns the chat id"""
-        return self._message_dict["chat_id"]
+        return self._chat_id
 
     @property
     def username(self):
         """Returns the username"""
-        return self._message_dict["username"]
+        return self._username
 
     @property
     def text(self):
         """Returns the content of the message"""
-        return self._message_dict.get("text")
+        return self._text
 
     @property
     def is_command(self):
         """Returns true if the message is a command"""
-        return self._message_dict.get("command") is not None
+        return self.command is not None
 
     @property
     def command(self):
         """Returns the command contained in the message"""
-        return self._message_dict.get("command")
+        return self._command
 
     @property
     def is_file(self):
         """Returns true if the message is a file"""
-        return self._message_dict.get("file_id") is not None
+        return self.file_id is not None
 
     @property
     def file_id(self):
         """Returns the id of the file"""
-        return self._message_dict.get("file_id")
+        return self._file_id
 
     @property
     def has_arguments(self):
@@ -108,11 +134,11 @@ class Message(ABC):
     @property
     def ignore(self):
         """Returns true if the message is to be ignored"""
-        return self._message_dict.get("ignore", False)
+        return self._ignore
 
     @ignore.setter
     def ignore(self, val):
-        self._message_dict["ignore"] = val
+        self._ignore = val
 
 
 class Backend(ABC):

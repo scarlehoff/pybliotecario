@@ -3,13 +3,13 @@
     Main script for the pybliotecario program
     for command line invocation
 """
-import configparser
 import logging
 import sys
-import os
+from pathlib import Path
 
 from pybliotecario.backend import TelegramUtil, TestUtil, FacebookUtil
 from pybliotecario.core_loop import main_loop
+from pybliotecario.customconf import CustomConfigParser
 
 # Modify argument_parser.py to read new arguments
 from pybliotecario.argument_parser import parse_args, CONFIG_FILE
@@ -20,11 +20,12 @@ logger = logging.getLogger()
 
 def read_config(config_file=None):
     """Reads the pybliotecario config file and uploads the global configuration"""
-    config_files = ["{0}/.{1}".format(os.environ.get("HOME"), CONFIG_FILE), CONFIG_FILE]
+    config_files = [Path.home() / f".{CONFIG_FILE}", CONFIG_FILE]
     if config_file is not None:
         config_files.append(config_file)
-    config = configparser.ConfigParser()
+    config = CustomConfigParser()
     config.read(config_files, encoding="UTF-8")
+    # Add a custom paster to this config
     if config and config.defaults():
         return config
     print("Before using this program you need to run the --init option in order to configure it")

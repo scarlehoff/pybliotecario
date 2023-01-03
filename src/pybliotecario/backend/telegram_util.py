@@ -32,7 +32,7 @@ class TelegramMessage(Message):
 
     def _parse_update(self, update):
         """Receives an update in the form of a dictionary (that came from a json)
-        and fills in the _message_dict dictionary
+        and fills the message attributes
         """
         keys = update.keys()
         # First check whether this is a message, edited message or a channel post
@@ -54,7 +54,7 @@ class TelegramMessage(Message):
             return
         # Now get the chat data and id
         chat_data = message["chat"]
-        self._message_dict["chat_id"] = chat_data["id"]
+        self._chat_id = chat_data["id"]
         # TODO test this part of the parser as this 'from' was a legacy thing at some point
         from_data = message.get("from", chat_data)
 
@@ -62,19 +62,19 @@ class TelegramMessage(Message):
         username = "unknown_user"
         for user_naming in ["last_name", "first_name", "username"]:
             username = from_data.get(user_naming, username)
-        self._message_dict["username"] = username
+        self._username = username
 
         # Check the filetype
         text = None
         if "photo" in message:
             # If it is a photo, get the file id and use the caption as the title
             photo_data = message["photo"][-1]
-            self._message_dict["file_id"] = photo_data["file_id"]
+            self._file_id = photo_data["file_id"]
             text = message.get("caption", "untitled")
         elif "document" in message:
             # If it is a document, telegram gives you everything you need
             file_dict = message["document"]
-            self._message_dict["file_id"] = file_dict["file_id"]
+            self._file_id = file_dict["file_id"]
             text = message.get("caption", None)
             if text is None:
                 # Use the file name
@@ -87,10 +87,9 @@ class TelegramMessage(Message):
         if "group" in chat_data:
             self._group_info = chat_data
 
-        # Finally check whether the message looks like a command
-        self._message_dict["text"] = text
-        if text and text.startswith("/"):
-            self._parse_command(text)
+        # Finally, with the piece of text left, parse the possible command
+        # _parse_command will fill both text and command
+        self._parse_command(text)
 
     @property
     def is_group(self):

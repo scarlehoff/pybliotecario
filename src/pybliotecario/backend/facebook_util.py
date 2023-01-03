@@ -42,7 +42,7 @@ class FacebookMessage(Message):
 
     def _parse_update(self, update):
         """Receives an update in the form of a dictionary (that came from a json)
-        and fills in the _message_dict dictionary
+        and fills the message attributes
         """
         # Check whether it is the correct object, otherwise out
         if update.get("object") != "page":
@@ -54,14 +54,11 @@ class FacebookMessage(Message):
         msg_info = update["entry"][0]["messaging"][0]
         # Check who sent it
         sender_id = msg_info["sender"]["id"]
-        self._message_dict["chat_id"] = sender_id
+        self._chat_id = sender_id
         # Get the msg
         msg = msg_info["message"]
         # get the text and parse it if necessary
-        text = msg.get("text")
-        self._message_dict["text"] = text
-        if text and text.startswith("/"):
-            self._parse_command(text)
+        self._parse_command(msg.get("text"))
         # In facebook we have either text or image
         # TODO: in facebook you can pass more than one img at once...
         attachment = msg.get("attachments")
@@ -69,8 +66,8 @@ class FacebookMessage(Message):
             at_info = attachment[0]
             # Checked for images and files and seems to work
             url = at_info["payload"]["url"]
-            self._message_dict["file_id"] = url
-            self._message_dict["text"] = url.split("?")[0].split("/")[-1]
+            self._file_id = url
+            self._text = url.split("?")[0].split("/")[-1]
 
 
 class FacebookUtil(Backend):

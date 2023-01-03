@@ -31,7 +31,7 @@ def send_help(tele_api, chat_id):
         ("system", "System"),
         ("stocks", "Stocks"),
         ("twitter", "TwitterComponent"),
-        ("photocol", "PhotoCol")
+        ("photocol", "PhotoCol"),
     ]
     full_help = []
     for module, cls in components:
