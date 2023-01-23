@@ -1,5 +1,5 @@
 """
-    Module using the arxiv API for prelog.info tracking
+    Module using the arxiv API for prelogger.info tracking
     update notifications and quick-querying from the Telegram app
 """
 
@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 import arxiv
 from pybliotecario.components.component_core import Component
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def is_today(time_to_test):
@@ -43,10 +43,9 @@ def query_recent(category):
     ).results()
     elements = []
     for _, element in enumerate(results):
-        time_s = element.updated
-        if not is_today(time_s):
-            break
-        elements.append(element)
+        if is_today(element.published):
+            elements.append(element)
+    logger.info("Found %d new papers", len(elements))
     return elements
 
 
@@ -55,7 +54,7 @@ def check_keyword(paper_value, keyword):
     if isinstance(paper_value, list):
         return any([check_keyword(i, keyword) for i in paper_value])
     str_value = str(paper_value)
-    return keyword.lower() in str_value.lower()
+    return keyword.casefold().strip() in str_value.casefold().strip()
 
 
 def filter_results(result_list, filter_dictionary):
@@ -73,7 +72,7 @@ def filter_results(result_list, filter_dictionary):
             try:
                 val = getattr(paper, key)
             except AttributeError:
-                log.error("Error trying to read key: %s", key)
+                logger.error("Error trying to read key: %s", key)
                 continue
 
             for keyword in keywords:
@@ -108,17 +107,21 @@ def arxiv_recent_filtered(categories, filter_dict, abstract=False, max_authors=5
     for category in categories:
         tmp = query_recent(category)
         results = filter_results(tmp, filter_dict)
-        line = "{0} new papers in {1}, {2} interesting ones: \n".format(
-            len(tmp), category, len(results)
-        )
+        url = f"https://arxiv.org/list/{category}/new"
+        n_new = len(tmp)
+        n_int = len(results)
+        line = f"{n_new} new papers in [{category}]({url}) "
+        if n_int > 0:
+            line += f"{n_int} interesting ones:\n"
+        else:
+            line += f"(nothing to be highlighted)."
         for paper in results:
             paper_authors = paper.authors
             if len(paper_authors) > max_authors:
                 paper_authors = paper_authors[:max_authors] + ["et al"]
             authors = ", ".join(str(i) for i in paper_authors)
-            title = paper.title
             arxiv_id = paper.get_short_id().replace("v1", "")
-            line += f" > {title}: {authors}\n     by {arxiv_id}\n"
+            line += f" > {paper.title}: [{arxiv_id}]({paper.links[0]})\n  by {authors}\n"
             if abstract:
                 line += paper["summary"]
         lines.append(line)
@@ -197,8 +200,8 @@ class Arxiv(Component):
         msg = arxiv_recent_filtered(
             self.categories, self.filter_dict, max_authors=self._max_authors
         )
-        self.send_msg(msg)
-        log.info("Arxiv information sent")
+        self.send_msg(msg, markdown=True)
+        logger.info("Arxiv information sent")
 
     def telegram_message(self, msg):
         command = msg.command
@@ -219,8 +222,8 @@ if __name__ == "__main__":
     import tempfile
 
     logger_setup(tempfile.TemporaryFile(), debug=True)
-    log.info("Testing the arxiv component")
-    log.info("Query a category")
+    logger.info("Testing the arxiv component")
+    logger.info("Query a category")
     categoria = "hep-ph"
     recent_papers = query_recent(categoria)
     dict_search = {
@@ -229,11 +232,11 @@ if __name__ == "__main__":
         "summary": ["VBF"],
     }
     filter_papers = filter_results(recent_papers, dict_search)
-    log.warning(filter_papers)
+    logger.warning(filter_papers)
     tlg_msg = arxiv_recent_filtered([categoria], dict_search)
-    log.info(tlg_msg)
+    logger.info(tlg_msg)
 
-#     log.info("Test download")
+#     logger.info("Test download")
 #     test_id = "1802.02445"
 #     name = arxiv_get_pdf(test_id)
 #     os.remove(name)
