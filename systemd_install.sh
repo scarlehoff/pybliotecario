@@ -1,6 +1,6 @@
 #!/bin/bash
 
-host_name=$(hostname)
+host_name=$(hostnamectl hostname)
 
 usage() {
     echo "Usage: ./systemd_install.sh -e executable_name
