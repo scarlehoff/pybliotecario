@@ -85,22 +85,35 @@ If you don't know how to get one, read here: https://core.telegram.org/bots#6-bo
     token = input("Authorization token: ")
     print("Thanks, let's test this out. Say something to your bot")
     from pybliotecario.backend import TelegramUtil
+    max_timeouts = 20
+    tim = 0
 
     teleAPI = TelegramUtil(token, timeout=20)
     while True:
         all_updates = teleAPI.raw_updates()
         from pybliotecario.backend.telegram_util import TelegramMessage
 
-        update = TelegramMessage(all_updates[0])
-        print("Message received: {0}".format(update.text))
+        try:
+            update = TelegramMessage(all_updates[0])
+        except IndexError as e:
+            print("Timeout... waiting for updates again...")
+            tim += 1
+            if tim > max_timeouts:
+                raise e
+            continue
+        print(f"Message received: {update.text}")
         yn = input("Was this your msg? [y/n] ")
         if yn.lower() in ("y", "s"):
             chat_id = update.chat_id
-            print("Your chat id is: {0} and your username is: {1}".format(chat_id, update.username))
+            print(f"Your chat id is: {chat_id} and your username is: {update.username}")
             break
         print("Try again")
+
+    yn = input("Do you want to enable the 'chivato' mode, so you get a warning if anyone other than you tries to use the bot? [yn] ")
+    chivato = yn.lower() in ("y", "s")
+
     # Fill the DEFAULT options
-    config_dict = {"DEFAULT": {"TOKEN": token, "chat_id": chat_id, "main_folder": main_folder}}
+    config_dict = {"DEFAULT": {"TOKEN": token, "chat_id": chat_id, "main_folder": main_folder, "chivato": chivato}}
     return config_dict
 
 
