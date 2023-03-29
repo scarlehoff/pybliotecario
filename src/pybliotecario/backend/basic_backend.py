@@ -166,6 +166,10 @@ class Backend(ABC):
     def _get_updates(self, not_empty=False):
         """Retrieve updates"""
 
+    def raw_updates(self):
+        """Returns a raw version of the updates as implemented by the child class"""
+        return self._get_updates(not_empty=True)
+
     @abstractmethod
     def send_message(self, text, chat, **kwargs):
         """Sends a message to the chat"""

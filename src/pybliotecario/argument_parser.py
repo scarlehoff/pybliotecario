@@ -88,7 +88,7 @@ If you don't know how to get one, read here: https://core.telegram.org/bots#6-bo
 
     teleAPI = TelegramUtil(token, timeout=20)
     while True:
-        all_updates = teleAPI.get_updates(not_empty=True)
+        all_updates = teleAPI.raw_updates()
         from pybliotecario.backend.telegram_util import TelegramMessage
 
         update = TelegramMessage(all_updates[0])
@@ -109,6 +109,7 @@ def configure_all():
     inherint from Component and run config_module
     on it"""
     config_dict = {}
+    missing_dependencies = False
     # Import everything that inherits from Component
     import pybliotecario.components as components
 
@@ -116,13 +117,25 @@ def configure_all():
     module_components = components.__name__
     modules = glob.glob(folder_components + "/*.py")
     for module_file in modules:
-        module_name = "{0}.{1}".format(module_components, os.path.basename(module_file))
-        module_clean = module_name.replace(".py", "")
-        module = importlib.import_module(module_clean)
+        module_name = pathlib.Path(module_file).with_suffix("").name
+        try:
+            module = importlib.import_module(f"{module_components}.{module_name}")
+        except ModuleNotFoundError as e:
+            print(f"In order to use the component '{module_name}' it is necessary to install its dependencies")
+            missing_dependencies = True
+            continue
         dict_list = config_module(module)
         for dictionary in dict_list:
             for key, item in dictionary.items():
                 config_dict[key] = item
+
+    if missing_dependencies:
+        print("""To install missing dependencies for a particular component you can install them explicitly:
+    ~$ pip install pybliotecario[component]
+or install all dependencies with
+    ~$ pip install pybliotecario[full]""")
+
+
     return config_dict
 
 
