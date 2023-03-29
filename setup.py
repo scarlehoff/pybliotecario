@@ -33,7 +33,7 @@ target_dependencies["full"] = set().union(*target_dependencies.values())
 README = (pathlib.Path(__file__).parent / "readme.md").read_text()
 setup(
     name=pybliotecario_name,
-    version="2.2",
+    version="2.3",
     author="Scarlehoff",
     author_email="juacrumar@lairen.eu",
     url="https://github.com/scarlehoff/pybliotecario",
