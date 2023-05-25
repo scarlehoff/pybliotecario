@@ -78,12 +78,14 @@ def main_loop(tele_api, config=None, clear=False):
     main_id = config.getmainid("DEFAULT", "chat_id")
     chivato = config.getboolean("DEFAULT", "chivato", fallback=False)
 
+    global except_counter
     except_counter = 0
 
     # Generate the function to act on Messages
     def act_on_message(message):
         """This function receives a pybliotecario.Message and
         an actor object and calls act_on_telegram_command as required"""
+        global except_counter
         # Check whether the message should be ignored
         try:  # Wrap everything on a try-except block which will not crash if clear=True
             if message.ignore:
