@@ -96,7 +96,10 @@ def arxiv_get_pdf(arxiv_id_raw):
     """Downloads a paper from the arxiv given an id"""
     arxiv_id = url_to_id(arxiv_id_raw)
     # First we recover the information about the paper
-    paper = next(arxiv.Search(id_list=[arxiv_id]).results())
+    try:
+        paper = next(arxiv.Search(id_list=[arxiv_id]).results())
+    except arxiv.arxiv.HTTPError:
+        return None
     return paper.download_pdf("/tmp/")
 
 
@@ -211,7 +214,10 @@ class Arxiv(Component):
             return
         if command in ("arxivget", "arxiv-get", "arxiv_get"):
             file_send = arxiv_get_pdf(arxiv_id)
-            self.send_file(file_send, delete=True)
+            if file_send is None:
+                self.send_msg("Error trying to download the paper, please check ID again")
+            else:
+                self.send_file(file_send, delete=True)
         else:
             msg = arxiv_query_info(arxiv_id)
             self.send_msg(msg)
