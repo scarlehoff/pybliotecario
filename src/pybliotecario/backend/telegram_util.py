@@ -8,6 +8,7 @@ import os.path
 import urllib
 import logging
 import requests
+from time import sleep
 from pybliotecario.backend.basic_backend import Message, Backend
 
 TELEGRAM_URL = "https://api.telegram.org/"
@@ -120,17 +121,23 @@ class TelegramUtil(Backend):
         """Returns the response for a given url
         In case of timeout, emulate an empty response
         """
+        content = '{ "ok": true, "result": [] }'
         try:
             response = requests.get(url, timeout=self.timeout)
             content = response.content.decode("utf-8")
         except requests.exceptions.Timeout:
-            content = '{ "ok": true, "result": [] }'
+            logger.warning("Timeout. Sleeping for 2 minutes...")
+            # After a timeout, sleep for 1 minute
+            sleep(60)
+        except requests.exceptions.ConnectionError as e:
+            logger.error(e)
         return content
 
     def __get_json_from_url(self, url):
         """Return the json response of a given url"""
         content_response = self.__make_request(url)
-        return json.loads(content_response)
+        res_json = json.loads(content_response)
+        return res_json
 
     def __re_offset(self, updates):
         """Updates the offset
@@ -168,15 +175,18 @@ class TelegramUtil(Backend):
 
         If not_empty = True, this function will only return when a message arrives
         """
-        url = "{0}?timeout={1}".format(self.get_msg, self.timeout)
+        url = f"{self.get_msg}?timeout={self.timeout}"
         if self.offset:
-            url += "&offset={0}".format(self.offset)
+            url += f"&offset={self.offset}"
         updates = self.__get_json_from_url(url)
+
         if not updates and not_empty:
             return self._get_updates(not_empty=True)
+
         if self.debug:
-            logger.info("Request url: {0}".format(url))
-            logger.info("Obtained updates: {0}".format(updates))
+            logger.info("Request url: %s", url)
+            logger.info("Obtained updates: %s", updates)
+
         try:
             result = updates["result"]
         except Exception as e:
@@ -186,6 +196,7 @@ class TelegramUtil(Backend):
             logger.error("List of updates: ")
             logger.error(updates)
             return []
+
         self.__re_offset(result)
         return result
 
