@@ -83,5 +83,7 @@ def run_command(args, tele_api, config):
 
     if args.message:
         message_text = " ".join(args.message)
+        # Unescape certain characters that we know to be fine
+        message_text = message_text.replace("\\n", "\n")
         tele_api.send_message(message_text, chat_id)
         log.info("Message sent")
