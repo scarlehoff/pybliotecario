@@ -237,7 +237,7 @@ def parse_args(args):
         help="Wizard to configure the pybliotecario for the first time",
         action=InitAction,
     )
-    parser.add_argument("--config_file", help="Define a custom configuration file")
+    parser.add_argument("--config_file", help=f"Define a custom configuration file (default: {default_config_path()})")
     parser.add_argument(
         "--backend",
         help="Choose backend: telegram (default), facebook",
