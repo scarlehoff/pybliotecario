@@ -9,18 +9,26 @@ from pathlib import Path
 
 from pybliotecario.backend import TelegramUtil, TestUtil, FacebookUtil
 from pybliotecario.core_loop import main_loop
-from pybliotecario.customconf import CustomConfigParser
+from pybliotecario.customconf import CustomConfigParser, default_config_path
 
 # Modify argument_parser.py to read new arguments
-from pybliotecario.argument_parser import parse_args, CONFIG_FILE
+from pybliotecario.argument_parser import parse_args
 import pybliotecario.on_cmdline as on_cmdline
 
 logger = logging.getLogger()
 
 
 def read_config(config_file=None):
-    """Reads the pybliotecario config file and uploads the global configuration"""
-    config_files = [Path.home() / f".{CONFIG_FILE}", CONFIG_FILE]
+    """Reads the pybliotecario config file and uploads the global configuration
+    By default looks always in the default file path (in XDG_CONFIG_HOME) and the current folder
+    """
+    default_file_path = default_config_path()
+    # Checks as well (with lower priority) for ~/.pybliotecario.ini for backwards compatibility
+    old_path = Path.home() / ".pybliotecario.ini"
+    config_files = [old_path, default_file_path, default_file_path.name]
+    if old_path.exists():
+        logger.error(f"Deprecation notice: ~/.pybliotecario.ini is now deprecated, please move the configuration to {default_file_path}")
+
     if config_file is not None:
         config_files.append(config_file)
     config = CustomConfigParser()

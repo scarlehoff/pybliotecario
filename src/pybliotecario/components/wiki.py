@@ -33,23 +33,22 @@ class WikiComponent(Component):
 
     @classmethod
     def configure_me(cls):
-        print("")
-        print(" # Wikipedia Module ")
-        print("This is the configuration helper for the wikipedia module")
-        print("Introduce the length of the msgs you want to obtain: ")
+        print(f"""
+# Wikipedia Module
+This is the configuration helper for the wikipedia module
+Introduce the length of the msgs you want to obtain (max: {MAX_SIZE}):""")
         summary_size = 0
         while summary_size > MAX_SIZE or summary_size < 1:
             # The max msg in telegram is 4096 UTF char.
             try:
-                summary_size = int(input(" Max: {0} > ".format(MAX_SIZE)))
+                summary_size = int(input(f" > ".format(MAX_SIZE)))
             except ValueError:
-                print("Please, write a number between 0 and {0}".format(MAX_SIZE))
+                print(f"Please, write a number between 0 and {MAX_SIZE}")
         possible_languages = ["EN", "ES", "IT"]
         language = None
         print("Introduce the default language for Wikipedia pages")
         while language not in possible_languages:
-            print("Possible choices: {0}".format(", ".join(possible_languages)))
-            language = input(" > (default: {0}".format(DEFAULT_LANGUAGE))
+            language = input(f" > Possible choices: {possible_languages} (default: {DEFAULT_LANGUAGE}) > ")
             if language == "":
                 language = DEFAULT_LANGUAGE
         dict_out = {

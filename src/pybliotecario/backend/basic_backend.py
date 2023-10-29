@@ -164,7 +164,8 @@ class Backend(ABC):
 
     @abstractmethod
     def _get_updates(self, not_empty=False):
-        """Retrieve updates"""
+        """Retrieve updates as a list"""
+        return []
 
     def raw_updates(self):
         """Returns a raw version of the updates as implemented by the child class"""

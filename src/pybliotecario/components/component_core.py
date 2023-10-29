@@ -15,7 +15,7 @@ import os
 import sys
 import logging
 
-from pybliotecario.argument_parser import CONFIG_FILE
+from ..customconf import default_config_path
 
 log = logging.getLogger(__name__)
 
@@ -54,7 +54,10 @@ class Component:
 
     def update_config(self):
         """Updates default ($HOME/.CONFIG_FILE) configuration file"""
-        default_config = "{0}/.{1}".format(os.environ.get("HOME"), CONFIG_FILE)
+        if self.configuration is not None:
+            print("Sorry, I forgot this set_trace here, my bad")
+            import ipdb; ipdb.set_trace()
+        default_config = default_config_path()
         new_section = self.configure_me()
         for key, item in new_section.items():
             self.configuration[key] = item

@@ -52,7 +52,7 @@ class Github(Component):
             except ValueError:
                 print("Only integer numbers accepted")
         dict_out = {
-            self.key_name: {
+            cls.key_name: {
                 "token": access_token,
                 "since_hours": hours,
             }
