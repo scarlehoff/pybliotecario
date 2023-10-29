@@ -23,10 +23,7 @@ class Github(Component):
 
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
-        if self.key_name in configuration:
-            self.github_config = self.read_config_section(self.key_name)
-        else:
-            raise Exception("MAL")
+        self.github_config = self.read_config_section(self.key_name)
         self._token = self.github_config.get("token", "")
         self._hours = int(self.github_config.get("since_hours", 2))
         self._github = None

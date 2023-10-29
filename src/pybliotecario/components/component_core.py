@@ -15,8 +15,6 @@ import os
 import sys
 import logging
 
-from ..customconf import default_config_path
-
 log = logging.getLogger(__name__)
 
 
@@ -32,6 +30,7 @@ class Component:
     """
 
     help_text = None
+    key_name = None
 
     def __init__(
         self,
@@ -52,50 +51,32 @@ class Component:
         self.configurable = False
         self.running_in_loop = running_in_loop
 
-    def update_config(self):
-        """Updates default ($HOME/.CONFIG_FILE) configuration file"""
-        if self.configuration is not None:
-            print("Sorry, I forgot this set_trace here, my bad")
-            import ipdb; ipdb.set_trace()
-        default_config = default_config_path()
-        new_section = self.configure_me()
-        for key, item in new_section.items():
-            self.configuration[key] = item
-        with open(default_config, "w") as f:
-            self.configuration.write(f)
-
     def read_config_section(self, section=None, telegram_error=True):
         """
-        Checks whether section exists within the configuration file
-        returns None if it doesn't
+        Checks whether section exists within the configuration file and returns its content
 
-        If the bot is running in daemon/receiving from Telegram mode, can't configure.
-        By default, if the component is called from Telegram without being configured
-        it will send an error unless the argument `telegram_error` is set to False
+        If the section cannot be found and the bot is running in daemon mode or receiving input
+        from the backend, send back an error message and return an empty dictionary.
+
+        If the bot is running interactively, inform the user and exit with error.
         """
         if section is None:
-            section = self.section_name
+            section = self.key_name
+
         try:
             section_dict = self.configuration[section]
             return section_dict
         except KeyError:
-            if self.running_in_loop:
-                log.error("Section {0} is not configured, please run --init".format(section))
-                if telegram_error:
-                    self.send_msg("Section {0} is not configured and will not work".format(section))
-                return {}
-            log.warning("There is no section {0} in configuration file".format(section))
-            yesno = input(
-                "Do you want to configure? (this will add a new section to $HOME/.{0} [yn] ".format(
-                    CONFIG_FILE
-                )
+            log.error(
+                f"Section {section} is not configured, please run pybliotecario with --init or add it manually"
             )
-            if yesno.lower() in ("y", "s"):
-                self.update_config()
-                sys.exit(-1)
-            else:
-                log.error("Exiting with error")
-                sys.exit(-1)
+            if self.running_in_loop:
+                if telegram_error:
+                    self.send_msg(f"Section {section} is not configured and will not work")
+                return {}
+
+            log.error("Exiting with error")
+            sys.exit(-1)
 
     @classmethod
     def whoamI(cls):
