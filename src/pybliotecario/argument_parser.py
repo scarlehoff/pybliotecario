@@ -8,6 +8,10 @@ import importlib
 import os
 from pathlib import Path
 
+from . import components
+from .backend import TelegramUtil
+from .backend.telegram_util import TelegramMessage
+from .components.component_core import Component
 from .customconf import default_config_path, default_data_path
 
 
@@ -40,8 +44,6 @@ def check_attr(attr):
     Checks whether the attr is a class and whether
     it does inherit from Component and whether
     """
-    from pybliotecario.components.component_core import Component
-
     if not isinstance(attr, type):
         return False
     if attr == Component:
@@ -65,7 +67,7 @@ def config_module(module):
     dict_list = []
     for Actor in actor_list:
         name = Actor.whoamI()
-        yn = input("Do you want to configure {0} now? [yn] ".format(name))
+        yn = input(f"Do you want to configure {name} now? [yn] ")
         if not yn.lower().startswith(("y", "s")):
             continue
         result = Actor.configure_me()
@@ -91,9 +93,6 @@ The instructions on how to get the token can be found here: https://core.telegra
     token = input("Authorization token: ")
 
     # Try to fire up the bot with the given token
-    from pybliotecario.backend import TelegramUtil
-    from pybliotecario.backend.telegram_util import TelegramMessage
-
     telegram_API = TelegramUtil(token, timeout=20)
     print("Thanks, let's test this out. Say something (anything!) to your bot in telegram")
 
@@ -124,13 +123,7 @@ The instructions on how to get the token can be found here: https://core.telegra
     chivato = yn.lower().startswith(("y", "s"))
 
     # Now prepare the dictionary with the DEFAULT field of the config file
-    config_dict = {
-        "DEFAULT": {
-            "TOKEN": token,
-            "chat_id": chat_id,
-            "chivato": chivato,
-        }
-    }
+    config_dict = {"DEFAULT": {"TOKEN": token, "chat_id": chat_id, "chivato": chivato}}
     return config_dict
 
 
@@ -140,8 +133,6 @@ def configure_all():
     on it"""
     config_dict = {}
     missing_dependencies = False
-    # Import everything that inherits from Component
-    import pybliotecario.components as components
 
     folder_components = os.path.dirname(components.__file__)
     module_components = components.__name__
@@ -150,7 +141,7 @@ def configure_all():
         module_name = Path(module_file).with_suffix("").name
         try:
             module = importlib.import_module(f"{module_components}.{module_name}")
-        except ModuleNotFoundError as e:
+        except ModuleNotFoundError:
             print(
                 f"In order to use the component '{module_name}' it is necessary to install its dependencies"
             )
@@ -233,11 +224,12 @@ def parse_args(args):
     """Wrapper for ArgumentParser"""
     parser = ArgumentParser()
     parser.add_argument(
-        "--init",
-        help="Wizard to configure the pybliotecario for the first time",
-        action=InitAction,
+        "--init", help="Wizard to configure the pybliotecario for the first time", action=InitAction
     )
-    parser.add_argument("--config_file", help=f"Define a custom configuration file (default: {default_config_path()})")
+    parser.add_argument(
+        "--config_file",
+        help=f"Define a custom configuration file (default: {default_config_path()})",
+    )
     parser.add_argument(
         "--backend",
         help="Choose backend: telegram (default), facebook",

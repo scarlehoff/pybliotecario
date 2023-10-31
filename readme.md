@@ -59,12 +59,14 @@ Remember that if you installed the development version you will need to use inst
 
 ## Configuration of the pybliotecario
 
-All configuration options of the pybliotecario can be found in the file `$HOME/.pybliotecario.ini`.
-This file is automatically created (and most of the options filled) by running `--init`.
+All configuration options for the pybliotecario can be found in the `${XDG_CONFIG_HOME}/pybliotecario/pybliotecario.ini` file.
+In most systems this resolves to `~/.config/pybliotecario/pybliotecario.ini`.
+This file is automatically created (and most of the options filled) by running `--init`
+and its syntax follows that of the python default [ConfigParser](https://docs.python.org/3/library/configparser.html).
 
 ## Basic usage
 
-Once `--init`` has been run for the first time (and thus the API key is in found in `$HOME/.pybliotecario.ini`)
+Once `--init`` has been run for the first time (and thus the API key is in found in `pybliotecario.ini`)
 it is possible to start using the program.
 To send a message to your Telegram account run:
 

@@ -3,7 +3,7 @@
 
     In order to use this module, create a new application in the
     [twitter developers portal](https://developer.twitter.com/)
-    and fill in `.pybliotecario.ini` the keys requested by `_authenticate`:
+    and fill in `pybliotecario.ini` the keys requested by `_authenticate`:
 
     ```ini
     [TWITTER]
