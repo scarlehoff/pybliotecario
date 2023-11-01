@@ -206,7 +206,11 @@ class TelegramUtil(Backend):
         url = f"{self.send_msg}?text={text}&chat_id={chat}"
         if markdown:
             url += f"&parse_mode=markdown"
-        self.__make_request(url)
+        content = self.__make_request(url)
+        # Sometimes, when using markdown, the update might fail
+        if markdown and not json.loads(content).get("ok"):
+            # If that's the case, try to resend without md
+            return self.send_message(text, chat, **kwargs)
 
     def send_image(self, img_path, chat):
         """Send an image to a given chat"""
