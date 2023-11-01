@@ -5,10 +5,11 @@
     an active process
 """
 
-import psutil
-from pybliotecario.components.component_core import Component
-
 import logging
+
+import psutil
+
+from pybliotecario.components.component_core import Component
 
 logger = logging.getLogger(__name__)
 
@@ -52,17 +53,17 @@ def is_it_alive(data):
             cmdline = proc.cmdline()
             for info in cmdline:
                 if data in info:
-                    matches.append("PID: {0}, {1}".format(proc.pid, " ".join(cmdline)))
+                    command_str = " ".join(cmdline)
+                    matches.append(f"PID: {proc.pid}, {command_str}")
                     alive = True
     if alive:
-        msg = "{0} is alive".format(data)
+        msg = f"{data} is alive"
         if matches:
-            msg += "\nI found the following matching processes: \n > {0}".format(
-                "\n > ".join(matches)
-            )
+            matching_processes = "\n > ".join(matches)
+            msg += f"\nI found the following matching processes: \n > {matching_processes}"
 
     else:
-        msg = "{0} not found among active processes".format(data)
+        msg = f"{data} not found among active processes"
     return msg
 
 
@@ -71,13 +72,13 @@ def kill_pid(pid):
     process = get_process(pid)
     if process is not None:
         process.kill()
-        return "{0} killed".format(pid)
+        return f"{pid} killed"
     else:
-        return "No process with pid {0}".format(pid)
+        return f"No process with pid {pid}"
 
 
 class ControllerPID(Component):
-    """"""
+    """Check or kill pids"""
 
     help_text = """ > PID module
     /kill_pid pid: kills a given pid
@@ -106,7 +107,7 @@ class ControllerPID(Component):
                 if pid_string.isdigit():
                     return_msg = self.kill(int(pid_string))
                 else:
-                    return_msg = "{0} is not a PID?".format(pid_string)
+                    return_msg = f"{pid_string} is not a PID?"
             elif msg.command == "is_pid_alive":
                 return_msg = self.alive(pid_string)
             else:

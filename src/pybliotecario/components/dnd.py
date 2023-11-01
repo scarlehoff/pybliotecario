@@ -1,9 +1,10 @@
 """
     Module implementing some functions useful for playing DnD over the internet
 """
-import re
 import logging
 from random import randint
+import re
+
 from pybliotecario.components.component_core import Component
 
 log = logging.getLogger(__name__)
@@ -27,7 +28,7 @@ def parse_roll(text):
     # Now get all the modifiers (if any)
     nindex = re_pm.search(modifiers)
     if nindex:
-        mod = modifiers[nindex.start():]
+        mod = modifiers[nindex.start() :]
         dice = text.partition(mod)[0]
     else:
         mod = ""
@@ -71,7 +72,7 @@ def roll_dice(text):
 
     # Now sum everything together and add any possible modifiers
     final_result = sum(result)
-    final_str = " + ".join(["({0})".format(i) for i in result])
+    final_str = " + ".join([f"({i})" for i in result])
 
     # Evaluate the modifiers with ast
     if mod.strip():
@@ -80,7 +81,7 @@ def roll_dice(text):
             final_result += int(i)
         mod = " ".join(modifiers)
     # And now put all together
-    final_str += " {0} = {1}".format(mod, final_result)
+    final_str += f"{mod} = {final_result}"
     return final_str
 
 
@@ -105,5 +106,5 @@ class DnD(Component):
         # Compute the result in the form of a string
         roll_result = roll_dice(roll_cmd)
         # Write the answer
-        answer = "{0} rolled{1}:\n{2}".format(username, roll_text, roll_result)
+        answer = f"{username} rolled{roll_text}:\n{roll_result}"
         self.send_msg(answer)

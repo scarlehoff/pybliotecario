@@ -118,16 +118,10 @@ class Stocks(Component):
 
 
 if __name__ == "__main__":
-    import tempfile
     import os
+    import tempfile
 
-    json_example = {
-        "AAPL": {"below": 140, "above": 110},
-        "TSLA": {
-            "below": 1000,
-            "above": 200,
-        },
-    }
+    json_example = {"AAPL": {"below": 140, "above": 110}, "TSLA": {"below": 1000, "above": 200}}
     fd, tmp = tempfile.mkstemp(suffix=".json", text=True)
     with os.fdopen(fd, "w") as f:
         json.dump(json_example, f)

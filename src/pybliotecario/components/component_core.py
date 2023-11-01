@@ -11,9 +11,9 @@
     the class Component will just pass the text of the msg (or the command)
     to the `act_on_command` or `act_on_message` methods.
 """
+import logging
 import os
 import sys
-import logging
 
 log = logging.getLogger(__name__)
 
@@ -90,7 +90,7 @@ class Component:
             return cls.help_text
         else:
             name = cls.whoamI()
-            help_str = "Help msg for {0} not implemented".format(name)
+            help_str = f"Help msg for {name} not implemented"
             return help_str
 
     @classmethod
@@ -151,7 +151,7 @@ class Component:
         if chat_id is None:
             chat_id = self.interaction_chat
         if not os.path.isfile(imgpath):
-            self.send_msg("ERROR: failed to send {0}".format(imgpath), chat_id)
+            self.send_msg(f"ERROR: failed to send {imgpath}", chat_id)
         self.telegram.send_image(imgpath, chat_id)
         if delete:
             os.remove(imgpath)
@@ -164,7 +164,7 @@ class Component:
         if chat_id is None:
             chat_id = self.interaction_chat
         if not os.path.isfile(filepath):
-            self.send_msg("ERROR: failed to send {0}".format(filepath), chat_id)
+            self.send_msg(f"ERROR: failed to send {filepath}", chat_id)
         self.telegram.send_file(filepath, chat_id)
         if delete:
             os.remove(filepath)

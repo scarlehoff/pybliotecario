@@ -6,10 +6,11 @@
     and follow the instructions
 """
 import datetime
+import logging
+
 import github as pygithub
 
 from pybliotecario.components.component_core import Component
-import logging
 
 log = logging.getLogger(__name__)
 
@@ -48,12 +49,7 @@ class Github(Component):
                 hours = int(input(" > "))
             except ValueError:
                 print("Only integer numbers accepted")
-        dict_out = {
-            cls.key_name: {
-                "token": access_token,
-                "since_hours": hours,
-            }
-        }
+        dict_out = {cls.key_name: {"token": access_token, "since_hours": hours}}
         return dict_out
 
     def _check_issues(self, repo_name):
@@ -72,8 +68,7 @@ class Github(Component):
             titles.append(f"    > {pr}#{issue.number}: [{issue.title}]({url})")
         if titles:
             self.send_msg(
-                f"New github issues/PR in {repo_name}: \n" + "\n".join(titles),
-                markdown=True,
+                f"New github issues/PR in {repo_name}: \n" + "\n".join(titles), markdown=True
             )
 
     def cmdline_command(self, args):
@@ -82,21 +77,18 @@ class Github(Component):
 
 
 if __name__ == "__main__":
+    import configparser
     from pathlib import Path
     import tempfile
-    import configparser
-    from pybliotecario.pybliotecario import logger_setup, main
+
     from pybliotecario.backend import TestUtil
+    from pybliotecario.pybliotecario import logger_setup, main
 
     tmpdir = Path(tempfile.mkdtemp())
     tmptxt = tmpdir / "text.txt"
 
     config = configparser.ConfigParser()
-    config["DEFAULT"] = {
-        "main_folder": tmpdir,
-        "token": "AAAaaa123",
-        "chat_id": 453,
-    }
+    config["DEFAULT"] = {"main_folder": tmpdir, "token": "AAAaaa123", "chat_id": 453}
     config["GITHUB"] = {"token": "<TOKEN GITHUB>", "since_hours": 5}
 
     logger_setup(tmpdir / "log.txt", debug=True)

@@ -6,7 +6,9 @@
 
 from datetime import datetime
 import logging
+
 from pyowm import OWM
+
 from pybliotecario.components.component_core import Component
 
 log = logging.getLogger(__name__)
@@ -118,8 +120,9 @@ class Weather(Component):
 
 
 if __name__ == "__main__":
-    from pybliotecario.pybliotecario import logger_setup
     import tempfile
+
+    from pybliotecario.pybliotecario import logger_setup
 
     logger_setup(tempfile.TemporaryFile(), debug=True)
     log.info("Testing weather")

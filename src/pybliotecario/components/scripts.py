@@ -3,10 +3,11 @@
     For instant, good_morning will call the command defined in
     /script good_morning will call the command defined in [SCRIPTS] good_morning
 """
-import pathlib
 import logging
-import subprocess as sp
+import pathlib
 import shlex
+import subprocess as sp
+
 from pybliotecario.components.component_core import Component
 
 logger = logging.getLogger(__name__)
@@ -113,9 +114,7 @@ class Script(Component):
             sc_cmd = script_command.strip()
             if not sc_cmd:
                 break
-            script_file = input(
-                " Introduce the path of the command to run with '{0}': ".format(sc_cmd)
-            )
+            script_file = input(f" Introduce the path of the command to run with '{sc_cmd}': ")
             dict_out[cls.section_name][sc_cmd] = script_file
         return dict_out
 
@@ -134,7 +133,7 @@ class Script(Component):
         if script_name == "list":
             self.available_commands()
         elif script_name not in self.script_names:
-            self.send_msg("Command {0} not defined".format(script_name))
+            self.send_msg(f"Command {script_name} not defined")
             self.available_commands()
         else:
             command_path = pathlib.Path(self.scripts[script_name])
@@ -149,7 +148,7 @@ class Script(Component):
                     else:
                         cmd_list = [f"./{command_path.name}"] + script_args
                         sp.run(cmd_list, check=True, cwd=command_path.parent)
-                    self.send_msg(f"Command ran")
+                    self.send_msg("Command ran")
                 except sp.CalledProcessError:
                     self.send_msg("Command ran but failed")
             else:

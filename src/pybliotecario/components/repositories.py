@@ -3,11 +3,12 @@
     Useful for monitoring changes in a repository being able to apply custom filters
 """
 
+import logging
 import os
 import re
 import subprocess as sp
+
 from pybliotecario.components.component_core import Component
-import logging
 
 log = logging.getLogger(__name__)
 

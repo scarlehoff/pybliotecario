@@ -16,10 +16,12 @@
 """
 
 import json
-import pathlib
 import logging
+import pathlib
+
 import requests
-from pybliotecario.backend.basic_backend import Message, Backend
+
+from pybliotecario.backend.basic_backend import Backend, Message
 
 _HAS_FLASK = True
 try:
@@ -162,12 +164,7 @@ class FacebookUtil(Backend):
         payload = {
             "recipient": json.dumps({"id": chat}),
             "message": json.dumps(
-                {
-                    "attachment": {
-                        "type": "image",
-                        "payload": {"is_reusable": True},
-                    }
-                }
+                {"attachment": {"type": "image", "payload": {"is_reusable": True}}}
             ),
             "filedata": (img.stem, img.read_bytes(), f"image/{img.suffix[1:]}"),
         }
@@ -179,12 +176,7 @@ class FacebookUtil(Backend):
         payload = {
             "recipient": json.dumps({"id": chat}),
             "message": json.dumps(
-                {
-                    "attachment": {
-                        "type": "file",
-                        "payload": {"is_reusable": True},
-                    }
-                }
+                {"attachment": {"type": "file", "payload": {"is_reusable": True}}}
             ),
             "filedata": (fff.name, fff.read_bytes()),
         }

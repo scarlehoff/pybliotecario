@@ -3,9 +3,10 @@
     when it is called with daemon mode -d
 """
 from datetime import datetime
-from pathlib import Path
-import pybliotecario.on_cmd_message as on_cmd_message
 import logging
+from pathlib import Path
+
+import pybliotecario.on_cmd_message as on_cmd_message
 
 logger = logging.getLogger(__name__)
 
