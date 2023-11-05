@@ -6,8 +6,8 @@
     This is a design choice as this way it is not necessary to have all dependencies
     if you want to run only some submodules of the pybliotecario.
 """
-import logging
 import importlib
+import logging
 
 log = logging.getLogger(__name__)
 
@@ -78,7 +78,7 @@ def act_on_telegram_command(tele_api, message_obj, config):
         elif tg_command == "help":
             return send_help(tele_api, chat_id)
         else:
-            log.info("No actor declared for this command: {0}".format(tg_command))
+            log.info(f"No actor declared for this command: {tg_command}")
             return None
 
     except ModuleNotFoundError as e:

@@ -4,12 +4,14 @@
 
     It's a companion to https://github.com/scarlehoff/websito/blob/master/views/foto.pug
 """
-from pathlib import Path
 from datetime import datetime
-import uuid
 import json
 import logging
+from pathlib import Path
+import uuid
+
 from PIL import Image
+
 from pybliotecario.components.component_core import Component
 
 log = logging.getLogger(__name__)
@@ -46,7 +48,7 @@ class PhotoCol(Component):
             aratio = image.width / image.height
             # Keep a resemblance of the original aspect ratio
             size = 240
-            thumb_size = (size, int(size/aratio))
+            thumb_size = (size, int(size / aratio))
             image.thumbnail(thumb_size)
             image.save((self._photofol / "thumbnail" / unique_name).with_suffix(".jpg"))
         except IOError:
@@ -86,7 +88,7 @@ class PhotoCol(Component):
         if success:
             # Create a removed folder to put the picture in
             removed_folder = self._photofol / "removed"
-            removed_folder.mkdir(exist_ok = True)
+            removed_folder.mkdir(exist_ok=True)
 
             # Move both picture and thumbnail to removed
             foto_path = self._photofol / test

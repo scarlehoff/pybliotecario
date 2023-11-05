@@ -4,23 +4,32 @@
     for command line invocation
 """
 import logging
-import sys
 from pathlib import Path
-
-from pybliotecario.backend import TelegramUtil, TestUtil, FacebookUtil
-from pybliotecario.core_loop import main_loop
-from pybliotecario.customconf import CustomConfigParser
+import sys
 
 # Modify argument_parser.py to read new arguments
-from pybliotecario.argument_parser import parse_args, CONFIG_FILE
+from pybliotecario.argument_parser import parse_args
+from pybliotecario.backend import FacebookUtil, TelegramUtil, TestUtil
+from pybliotecario.core_loop import main_loop
+from pybliotecario.customconf import CustomConfigParser, default_config_path
 import pybliotecario.on_cmdline as on_cmdline
 
 logger = logging.getLogger()
 
 
 def read_config(config_file=None):
-    """Reads the pybliotecario config file and uploads the global configuration"""
-    config_files = [Path.home() / f".{CONFIG_FILE}", CONFIG_FILE]
+    """Reads the pybliotecario config file and uploads the global configuration
+    By default looks always in the default file path (in XDG_CONFIG_HOME) and the current folder
+    """
+    default_file_path = default_config_path()
+    # Checks as well (with lower priority) for ~/.pybliotecario.ini for backwards compatibility
+    old_path = Path.home() / ".pybliotecario.ini"
+    config_files = [old_path, default_file_path, default_file_path.name]
+    if old_path.exists():
+        logger.error(
+            f"Deprecation notice: ~/.pybliotecario.ini is now deprecated, please move the configuration to {default_file_path}"
+        )
+
     if config_file is not None:
         config_files.append(config_file)
     config = CustomConfigParser()
@@ -81,8 +90,7 @@ def main(cmdline_arg=None, tele_api=None, config=None):
         main_folder = defaults.get("main_folder")
         if not main_folder:
             logger.warning(
-                "No 'default:main_folder' option set in %s, using /tmp/",
-                args.config_file,
+                "No 'default:main_folder' option set in %s, using /tmp/", args.config_file
             )
             main_folder = "/tmp/"
         logger_setup(main_folder + "/info.log", debug=args.debug)
@@ -95,8 +103,7 @@ def main(cmdline_arg=None, tele_api=None, config=None):
             api_token = config.defaults().get("token")
             if not api_token:
                 logger.error(
-                    "No 'default:token' option set in %s, run --init option",
-                    args.config_file,
+                    "No 'default:token' option set in %s, run --init option", args.config_file
                 )
                 sys.exit(-1)
 

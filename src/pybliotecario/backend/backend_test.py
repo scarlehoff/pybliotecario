@@ -3,8 +3,8 @@
     without communication with any service
 """
 
-import pathlib
 from datetime import datetime
+import pathlib
 
 from pybliotecario.backend.telegram_util import TelegramMessage
 

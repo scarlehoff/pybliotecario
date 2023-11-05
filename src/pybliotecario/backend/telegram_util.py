@@ -4,12 +4,13 @@
 """
 
 import json
-import os.path
-import urllib
 import logging
-import requests
 from time import sleep
-from pybliotecario.backend.basic_backend import Message, Backend
+import urllib
+
+import requests
+
+from pybliotecario.backend.basic_backend import Backend, Message
 
 TELEGRAM_URL = "https://api.telegram.org/"
 
@@ -21,7 +22,7 @@ IGNOREKEYS = {"new_chat_participant", "left_chat_participant", "sticker", "game"
 
 def log_request(status_code, reason, content):
     """Log the status of the send requests"""
-    result = "Request sent, status code: {0} - {1}: {2}".format(status_code, reason, content)
+    result = f"Request sent, status code: {status_code} - {reason}: {content}"
     logger.info(result)
 
 
@@ -56,7 +57,8 @@ class TelegramMessage(Message):
         # Now get the chat data and id
         chat_data = message["chat"]
         self._chat_id = chat_data["id"]
-        # TODO test this part of the parser as this 'from' was a legacy thing at some point
+        # I believe from and chat_data are only different when using a group
+        # but the pybliotecario has not really been tested (or used) in groups...
         from_data = message.get("from", chat_data)
 
         # Populate the user (in the list, last has more priority)
@@ -109,8 +111,8 @@ class TelegramUtil(Backend):
         self.debug = debug
         self.timeout = timeout
         # Build app the API urls
-        base_URL = TELEGRAM_URL + "bot{}/".format(TOKEN)
-        self.base_fileURL = TELEGRAM_URL + "file/bot{}/".format(TOKEN)
+        base_URL = TELEGRAM_URL + f"bot{TOKEN}/"
+        self.base_fileURL = TELEGRAM_URL + f"file/bot{TOKEN}/"
         self.send_msg = base_URL + "sendMessage"
         self.send_img = base_URL + "sendPhoto"
         self.send_doc = base_URL + "sendDocument"
@@ -205,22 +207,24 @@ class TelegramUtil(Backend):
         text = urllib.parse.quote_plus(text)
         url = f"{self.send_msg}?text={text}&chat_id={chat}"
         if markdown:
-            url += f"&parse_mode=markdown"
-        self.__make_request(url)
+            url += "&parse_mode=markdown"
+        content = self.__make_request(url)
+        # Sometimes, when using markdown, the update might fail
+        if markdown and not json.loads(content).get("ok"):
+            # If that's the case, try to resend without md
+            self.send_message(text, chat, **kwargs)
 
     def send_image(self, img_path, chat):
         """Send an image to a given chat"""
         data = {"chat_id": chat}
-        img = open(img_path, "rb")
-        files = {"photo": ("picture.jpg", img)}  # Here, the "rb" thing
+        with open(img_path, "rb") as img:
+            files = {"photo": ("picture.jpg", img)}  # Here, the "rb" thing
         blabla = requests.post(self.send_img, data=data, files=files)
         log_request(blabla.status_code, blabla.reason, blabla.content)
 
     def send_file(self, filepath, chat):
         data = {"chat_id": chat}
-        file_stream = open(filepath, "rb")
-        doc_name = os.path.basename(filepath)
-        files = {"document": (doc_name, file_stream)}
+        files = {"document": (filepath.name, filepath.open("rb"))}
         blabla = requests.post(self.send_doc, data=data, files=files)
         log_request(blabla.status_code, blabla.reason, blabla.content)
 
@@ -239,8 +243,8 @@ class TelegramUtil(Backend):
         if not file_url:
             return None
         n = 0
+        # If the file already exists, iterate it by adding a nX
         while file_path.exists():
-            # If the file already exist, iterate it
             new_name = f"n{n}-{file_path.name}"
             file_path = file_path.parent / new_name
             n += 1

@@ -5,10 +5,11 @@
 # TODO:
 #   Make sure you don't save img1.png img1.jpg
 
-import os
 import glob
-import pathlib
 import logging
+import os
+import pathlib
+
 from pybliotecario.components.component_core import Component
 
 log = logging.getLogger(__name__)

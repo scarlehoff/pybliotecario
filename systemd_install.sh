@@ -40,10 +40,10 @@ then
 fi
 
 
-# Check whether the config file does exist, if it doesn't, run init
-if [ ! -f ${HOME}/.pybliotecario.ini ]
+# Check whether the config file does exist in the usual place, if it doesn't, run init
+if [ ! -f ${HOME}/.config/pybliotecario/pybliotecario.ini ]
 then
-    echo "User config file not found in ${HOME}/.pybliotecario.ini"
+    echo "User config file not found in  ${HOME}/.config/pybliotecario/pybliotecario.ini"
     echo "Running --init to configure ${executable} for the first time"
     ${executable} --init || exit 1
 fi

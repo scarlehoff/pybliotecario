@@ -8,9 +8,9 @@
 """
 
 from abc import ABC, abstractmethod
+import json
 import logging
 import urllib
-import json
 
 logger = logging.getLogger(__name__)
 
@@ -164,7 +164,8 @@ class Backend(ABC):
 
     @abstractmethod
     def _get_updates(self, not_empty=False):
-        """Retrieve updates"""
+        """Retrieve updates as a list"""
+        return []
 
     def raw_updates(self):
         """Returns a raw version of the updates as implemented by the child class"""
@@ -211,8 +212,8 @@ class Backend(ABC):
         """Sends a file"""
         logger.error("This backend does not implement sending files")
 
-    def download_file(self, file_id, file_name):
+    def download_file(self, file_id, file_path):
         """Downloads a file using urllib.
         Understands file_id as the url
         """
-        return urllib.request.urlretrieve(file_id, file_name)
+        return urllib.request.urlretrieve(file_id, file_path)

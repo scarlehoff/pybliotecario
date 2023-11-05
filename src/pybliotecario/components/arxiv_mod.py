@@ -3,10 +3,12 @@
     update notifications and quick-querying from the Telegram app
 """
 
-import os
-import logging
 from datetime import datetime, timedelta, timezone
+import logging
+import os
+
 import arxiv
+
 from pybliotecario.components.component_core import Component
 
 logger = logging.getLogger(__name__)
@@ -117,7 +119,7 @@ def arxiv_recent_filtered(categories, filter_dict, abstract=False, max_authors=5
         if n_int > 0:
             line += f"{n_int} interesting ones:\n"
         else:
-            line += f"(nothing to be highlighted)."
+            line += "(nothing to be highlighted)."
         for paper in results:
             paper_authors = paper.authors
             if len(paper_authors) > max_authors:
@@ -137,7 +139,6 @@ def arxiv_query_info(arxiv_id_raw):
     """
     arxiv_id = url_to_id(arxiv_id_raw)
     paper = next(arxiv.Search(id_list=[arxiv_id]).results())
-    title = paper.title
     authors = [str(i) for i in paper.authors]
     abstract = paper.summary.replace("\n", " ")
     msg = f""" > {arxiv_id}
@@ -224,8 +225,9 @@ class Arxiv(Component):
 
 
 if __name__ == "__main__":
-    from pybliotecario.pybliotecario import logger_setup
     import tempfile
+
+    from pybliotecario.pybliotecario import logger_setup
 
     logger_setup(tempfile.TemporaryFile(), debug=True)
     logger.info("Testing the arxiv component")

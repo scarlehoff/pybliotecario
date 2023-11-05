@@ -1,19 +1,23 @@
 """
-    Wrapper for argument parser and initialization
+    Wrapper for the argument parser and the initialization
 """
-import os
-import glob
-import pathlib
-import importlib
+from argparse import Action, ArgumentParser, ArgumentTypeError
 import configparser
-from argparse import ArgumentParser, Action, ArgumentTypeError
+import glob
+import importlib
+import os
+from pathlib import Path
 
-CONFIG_FILE = "pybliotecario.ini"
+from . import components
+from .backend import TelegramUtil
+from .backend.telegram_util import TelegramMessage
+from .components.component_core import Component
+from .customconf import default_config_path, default_data_path
 
 
 def validpath(value):
     """Check whether the received path is valid"""
-    path = pathlib.Path(value)
+    path = Path(value)
     if not path.exists():
         raise ArgumentTypeError(f"The file '{value}' can't be found")
     if path.is_dir():
@@ -40,8 +44,6 @@ def check_attr(attr):
     Checks whether the attr is a class and whether
     it does inherit from Component and whether
     """
-    from pybliotecario.components.component_core import Component
-
     if not isinstance(attr, type):
         return False
     if attr == Component:
@@ -65,7 +67,7 @@ def config_module(module):
     dict_list = []
     for Actor in actor_list:
         name = Actor.whoamI()
-        yn = input("Do you want to configure {0} now? [yn] ".format(name))
+        yn = input(f"Do you want to configure {name} now? [yn] ")
         if not yn.lower().startswith(("y", "s")):
             continue
         result = Actor.configure_me()
@@ -74,46 +76,54 @@ def config_module(module):
     return dict_list
 
 
-def configure_telegram(main_folder):
-    """Configure Telegram"""
+def configure_telegram():
+    """Configure pybliotecario to use the Telegram API
+    This function walks the user through the process of creating a new bot
+    and storing the token and the chat_id of the user in the configuration file
+    """
     # Initialize the bot in telegram
     print(
         """Welcome to The Wizard!
-The first thing you will need is an authorization token from the botfather.
-If you don't know how to get one, read here: https://core.telegram.org/bots#6-botfather"""
+The first thing you will need is to create a new bot with the botfather in your telegram client.
+Alternatively, you can get use a previously created bot.
+Ask the botfather for an authorization token before continuing.
+The instructions on how to get the token can be found here: https://core.telegram.org/bots#how-do-i-create-a-bot
+"""
     )
     token = input("Authorization token: ")
-    print("Thanks, let's test this out. Say something to your bot")
-    from pybliotecario.backend import TelegramUtil
-    max_timeouts = 20
-    tim = 0
 
-    teleAPI = TelegramUtil(token, timeout=20)
-    while True:
-        all_updates = teleAPI.raw_updates()
-        from pybliotecario.backend.telegram_util import TelegramMessage
+    # Try to fire up the bot with the given token
+    telegram_API = TelegramUtil(token, timeout=20)
+    print("Thanks, let's test this out. Say something (anything!) to your bot in telegram")
 
-        try:
-            update = TelegramMessage(all_updates[0])
-        except IndexError as e:
-            print("Timeout... waiting for updates again...")
-            tim += 1
-            if tim > max_timeouts:
-                raise e
-            continue
-        print(f"Message received: {update.text}")
-        yn = input("Was this your msg? [y/n] ")
-        if yn.lower() in ("y", "s"):
-            chat_id = update.chat_id
-            print(f"Your chat id is: {chat_id} and your username is: {update.username}")
+    for _ in range(20):  # Allow for 20 tries
+        all_updates = telegram_API.raw_updates()
+
+        for update in all_updates:
+            msg = TelegramMessage(update)
+            print(f"Message received: {msg.text}")
+            yn = input("Was this your msg? [y/n] ")
+            if msg_found := yn.lower().startswith(("y", "s")):
+                chat_id = msg.chat_id
+                username = msg.username
+                print(f"Your chat id is: {chat_id} and your username: {username}")
+                break
+
+        if msg_found:
             break
-        print("Try again")
 
-    yn = input("Do you want to enable the 'chivato' mode, so you get a warning if anyone other than you tries to use the bot? [yn] ")
-    chivato = yn.lower() in ("y", "s")
+        print("Please, try again")
 
-    # Fill the DEFAULT options
-    config_dict = {"DEFAULT": {"TOKEN": token, "chat_id": chat_id, "main_folder": main_folder, "chivato": chivato}}
+    else:
+        raise ValueError("There was some problem with the configuration of Telegram")
+
+    yn = input(
+        "Do you want to enable the 'chivato' mode, so you get a warning if anyone other than you tries to use the bot? [yn] "
+    )
+    chivato = yn.lower().startswith(("y", "s"))
+
+    # Now prepare the dictionary with the DEFAULT field of the config file
+    config_dict = {"DEFAULT": {"TOKEN": token, "chat_id": chat_id, "chivato": chivato}}
     return config_dict
 
 
@@ -123,18 +133,18 @@ def configure_all():
     on it"""
     config_dict = {}
     missing_dependencies = False
-    # Import everything that inherits from Component
-    import pybliotecario.components as components
 
     folder_components = os.path.dirname(components.__file__)
     module_components = components.__name__
     modules = glob.glob(folder_components + "/*.py")
     for module_file in modules:
-        module_name = pathlib.Path(module_file).with_suffix("").name
+        module_name = Path(module_file).with_suffix("").name
         try:
             module = importlib.import_module(f"{module_components}.{module_name}")
-        except ModuleNotFoundError as e:
-            print(f"In order to use the component '{module_name}' it is necessary to install its dependencies")
+        except ModuleNotFoundError:
+            print(
+                f"In order to use the component '{module_name}' it is necessary to install its dependencies"
+            )
             missing_dependencies = True
             continue
         dict_list = config_module(module)
@@ -143,11 +153,12 @@ def configure_all():
                 config_dict[key] = item
 
     if missing_dependencies:
-        print("""To install missing dependencies for a particular component you can install them explicitly:
+        print(
+            """To install missing dependencies for a particular component you can install them explicitly:
     ~$ pip install pybliotecario[component]
 or install all dependencies with
-    ~$ pip install pybliotecario[full]""")
-
+    ~$ pip install pybliotecario[full]"""
+        )
 
     return config_dict
 
@@ -163,36 +174,49 @@ class InitAction(Action):
     def __init__(self, nargs=0, **kwargs):
         super().__init__(nargs=nargs, **kwargs)
 
-    def __call__(self, parser, *args, **kwargs):
+    def __call__(self, parser, namespace, *args, **kwargs):
         """
-        Configures the pybliotecario by first
-        configuring Telegram
-        and then calling the configure_me method of all components
+        Configures the pybliotecario by first configuring the Telegram API
+        and then calling the ``configure_me`` method of all components
         """
         config_dict = {}
-        # Set up environmental stuff
-        home = os.environ["HOME"]
-        main_folder = home + "/.pybliotecario/"
-        os.makedirs(main_folder, exist_ok=True)
-        config_file = home + "/." + CONFIG_FILE
-        # Check whether a config file already exists
-        config_exists = os.path.isfile(config_file)
-        # If it does, you might not want to reconfigure Telegram, so let's ask
-        initialize = True
-        if config_exists:
+
+        config_path = default_config_path()
+        data_folder = default_data_path()
+
+        if namespace.config_file is not None:
             print(
-                """It seems pybliotecario's Telegram capabilities
-have already been configured in this computer"""
+                f"WARNING! You are setting {namespace.config_file} as the configuration file instead of the default {config_path}"
             )
-            yn = input("Do you want to configure it again? [y/n] ")
+            yn = input("Are you sure? Do you want to continue [y/n] ")
             if not yn.lower().startswith(("y", "s")):
-                initialize = False
+                print("Don't use --config_file with --init to avoid this!")
+                parser.exit(0)
+            config_path = namespace.config_file
+            data_folder = Path(input(f"Where do you want your data? e.g.: {data_folder}: "))
+
+        print(f"Note: configuration will be written to {config_path}")
+
+        # Make sure the folders exist
+        data_folder.mkdir(exist_ok=True, parents=True)
+        config_path.parent.mkdir(exist_ok=True, parents=True)
+
+        # Check whether a config file already exists, if it does, ask before doing the Telegram
+        initialize = True
+        if config_exists := config_path.exists():
+            print("It seems pybliotecario has already been initialized in this computer")
+            yn = input("Do you want to start the configuration from scratch? [y/n] ")
+            initialize = yn.lower().startswith(("y", "s"))
+
         if initialize:
-            config_dict.update(configure_telegram(main_folder))
-        print("Let's loop over the pybliotecario modules to configure their options")
+            config_dict.update(configure_telegram())
+            config_dict["DEFAULT"]["main_folder"] = data_folder
+
+        print("Now let's loop over all pybliotecario modules to configure their options")
         config_dict.update(configure_all())
         # And finally write the config file
-        write_config(config_dict, config_file, config_exists=config_exists)
+        write_config(config_dict, config_path, config_exists=config_exists)
+        print(f"The configuration of the pybliotecario has been written to: {config_path}")
         parser.exit(0)
 
 
@@ -200,11 +224,12 @@ def parse_args(args):
     """Wrapper for ArgumentParser"""
     parser = ArgumentParser()
     parser.add_argument(
-        "--init",
-        help="Wizard to configure the pybliotecario for the first time",
-        action=InitAction,
+        "--init", help="Wizard to configure the pybliotecario for the first time", action=InitAction
     )
-    parser.add_argument("--config_file", help="Define a custom configuration file")
+    parser.add_argument(
+        "--config_file",
+        help=f"Define a custom configuration file (default: {default_config_path()})",
+    )
     parser.add_argument(
         "--backend",
         help="Choose backend: telegram (default), facebook",
