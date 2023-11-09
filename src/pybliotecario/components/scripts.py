@@ -53,7 +53,7 @@ class Script(Component):
     simultaneously. If you want to do so you will have to change the code manually.
     """
 
-    section_name = "SCRIPT"
+    key_name = "SCRIPT"
     help_text = """ > Script module
     /script list: list all possible scripts
     /script script_name: execute the given script """
@@ -108,14 +108,14 @@ class Script(Component):
         print("")
         print(" # Scripts module ")
         print("This is the configuration helper for the scripts module, leave empty to exit")
-        dict_out = {cls.section_name: {}}
+        dict_out = {cls.key_name: {}}
         while True:
             script_command = input(" Introduce the command name: ")
             sc_cmd = script_command.strip()
             if not sc_cmd:
                 break
             script_file = input(f" Introduce the path of the command to run with '{sc_cmd}': ")
-            dict_out[cls.section_name][sc_cmd] = script_file
+            dict_out[cls.key_name][sc_cmd] = script_file
         return dict_out
 
     def telegram_message(self, msg):
