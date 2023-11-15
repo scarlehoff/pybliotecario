@@ -18,9 +18,9 @@ description = "Personal telegram bot to interact between your Telegram account a
 readme = "README"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: GNU GPLv3",
     "Operating System :: OS Independent",
 ]
+license = {text = "GPLv3"}
 requires-python = ">=3.8"
 dependencies = [
     "requests",
