@@ -15,7 +15,7 @@ authors = [
     { name = "juacrumar", email = "juacrumar@lairen.eu" }
 ]
 description = "Personal telegram bot to interact between your Telegram account and your computer"
-readme = "README"
+readme = "readme.md"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
