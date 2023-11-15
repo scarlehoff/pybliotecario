@@ -1,3 +1,47 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts] # Change this if you want to modify the name of the executable!
+pybliotecario = "pybliotecario.pybliotecario:main"
+
+[project.urls]
+repository = "https://github.com/scarlehoff/pybliotecario"
+
+[project]
+name = "pybliotecario"
+dynamic = ["version"]
+authors = [
+    { name = "juacrumar", email = "juacrumar@lairen.eu" }
+]
+description = "Personal telegram bot to interact between your Telegram account and your computer"
+readme = "README"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: GNU GPLv3",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "requests",
+    "psutil"
+]
+
+[project.optional-dependencies]
+facebook = ["flask", "requests_toolbelt"]
+stonks = ["yahoo-fin", "pandas"]
+arxiv = ["arxiv"]
+weather = ["pyowm"]
+wiki = ["wikipedia"]
+github = ["pygithub"]
+image = ["pillow"]
+tests = ["numpy"]
+full = ["pybliotecario[facebook, stonks, arxiv, weather, wiki, github, image, tests]"]
+
+
+[tool.setuptools.dynamic]
+version = {attr = "pybliotecario.__version__"}
+
 [tool.black]
 line-length = 100
 skip_magic_trailing_comma = true

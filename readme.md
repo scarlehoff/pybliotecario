@@ -20,7 +20,7 @@ and the base program can be installed with:
 pip install pybliotecario
 ```
 
-If you want to install all dependencies for [all components](https://github.com/scarlehoff/pybliotecario/blob/master/setup.py#L17) do
+If you want to install all dependencies for [all components](https://github.com/scarlehoff/pybliotecario/blob/master/pyproject.toml#L30) do
 
 ```bash
 pip install pybliotecario[full]
@@ -31,20 +31,10 @@ You can also install it using the development version:
 ```bash
 git clone https://github.com/scarlehoff/pybliotecario.git
 cd pybliotecario
-python3 setup.py install
+python3 -m pip install .
 ```
 
-You can use the command line argument `with_name` to install the pybliotecario
-with your hostname (capitalized) as executable name.
-
-```bash
-python3 setup.py install --with_name
-```
-
-That way, for instance, if your computer is called `glados` you can invoke the program with `~$ Glados`.
-If you want to use a different name just modify the variable `pybliotecario_name` inside `setup.py`.
-
-A small `systemd_install.sh` script is included in the repository in order to daemonize it easily.
+A small `systemd_install.sh` script is included in the repository in order to easily daemonize it.
 
 ## How to connect the pybliotecario to Telegram
 The main backend for the pybliotecario is Telegram, although facebook can also be used (see [here](https://github.com/scarlehoff/pybliotecario/tree/master/src/pybliotecario/backend))
