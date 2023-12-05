@@ -219,7 +219,7 @@ class TelegramUtil(Backend):
         data = {"chat_id": chat}
         with open(img_path, "rb") as img:
             files = {"photo": ("picture.jpg", img)}  # Here, the "rb" thing
-        blabla = requests.post(self.send_img, data=data, files=files)
+            blabla = requests.post(self.send_img, data=data, files=files)
         log_request(blabla.status_code, blabla.reason, blabla.content)
 
     def send_file(self, filepath, chat):
