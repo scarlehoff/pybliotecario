@@ -110,7 +110,7 @@ def main_loop(tele_api, config=None, clear=False):
                 file_path = _monthly_folder(main_folder) / file_name
                 result = tele_api.download_file(message.file_id, file_path)
                 if result:
-                    tele_api.send_message("¡Archivo recibido y guardado!", chat_id)
+                    tele_api.send_quiet_message("¡Archivo recibido y guardado!", chat_id)
                     logger.info("File saved to %s", file_path)
                 else:
                     tele_api.send_message("There was some problem with this, sorry", chat_id)
