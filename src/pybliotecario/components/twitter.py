@@ -13,6 +13,7 @@
     consumer_secret = <consumer_secret>
     ```
 """
+
 import logging
 
 import tweepy as tw

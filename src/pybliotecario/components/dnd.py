@@ -1,6 +1,7 @@
 """
     Module implementing some functions useful for playing DnD over the internet
 """
+
 import logging
 from random import randint
 import re

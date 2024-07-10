@@ -11,6 +11,7 @@
     the class Component will just pass the text of the msg (or the command)
     to the `act_on_command` or `act_on_message` methods.
 """
+
 import logging
 import os
 import sys
@@ -138,11 +139,15 @@ class Component:
         self.telegram.send_message("Command line argument invoked", self.chat_id)
 
     # Some useful wrappers
-    def send_msg(self, msg, chat_id=None, markdown=False):
+    def send_msg(self, msg, chat_id=None, markdown=False, quiet=False):
         """Wrapper around API send_msg, if chat_id is not defined
-        it will use the chat_id this class was instantiated to"""
+        it will use the chat_id this class was instantiated to.
+        If ``quiet`` == True, use `send_quiet_message`
+        """
         if chat_id is None:
             chat_id = self.interaction_chat
+        if quiet:
+            return self.telegram.send_quiet_message(msg, chat_id, markdown=markdown)
         return self.telegram.send_message(msg, chat_id, markdown=markdown)
 
     def send_img(self, imgpath, chat_id=None, delete=False):

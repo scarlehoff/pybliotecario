@@ -4,6 +4,7 @@
 
     It's a companion to https://github.com/scarlehoff/websito/blob/master/views/foto.pug
 """
+
 from datetime import datetime
 import json
 import logging

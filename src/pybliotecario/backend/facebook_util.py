@@ -196,13 +196,11 @@ class FacebookUtil(Backend):
 
 if __name__ == "__main__":
     from configparser import ConfigParser
+
     logger.info("Testing FB Util")
     verify = "your_verify_token"
     app_token = "your_app_key"
     config = ConfigParser()
-    config["FACEBOOK"] = {
-            "verify": verify,
-            "app_token": app_token
-            }
+    config["FACEBOOK"] = {"verify": verify, "app_token": app_token}
     fb_util = FacebookUtil(config, debug=True)
     fb_util.act_on_updates(lambda x: print(x))

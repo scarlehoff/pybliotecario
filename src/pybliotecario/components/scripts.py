@@ -3,6 +3,7 @@
     For instant, good_morning will call the command defined in
     /script good_morning will call the command defined in [SCRIPTS] good_morning
 """
+
 import logging
 import pathlib
 import shlex
@@ -148,7 +149,7 @@ class Script(Component):
                     else:
                         cmd_list = [f"./{command_path.name}"] + script_args
                         sp.run(cmd_list, check=True, cwd=command_path.parent)
-                    self.send_msg("Command ran")
+                    self.send_msg("Command ran", quiet=True)
                 except sp.CalledProcessError:
                     self.send_msg("Command ran but failed")
             else:
