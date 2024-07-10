@@ -33,8 +33,7 @@ class System(Component):
     def telegram_message(self, msg):
         # Allow only the main user to use system
         if not self.check_identity(msg):
-            self.send_msg("You are not allowed to run scripts here")
-            return
+            return self._not_allowed_msg()
         command_key = msg.text.strip()
         command_name = ACCEPTED_COMMANDS.get(command_key)
         # Check whether the command is in the accepted_commands dictionary

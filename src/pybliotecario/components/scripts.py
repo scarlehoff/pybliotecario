@@ -122,7 +122,7 @@ class Script(Component):
     def telegram_message(self, msg):
         if not self.check_identity(msg) and not self._allow_everyone:
             self.blocked = True
-            self.send_msg("You are not allowed to run scripts here")
+            self._not_allowed_msg()
         if self.blocked:
             return
 

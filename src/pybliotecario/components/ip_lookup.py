@@ -25,10 +25,9 @@ class IpLookup(Component):
     def telegram_message(self, msg):
         """If the chat id asking is the correct one
         sends a msg with the current ip, otherwise fails"""
-        if self.check_identity(msg):
-            send_msg = ip_lookup()
-        else:
-            send_msg = "You are not allowed to see this"
+        if not self.check_identity(msg):
+            return self._not_allowed_msg()
+        send_msg = ip_lookup()
         self.telegram.send_message(send_msg, msg.chat_id)
 
     def cmdline_command(self, args):

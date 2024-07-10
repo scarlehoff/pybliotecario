@@ -173,3 +173,7 @@ class Component:
         self.telegram.send_file(filepath, chat_id)
         if delete:
             os.remove(filepath)
+
+    def _not_allowed_msg(self, chat_id=None):
+        """Tell the calling ID they are not allowed to use this component"""
+        return self.send_msg("You are not allowed to use this", quiet=True, chat_id=chat_id)
