@@ -79,6 +79,7 @@ def main_loop(tele_api, config=None, clear=False):
     accepted_ids = config.getidlist("DEFAULT", "chat_id")
     main_id = config.getmainid("DEFAULT", "chat_id")
     chivato = config.getboolean("DEFAULT", "chivato", fallback=False)
+    ignore_unknown = config.getboolean("DEFAULT", "ignore_unknown", fallback=False)
 
     global except_counter
     except_counter = 0
@@ -96,10 +97,14 @@ def main_loop(tele_api, config=None, clear=False):
             chat_id = message.chat_id
 
             # In "chivato" mode, send a message to the main chat_id if sender is not recognized
-            if chivato and chat_id not in accepted_ids:
-                chivato_msg = f"""El usuario @{message.username} ({chat_id=}) ha enviado el siguiente mensaje:
-{message.raw}"""
-                tele_api.send_message(chivato_msg, main_id)
+            if chat_id not in accepted_ids:
+                if chivato:
+                    chivato_msg = f"""El usuario @{message.username} ({chat_id=}) ha enviado el siguiente mensaje:
+        {message.raw}"""
+                    tele_api.send_message(chivato_msg, main_id)
+                if ignore_unknown:
+                    logger.info(f"Chat id {chat_id} not known, ignoring")
+                    return
 
             if message.is_command:
                 # Call the selected command and act on the message
