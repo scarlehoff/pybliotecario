@@ -8,6 +8,7 @@
 """
 
 from abc import ABC, abstractmethod
+from configparser import ConfigParser
 import json
 import logging
 import urllib
@@ -160,7 +161,14 @@ class Backend(ABC):
 
     """
 
-    _max_size = 99999
+    def __init__(self, config=None, debug=False, **kwargs):
+        if config is None:
+            # If no config is passed, generate and empty one
+            config = ConfigParser()
+        self._max_size = 99999
+        self._quiet = config.getboolean("DEFAULT", "quiet", fallback=False)
+        self._config = config
+        self._debug = debug
 
     @abstractmethod
     def _get_updates(self, not_empty=False):
@@ -174,6 +182,12 @@ class Backend(ABC):
     @abstractmethod
     def send_message(self, text, chat, **kwargs):
         """Sends a message to the chat"""
+
+    def send_quiet_message(self, text, chat, **kwargs):
+        """Like ``send_message`` but only sends the message if quiet is set to False
+        otherwise, do nothing"""
+        if not self._quiet:
+            return self.send_message(text, chat, **kwargs)
 
     @property
     @abstractmethod

@@ -18,7 +18,7 @@ logger = logging.getLogger()
 
 
 def read_config(config_file=None):
-    """Reads the pybliotecario config file and uploads the global configuration
+    """Reads the pybliotecario config file and updates the global configuration
     By default looks always in the default file path (in XDG_CONFIG_HOME) and the current folder
     """
     default_file_path = default_config_path()
@@ -107,19 +107,13 @@ def main(cmdline_arg=None, tele_api=None, config=None):
                 )
                 sys.exit(-1)
 
-            tele_api = TelegramUtil(api_token, debug=args.debug)
+            tele_api = TelegramUtil(config=config, debug=args.debug)
         elif args.backend.lower() == "test":
             tele_api = TestUtil("/tmp/test_file.txt")
         elif args.backend.lower() == "facebook":
-            try:
-                fb_config = config["FACEBOOK"]
-            except KeyError:
-                raise ValueError("No facebook section found for facebook in pybliotecario.ini")
-            verify_token = fb_config.get("verify")
-            app_token = fb_config.get("app_token")
-            tele_api = FacebookUtil(app_token, verify_token, debug=args.debug)
+            tele_api = FacebookUtil(config=config, debug=args.debug)
             # Check whether we have chat id
-            chat_id = fb_config.get("chat_id")
+            chat_id = config["FACEBOOK"].get("chat_id")
             if chat_id is not None:
                 config.set("DEFAULT", "chat_id", chat_id)
 

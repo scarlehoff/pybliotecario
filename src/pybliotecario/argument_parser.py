@@ -1,6 +1,7 @@
 """
     Wrapper for the argument parser and the initialization
 """
+
 from argparse import Action, ArgumentParser, ArgumentTypeError
 import configparser
 import glob
@@ -93,7 +94,7 @@ The instructions on how to get the token can be found here: https://core.telegra
     token = input("Authorization token: ")
 
     # Try to fire up the bot with the given token
-    telegram_API = TelegramUtil(token, timeout=20)
+    telegram_API = TelegramUtil(token=token, timeout=20)
     print("Thanks, let's test this out. Say something (anything!) to your bot in telegram")
 
     for _ in range(20):  # Allow for 20 tries

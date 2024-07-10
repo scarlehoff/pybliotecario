@@ -106,13 +106,18 @@ class TelegramUtil(Backend):
 
     _message_class = TelegramMessage
 
-    def __init__(self, TOKEN, debug=False, timeout=300):
+    def __init__(self, config=None, token=None, timeout=300, **kwargs):
+        super().__init__(config, **kwargs)
+        if token is None:
+            if config is None:
+                raise ValueError("Either a config or a token must be provided for Telegram")
+            token = config.defaults().get("token")
+
         self.offset = None
-        self.debug = debug
         self.timeout = timeout
         # Build app the API urls
-        base_URL = TELEGRAM_URL + f"bot{TOKEN}/"
-        self.base_fileURL = TELEGRAM_URL + f"file/bot{TOKEN}/"
+        base_URL = TELEGRAM_URL + f"bot{token}/"
+        self.base_fileURL = TELEGRAM_URL + f"file/bot{token}/"
         self.send_msg = base_URL + "sendMessage"
         self.send_img = base_URL + "sendPhoto"
         self.send_doc = base_URL + "sendDocument"
@@ -185,7 +190,7 @@ class TelegramUtil(Backend):
         if not updates and not_empty:
             return self._get_updates(not_empty=True)
 
-        if self.debug:
+        if self._debug:
             logger.info("Request url: %s", url)
             logger.info("Obtained updates: %s", updates)
 
@@ -254,7 +259,7 @@ class TelegramUtil(Backend):
 if __name__ == "__main__":
     logger.info("Testing TelegramUtil")
     token = "must put a token here to test"
-    ut = TelegramUtil(token, debug=True)
+    ut = TelegramUtil(token=token, debug=True)
     # noinspection PyProtectedMember
     results = ut._get_updates()
     for res in results:

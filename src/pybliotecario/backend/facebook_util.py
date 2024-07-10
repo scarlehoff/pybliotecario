@@ -79,20 +79,31 @@ class FacebookUtil(Backend):
     _message_class = FacebookMessage
     _max_size = MAX_SIZE
 
-    def __init__(self, PAGE_TOKEN, VERIFY_TOKEN, host="0.0.0.0", port=3000, debug=False):
+    def __init__(self, config=None, host="0.0.0.0", port=3000, **kwargs):
+        super().__init__(config, **kwargs)
+        if config is None:
+            raise ValueError("A configuration with a FACEBOOK section must be given")
+
+        try:
+            fb_config = config["FACEBOOK"]
+        except KeyError:
+            raise ValueError("No facebook section found for facebook in pybliotecario.ini")
+
         if not _HAS_FLASK:
             # Raise the error now
-            raise ModuleNotFoundError("No module named 'flask'")
+            raise ModuleNotFoundError("No module named 'flask', needed for Facebook backend")
 
-        self.page_access_token = PAGE_TOKEN
-        self.verify_token = VERIFY_TOKEN
+        verify_token = fb_config.get("verify")
+        page_token = fb_config.get("app_token")
+
+        self.page_access_token = page_token
+        self.verify_token = verify_token
         self.port = port
         self.host = host
         app = Flask(__name__)
         # Load the listener into the webhook endpoint
         app.add_url_rule("/webhook", "webhook", self.listener, methods=["POST", "GET"])
         self.flask_app = app
-        self.debug = debug
         self.action_function = None
         self.auth = {"access_token": self.page_access_token}
 
@@ -121,7 +132,7 @@ class FacebookUtil(Backend):
         opens the webhook to wait ofr updates and act on them
         """
         self.action_function = action_function
-        self.flask_app.run(host=self.host, port=self.port, debug=self.debug)
+        self.flask_app.run(host=self.host, port=self.port, debug=self._debug)
 
     def _get_updates(self, not_empty=False):
         """This class skips get_updates and uses act_on_updates directly"""
@@ -184,8 +195,14 @@ class FacebookUtil(Backend):
 
 
 if __name__ == "__main__":
+    from configparser import ConfigParser
     logger.info("Testing FB Util")
     verify = "your_verify_token"
     app_token = "your_app_key"
-    fb_util = FacebookUtil(app_token, verify, debug=True)
+    config = ConfigParser()
+    config["FACEBOOK"] = {
+            "verify": verify,
+            "app_token": app_token
+            }
+    fb_util = FacebookUtil(config, debug=True)
     fb_util.act_on_updates(lambda x: print(x))

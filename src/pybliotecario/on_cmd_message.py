@@ -6,6 +6,7 @@
     This is a design choice as this way it is not necessary to have all dependencies
     if you want to run only some submodules of the pybliotecario.
 """
+
 import importlib
 import logging
 
