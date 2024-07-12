@@ -101,17 +101,16 @@ class ControllerPID(Component):
         return is_it_alive(pid)
 
     def telegram_message(self, msg):
-        if self.check_identity(msg):
-            pid_string = msg.text.strip()
-            if msg.command == "kill_pid":
-                if pid_string.isdigit():
-                    return_msg = self.kill(int(pid_string))
-                else:
-                    return_msg = f"{pid_string} is not a PID?"
-            elif msg.command == "is_pid_alive":
-                return_msg = self.alive(pid_string)
+        if not self.check_identity(msg):
+            return self._not_allowed_msg
+        pid_string = msg.text.strip()
+        if msg.command == "kill_pid":
+            if pid_string.isdigit():
+                return_msg = self.kill(int(pid_string))
             else:
-                return_msg = f"Command {msg.command} not understood?"
+                return_msg = f"{pid_string} is not a PID?"
+        elif msg.command == "is_pid_alive":
+            return_msg = self.alive(pid_string)
         else:
-            return_msg = "You are not allowed to use this"
+            return_msg = f"Command {msg.command} not understood?"
         self.send_msg(return_msg)

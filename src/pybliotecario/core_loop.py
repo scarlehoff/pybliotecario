@@ -2,6 +2,7 @@
     This module manages the core loop of the pybliotecario
     when it is called with daemon mode -d
 """
+
 from datetime import datetime
 import logging
 from pathlib import Path
@@ -109,7 +110,7 @@ def main_loop(tele_api, config=None, clear=False):
                 file_path = _monthly_folder(main_folder) / file_name
                 result = tele_api.download_file(message.file_id, file_path)
                 if result:
-                    tele_api.send_message("¡Archivo recibido y guardado!", chat_id)
+                    tele_api.send_quiet_message("¡Archivo recibido y guardado!", chat_id)
                     logger.info("File saved to %s", file_path)
                 else:
                     tele_api.send_message("There was some problem with this, sorry", chat_id)
@@ -119,7 +120,7 @@ def main_loop(tele_api, config=None, clear=False):
                 # Otherwise just save the msg to the log and send a funny reply
                 _write_to_daily_log(main_folder, message.text)
                 random_msg = still_alive()
-                tele_api.send_message(random_msg, chat_id)
+                tele_api.send_quiet_message(random_msg, chat_id)
             except_counter = 0
         except Exception as e:
             logger.error(f"This message produced an exception: {e}")

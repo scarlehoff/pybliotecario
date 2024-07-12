@@ -1,8 +1,12 @@
 [DEFAULT]
 TOKEN = <telegram bot token>
-chat_id = <chat_id number> 
-main_folder = /home/<username>/.pybliotecario
-
+# chat_id accepts also a list of IDs separated by comma, the first one is considered the main one
+chat_id = <chat_id number>
+main_folder = /home/<username>/.local/share/pybliotecario
+# quiet defaults to false, whether the bot should always reply back
+quiet = false 
+# when chivato is true, the bot will write to the main chat_id whenever an user not in chat_id writes to the bot
+chivato = false #
 
 [FACEBOOK]
 verify = <verify token from fb>

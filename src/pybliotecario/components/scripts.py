@@ -3,6 +3,7 @@
     For instant, good_morning will call the command defined in
     /script good_morning will call the command defined in [SCRIPTS] good_morning
 """
+
 import logging
 import pathlib
 import shlex
@@ -121,7 +122,7 @@ class Script(Component):
     def telegram_message(self, msg):
         if not self.check_identity(msg) and not self._allow_everyone:
             self.blocked = True
-            self.send_msg("You are not allowed to run scripts here")
+            self._not_allowed_msg()
         if self.blocked:
             return
 
@@ -148,7 +149,7 @@ class Script(Component):
                     else:
                         cmd_list = [f"./{command_path.name}"] + script_args
                         sp.run(cmd_list, check=True, cwd=command_path.parent)
-                    self.send_msg("Command ran")
+                    self.send_msg("Command ran", quiet=True)
                 except sp.CalledProcessError:
                     self.send_msg("Command ran but failed")
             else:

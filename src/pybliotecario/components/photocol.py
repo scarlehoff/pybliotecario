@@ -4,6 +4,7 @@
 
     It's a companion to https://github.com/scarlehoff/websito/blob/master/views/foto.pug
 """
+
 from datetime import datetime
 import json
 import logging
@@ -106,8 +107,7 @@ class PhotoCol(Component):
             return self.send_msg("Command not understood")
 
         if not self.check_identity(msg):
-            self.send_msg("You are not allowed to interact with this command!")
-            return
+            return self._not_allowed_msg()
 
         if msg.command == "photocol_remove":
             return self._remove_from_db(msg.text)
