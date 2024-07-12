@@ -13,27 +13,24 @@ from pybliotecario.components.component_core import Component
 
 logger = logging.getLogger(__name__)
 
-
-def is_today(time_to_test):
+def _is_last_cutoff(time_to_test, base_hour=18):
     """
     Checks whether the given time to test corresponds to today
-    or to the previous day
-    Remember, the previous day for arxiv purposes only starts at 19.00
-    """
+    corresponds to the last cutoff.
+    Note that this will fail when there are holidays in the middle"""
     # First we need to find out which day is today
     today = datetime.now(timezone.utc)
-    wday = today.weekday()  # 0 == Monday
-    base_hour = 18
+    # Now go back 48 hours
+    today -= timedelta(days=2)
 
-    if wday < 2:
-        # If today is monday or tuesday, we should look at thursday/friday for the cutoff
-        base_today = today - timedelta(days=4)
-    else:  # yesterday
-        base_today = today - timedelta(days=2)
-    base_today = base_today.replace(hour=base_hour, minute=0, second=0, microsecond=0)
+    last_cutoff = today.replace(hour=base_hour, minute=0, second=0, microsecond=0)
+    if last_cutoff > today:
+        last_cutoff -= timedelta(days=1)
 
-    # Now, if the paper date (pdt) is from before the base time (base_today), that means it is not from today
-    return time_to_test >= base_today
+    if last_cutoff.weekday() > 4: # Saturday or Sunday have no cutoff
+        last_cutoff -= timedelta(days=2)
+
+    return time_to_test >= last_cutoff
 
 
 def query_recent(category):
@@ -45,7 +42,7 @@ def query_recent(category):
     ).results()
     elements = []
     for _, element in enumerate(results):
-        if is_today(element.published):
+        if _is_last_cutoff(element.published):
             elements.append(element)
     logger.info("Found %d new papers", len(elements))
     return elements
