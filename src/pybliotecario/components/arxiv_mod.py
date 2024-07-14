@@ -13,6 +13,7 @@ from pybliotecario.components.component_core import Component
 
 logger = logging.getLogger(__name__)
 
+
 def _is_last_cutoff(time_to_test, base_hour=18):
     """
     Checks whether the given time to test corresponds to today
@@ -20,15 +21,16 @@ def _is_last_cutoff(time_to_test, base_hour=18):
     Note that this will fail when there are holidays in the middle"""
     # First we need to find out which day is today
     today = datetime.now(timezone.utc)
-    # Now go back 48 hours
-    today -= timedelta(days=2)
 
-    last_cutoff = today.replace(hour=base_hour, minute=0, second=0, microsecond=0)
-    if last_cutoff > today:
-        last_cutoff -= timedelta(days=1)
+    cutoff_time = today.replace(hour=base_hour, minute=0, second=0, microsecond=0)
+    if cutoff_time > today:
+        cutoff_time -= timedelta(days=1)
 
-    if last_cutoff.weekday() > 4: # Saturday or Sunday have no cutoff
-        last_cutoff -= timedelta(days=2)
+    # Now go back by two days (e.g., if we are looking at Wednesday, the papers were sent on Monday)
+    # but we need to wrap around the weekend
+
+    wday = (min(today.weekday(), 4) - 2) % 5
+    last_cutoff = today.replace(day=wday)
 
     return time_to_test >= last_cutoff
 
