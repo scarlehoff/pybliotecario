@@ -23,19 +23,18 @@ def _is_last_cutoff(time_to_test, base_hour=18):
     today = datetime.now(timezone.utc)
 
     cutoff_time = today.replace(hour=base_hour, minute=0, second=0, microsecond=0)
-    if cutoff_time > today:
-        cutoff_time -= timedelta(days=1)
-
     # Now go back by two days (e.g., if we are looking at Wednesday, the papers were sent on Monday)
     # but we need to wrap around the weekend
 
-    wday = (min(today.weekday(), 4) - 2) % 5
-    last_cutoff = today.replace(day=wday)
+    cut_wday = cutoff_time.weekday()
+    wday = (min(cut_wday, 4) - 2) % 5
+    move_days = abs(cut_wday - wday)
+    last_cutoff = cutoff_time - timedelta(days=move_days)
 
     return time_to_test >= last_cutoff
 
 
-def query_recent(category):
+def query_recent(category, cross_referenced=False):
     """
     Query the arxiv for the updates of the last day for a given category
     """
@@ -44,8 +43,11 @@ def query_recent(category):
     ).results()
     elements = []
     for _, element in enumerate(results):
+        if element.primary_category != category and not cross_referenced:
+            continue
         if _is_last_cutoff(element.published):
             elements.append(element)
+
     logger.info("Found %d new papers", len(elements))
     return elements
 
