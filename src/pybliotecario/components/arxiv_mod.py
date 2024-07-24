@@ -28,7 +28,7 @@ def _is_last_cutoff(time_to_test, base_hour=18):
 
     cut_wday = cutoff_time.weekday()
     wday = (min(cut_wday, 4) - 2) % 5
-    move_days = abs(cut_wday - wday)
+    move_days = (cut_wday - wday) % 7
     last_cutoff = cutoff_time - timedelta(days=move_days)
 
     return time_to_test >= last_cutoff
