@@ -22,9 +22,9 @@ logger = logging.getLogger(__name__)
 def _get_live_price(ticker):
     """Wrapper around stock_info.get_live_price to avoid
     importing yahoo_fin if not explicitly called"""
-    from yahoo_fin import stock_info
-
-    return stock_info.get_live_price(ticker)
+    from yfinance import Ticker
+    ticker_object = Ticker(ticker)
+    return ticker_object.fast_info["lastPrice"]
 
 
 ### All checks to be applied, take ticker name, current price and conditions dictionary
@@ -109,12 +109,13 @@ class Stocks(Component):
     def telegram_message(self, msg):
         command = msg.command
         ticker = msg.text.strip()
-        if command == "stock_price":
+        if command == "stock_value":
             # noinspection PyPep8
             try:
                 pp = _get_live_price(ticker)
                 self.send_msg(f"{ticker} price: {pp:.3f}$")
-            except:  # yahoo-fin not very stable :(
+            except Exception as e:  # yahoo-fin not very stable :(
+                logger.error(e)
                 self.send_msg(f"Unknown error trying to get information from {ticker}")
 
 

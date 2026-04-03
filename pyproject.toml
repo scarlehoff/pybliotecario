@@ -29,7 +29,7 @@ dependencies = [
 
 [project.optional-dependencies]
 facebook = ["flask", "requests_toolbelt"]
-stonks = ["yahoo-fin", "pandas"]
+stonks = ["yfinance"]
 arxiv = ["arxiv"]
 weather = ["pyowm"]
 wiki = ["wikipedia"]
