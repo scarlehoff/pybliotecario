@@ -73,7 +73,7 @@ pybliotecario -d --debug
 Use the `--debug` flag if you want to see a verbose output of what's happening!
 
 
-## Extending the pybliotecario 
+## Extending the pybliotecario
 
 The program aims to be 100% extensible, running any kind of action in two different modes:
 
@@ -82,7 +82,7 @@ The program aims to be 100% extensible, running any kind of action in two differ
 
 Adding new actions to each of the different modes is trivial, there are a small example for each case in the relevant files.
 
-In order to add a new command to the bot you need to modify the file `on_cmdline.py` (for command line arguments) or `on_cmd_message.py` for commands sent from Telegram. 
+In order to add a new command to the bot you need to modify the file `on_cmdline.py` (for command line arguments) or `on_cmd_message.py` for commands sent from Telegram.
 The easiest course of action is to copy one of the components (in the `components` folder you can see the different modules) and add your own actions.
 The simplest of them is probably `components/ip_lookup.py` so have a look at it!
 
@@ -105,19 +105,19 @@ You can ask the pybliotecario at any point to send you a list of the available c
     /kill_pid pid: kills a given pid
     /is_pid_alive pid/name_of_program: looks for the given pid or program to check whether it is still alive
  > IP module
-    /ip : send the current ip in which the bot is running 
+    /ip : send the current ip in which the bot is running
  > Arxiv module
     /arxiv arxiv_id: sends information about the given id
-    /arxiv_get arxiv_id: sends the PDF for the given id 
+    /arxiv_get arxiv_id: sends the PDF for the given id
  > Script module
     /script list: list all possible scripts
-    /script script_name: execute the given script 
+    /script script_name: execute the given script
  > DnD module
     /r, /roll dice [text]: roll a dice in the format NdM+Mod
  > Reactions module
     /reaction_save reaction_name: save an image with name reaction_name
     /reaction_list: list all reactions
-    /reaction reaction_name: sends the reaction given by reaction_name 
+    /reaction reaction_name: sends the reaction given by reaction_name
  > Wikipedia module
     /wiki term: search for term in wikipedia, return the summary
     /wiki_full N term: read the full article and return N times the defined summary_size
@@ -135,7 +135,7 @@ In the file `on_cmdline.py` add a new if condition. You can add your action ther
 
 Note: if you need new command line arguments (you surely do!) don't forget to add them to the end of `argument_parser.py`!
 
-Example: 
+Example:
 ```
 pybliotecario -i test.jpg
 ```

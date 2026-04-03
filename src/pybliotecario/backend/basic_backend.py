@@ -1,10 +1,10 @@
 """
-    Base/abstract backend classes:
+Base/abstract backend classes:
 
-    - Message
-    - Backend
+- Message
+- Backend
 
-    Each backend should implement its own message type and inherit from backend
+Each backend should implement its own message type and inherit from backend
 """
 
 from abc import ABC, abstractmethod

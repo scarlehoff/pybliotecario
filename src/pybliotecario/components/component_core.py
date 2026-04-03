@@ -1,15 +1,15 @@
 """
-    All different components must inherit from the Component class
+All different components must inherit from the Component class
 
-    If the component `configurable` flag is set to True,
-    the installer will call the `configure_me` method of the class.
+If the component `configurable` flag is set to True,
+the installer will call the `configure_me` method of the class.
 
-    Once a command has been registered to a component it will call the
-    `telegram_command_parser` or the `cmdline_command_parser`.
+Once a command has been registered to a component it will call the
+`telegram_command_parser` or the `cmdline_command_parser`.
 
-    In the simplest scenario (the one considered by this example class)
-    the class Component will just pass the text of the msg (or the command)
-    to the `act_on_command` or `act_on_message` methods.
+In the simplest scenario (the one considered by this example class)
+the class Component will just pass the text of the msg (or the command)
+to the `act_on_command` or `act_on_message` methods.
 """
 
 import logging

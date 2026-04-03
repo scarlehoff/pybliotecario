@@ -1,8 +1,8 @@
 """
-    Module to save images into an image collection
-    with thumbnails and keeping a json as database
+Module to save images into an image collection
+with thumbnails and keeping a json as database
 
-    It's a companion to https://github.com/scarlehoff/websito/blob/master/views/foto.pug
+It's a companion to https://github.com/scarlehoff/websito/blob/master/views/foto.pug
 """
 
 from datetime import datetime

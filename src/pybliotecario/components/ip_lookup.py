@@ -1,4 +1,4 @@
-""" Server-helper function to look up the current IP of the program """
+"""Server-helper function to look up the current IP of the program"""
 
 import logging
 import urllib.request

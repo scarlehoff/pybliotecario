@@ -1,6 +1,6 @@
 """
-    This module manages the core loop of the pybliotecario
-    when it is called with daemon mode -d
+This module manages the core loop of the pybliotecario
+when it is called with daemon mode -d
 """
 
 from datetime import datetime

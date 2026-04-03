@@ -1,5 +1,5 @@
 """
-    Module to read and send content from wikipedia
+Module to read and send content from wikipedia
 """
 
 # TODO use the selected language

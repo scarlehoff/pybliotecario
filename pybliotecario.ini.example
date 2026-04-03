@@ -4,7 +4,7 @@ TOKEN = <telegram bot token>
 chat_id = <chat_id number>
 main_folder = /home/<username>/.local/share/pybliotecario
 # quiet defaults to false, whether the bot should always reply back
-quiet = false 
+quiet = false
 # when chivato is true, the bot will write to the main chat_id whenever an user not in chat_id writes to the bot
 chivato = false
 # if true, messages from chat ids not included in `chat_id` will be ignored

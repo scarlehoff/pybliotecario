@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-    Telegram backend
+Telegram backend
 """
 
 import json

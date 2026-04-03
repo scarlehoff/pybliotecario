@@ -1,6 +1,6 @@
 """
-    Module using the arxiv API for prelogger.info tracking
-    update notifications and quick-querying from the Telegram app
+Module using the arxiv API for prelogger.info tracking
+update notifications and quick-querying from the Telegram app
 """
 
 from datetime import datetime, timedelta, timezone

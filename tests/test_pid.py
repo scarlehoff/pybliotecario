@@ -1,11 +1,14 @@
 """
-    Tests the PID module
+Tests the PID module
 """
-import time
-import subprocess as sp
+
 from multiprocessing.pool import ThreadPool as Pool
-from pybliotecario.pybliotecario import main
+import subprocess as sp
+import time
+
 from pybliotecario.backend import TestUtil
+from pybliotecario.pybliotecario import main
+
 from .conftest import generate_fake_config
 
 

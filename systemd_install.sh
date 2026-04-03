@@ -12,7 +12,7 @@ confirm() {
     case "$yn" in
         [yYsS])
             true ;;
-        *) 
+        *)
             false ;;
     esac
 }
@@ -49,7 +49,7 @@ then
 fi
 
 
-# Small bash script to create a systemd unit with to start the 
+# Small bash script to create a systemd unit with to start the
 # bot on start as a daemon
 # TODO: make it into part of the --install command?
 unitname=pybliotecario
@@ -73,7 +73,7 @@ extra_options=""
 
 echo "Sometimes badly formed commands or network errors can make the bot fail
 The bot can just exit on failure or just ignore the error"
-if confirm "Do you want to ignore errors?" 
+if confirm "Do you want to ignore errors?"
 then
     extra_options="${extra_options} --clear_incoming"
     limit_interval="

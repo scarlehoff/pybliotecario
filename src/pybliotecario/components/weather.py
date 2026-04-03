@@ -1,7 +1,7 @@
 """
-    This module uses the OpenWeather API to provide
-    weather information for given location/given times
-    using: https://github.com/csparpa/pyowm
+This module uses the OpenWeather API to provide
+weather information for given location/given times
+using: https://github.com/csparpa/pyowm
 """
 
 from datetime import datetime

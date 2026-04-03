@@ -1,8 +1,8 @@
 """
-    This module contains utilities for interacting with processes of the computer
-    in which the bot runs.
-    It allows for things like killing a process from Telegram or querying for
-    an active process
+This module contains utilities for interacting with processes of the computer
+in which the bot runs.
+It allows for things like killing a process from Telegram or querying for
+an active process
 """
 
 import logging

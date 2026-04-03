@@ -1,16 +1,18 @@
 """
-    Tests for the DnD component
+Tests for the DnD component
 """
 
 import re
-from pybliotecario.pybliotecario import main
+
 from pybliotecario.backend import TestUtil
 from pybliotecario.components import dnd
+from pybliotecario.pybliotecario import main
+
 from .conftest import generate_fake_config
 
 
 def test_parse_roll():
-    """ Test that the dice is parsed correctly """
+    """Test that the dice is parsed correctly"""
 
     def check_comb(comb):
         dice, signs, modifiers = dnd.parse_roll(comb)

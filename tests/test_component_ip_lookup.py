@@ -1,10 +1,12 @@
 """
-    Tests the ip_lookup component
+Tests the ip_lookup component
 """
 
 import socket
-from pybliotecario.pybliotecario import main
+
 from pybliotecario.backend import TestUtil
+from pybliotecario.pybliotecario import main
+
 from .conftest import generate_fake_config
 
 

@@ -50,7 +50,7 @@ skip_magic_trailing_comma = true
 [tool.isort]
 atomic = true
 line_length = 100
-profile = "black" 
+profile = "black"
 skip_gitignore = true
 known_first_party = ["pybliotecario"]
 force_sort_within_sections = true

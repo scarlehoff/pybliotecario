@@ -1,6 +1,6 @@
 """
-    Define custom parsers for the config reader
-    and default data/config locations
+Define custom parsers for the config reader
+and default data/config locations
 """
 
 from configparser import ConfigParser

@@ -1,14 +1,17 @@
 """
-    Test the system component
+Test the system component
 """
+
 import subprocess as sp
-from pybliotecario.pybliotecario import main
+
 from pybliotecario.backend import TestUtil
+from pybliotecario.pybliotecario import main
+
 from .conftest import generate_fake_config
 
 
 def test_uptime(tmp_path, tmpfile):
-    """ Checks that the uptime is correct """
+    """Checks that the uptime is correct"""
     fake_config = generate_fake_config(tmp_path)
     fake_msg = ["/system uptime"]
     test_util = TestUtil(communication_file=tmpfile, fake_msgs=fake_msg)

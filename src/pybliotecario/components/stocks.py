@@ -1,13 +1,13 @@
 """
-    Use yahoo_fin: http://theautomatic.net/yahoo_fin-documentation/
-    to obtain information of stock prices
+Use yahoo_fin: http://theautomatic.net/yahoo_fin-documentation/
+to obtain information of stock prices
 
-    The watch list is a json like:
-    {
-    "AAPL" : {
-        "below" : 100,
-        "above" : 170
-    },
+The watch list is a json like:
+{
+"AAPL" : {
+    "below" : 100,
+    "above" : 170
+},
 
 """
 
@@ -23,6 +23,7 @@ def _get_live_price(ticker):
     """Wrapper around stock_info.get_live_price to avoid
     importing yahoo_fin if not explicitly called"""
     from yfinance import Ticker
+
     ticker_object = Ticker(ticker)
     return ticker_object.fast_info["lastPrice"]
 
