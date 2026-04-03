@@ -1,8 +1,8 @@
 """
-    This module contains utilities for interacting with processes of the computer
-    in which the bot runs.
-    It allows for things like killing a process from Telegram or querying for
-    an active process
+This module contains utilities for interacting with processes of the computer
+in which the bot runs.
+It allows for things like killing a process from Telegram or querying for
+an active process
 """
 
 import logging
@@ -40,7 +40,7 @@ def wait_for_it_until_finished(pids):
     psutil.wait_procs(processes)
 
 
-def is_it_alive(data):
+def _is_it_alive(data):
     """Given a pid or a string, check whether
     there is any matching process alive"""
     alive = False
@@ -98,7 +98,7 @@ class ControllerPID(Component):
     def alive(pid):
         """Check whether a PID (or str for searching
         for a PID) is alive"""
-        return is_it_alive(pid)
+        return _is_it_alive(pid)
 
     def telegram_message(self, msg):
         if not self.check_identity(msg):
@@ -110,7 +110,10 @@ class ControllerPID(Component):
             else:
                 return_msg = f"{pid_string} is not a PID?"
         elif msg.command == "is_pid_alive":
-            return_msg = self.alive(pid_string)
+            try:
+                return_msg = self.alive(pid_string)
+            except psutil.AccessDenied:
+                return_msg = f"Command failed for '{pid_string}'"
         else:
             return_msg = f"Command {msg.command} not understood?"
         self.send_msg(return_msg)

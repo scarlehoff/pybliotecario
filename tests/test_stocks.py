@@ -1,9 +1,12 @@
 """
-    Tests the stocks module
+Tests the stocks module
 """
+
 import json
-from pybliotecario.pybliotecario import main
+
 from pybliotecario.backend import TestUtil
+from pybliotecario.pybliotecario import main
+
 from .conftest import generate_fake_config
 
 

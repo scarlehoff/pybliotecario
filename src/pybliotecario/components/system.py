@@ -1,6 +1,6 @@
 """
-    This component contains system-commands to be run
-    remotely
+This component contains system-commands to be run
+remotely
 """
 
 import subprocess as sp

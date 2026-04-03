@@ -1,9 +1,9 @@
 """
-    Wrapper around the GitHub API
+Wrapper around the GitHub API
 
-    To get an API key go to 
-    https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
-    and follow the instructions
+To get an API key go to
+https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
+and follow the instructions
 """
 
 import datetime

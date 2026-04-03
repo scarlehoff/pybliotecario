@@ -1,39 +1,56 @@
 """
-    This module contains a mapping between Telegram commands
-    (msgs which start with / ) and components which will act on them.
+This module contains a mapping between Telegram commands
+(msgs which start with / ) and components which will act on them.
 
-    Note that the components are only imported when/if the appropriate command is invoked
-    This is a design choice as this way it is not necessary to have all dependencies
-    if you want to run only some submodules of the pybliotecario.
+Note that the components are only imported when/if the appropriate command is invoked
+This is a design choice as this way it is not necessary to have all dependencies
+if you want to run only some submodules of the pybliotecario.
 """
 
-import importlib
 import logging
+
+from .utils import import_component
 
 log = logging.getLogger(__name__)
 
+EXACT_COMMAND_MAPPING = {
+    "ip": ("ip_lookup", "IpLookup"),
+    # PID
+    "is_pid_alive": ("pid", "ControllerPID"),
+    "kill_pid": ("pid", "ControllerPID"),
+    # Arxiv
+    #     "arxiv_query": ("arxiv_mod", "Arxiv"),
+    #     "arxiv": ("arxiv_mod", "Arxiv"),
+    #     "arxivget": ("arxiv_mod", "Arxiv"),
+    #     "arxiv_get": ("arxiv_mod", "Arxiv"),
+    # scripts
+    "script": ("scripts", "Script"),
+    # dnd
+    "r": ("dnd", "DnD"),
+    "roll": ("dnd", "DnD"),
+    # reactions
+    #     "reaction_save": ("reactions", "Reactions"),
+    #     "reaction": ("reactions", "Reactions"),
+    #     "reaction_list": ("reactions", "Reactions"),
+    # system
+    "system": ("system", "System"),
+    # stocks
+    "stock_value": ("stocks", "Stocks"),
+}
 
-def import_component(module, cls):
-    module_path = "pybliotecario.components." + module
-    module = importlib.import_module(module_path)
-    return getattr(module, cls)
+PREFIX_COMMAND_MAPPING = {
+    "wiki": ("wiki", "WikiComponent"),
+    "reaction": ("reactions", "Reactions"),
+    "arxiv": ("arxiv_mod", "Arxiv"),
+}
 
 
 def send_help(tele_api, chat_id):
     log.info("Sending help msg")
-    components = [
-        ("pid", "ControllerPID"),
-        ("ip_lookup", "IpLookup"),
-        ("arxiv_mod", "Arxiv"),
-        ("scripts", "Script"),
-        ("dnd", "DnD"),
-        ("reactions", "Reactions"),
-        ("wiki", "WikiComponent"),
-        ("system", "System"),
-        ("stocks", "Stocks"),
-        ("twitter", "TwitterComponent"),
-        ("photocol", "PhotoCol"),
-    ]
+    components = sorted(
+        list(set(EXACT_COMMAND_MAPPING.values()).union(set(PREFIX_COMMAND_MAPPING.values())))
+    )
+
     full_help = []
     for module, cls in components:
         try:
@@ -49,38 +66,23 @@ def act_on_telegram_command(tele_api, message_obj, config):
     """
     Act for a given telegram command
     """
-    tg_command = message_obj.command
+    tg_command = message_obj.command.lower()
     chat_id = config["DEFAULT"]["chat_id"]
 
     try:
-        if tg_command == "ip":
-            from pybliotecario.components.ip_lookup import IpLookup as Actor
-        elif tg_command.lower() in ("is_pid_alive", "kill_pid"):
-            from pybliotecario.components.pid import ControllerPID as Actor
-        elif tg_command in ("arxiv_query", "arxiv", "arxivget", "arxiv_get"):
-            from pybliotecario.components.arxiv_mod import Arxiv as Actor
-        elif tg_command == "script":
-            from pybliotecario.components.scripts import Script as Actor
-        elif tg_command in ("r", "roll"):
-            from pybliotecario.components.dnd import DnD as Actor
-        elif tg_command in ("reaction_save", "reaction", "reaction_list"):
-            from pybliotecario.components.reactions import Reactions as Actor
-        elif tg_command[:4] == "wiki":
-            from pybliotecario.components.wiki import WikiComponent as Actor
-        elif tg_command == "system":
-            from pybliotecario.components.system import System as Actor
-        elif tg_command == "stock_price":
-            from pybliotecario.components.stocks import Stocks as Actor
-        elif tg_command.startswith("twitter_"):
-            from pybliotecario.components.twitter import TwitterComponent as Actor
-        elif tg_command.startswith("photocol"):
-            from pybliotecario.components.photocol import PhotoCol as Actor
-
+        if tg_command in EXACT_COMMAND_MAPPING:
+            module_name, class_name = EXACT_COMMAND_MAPPING[tg_command]
+        elif any(tg_command.startswith(i) for i in PREFIX_COMMAND_MAPPING):
+            for k, (module_name, class_name) in PREFIX_COMMAND_MAPPING.items():
+                if tg_command.startswith(k):
+                    break
         elif tg_command == "help":
             return send_help(tele_api, chat_id)
         else:
             log.info(f"No actor declared for this command: {tg_command}")
             return None
+
+        Actor = import_component(module_name, class_name)
 
     except ModuleNotFoundError as e:
         log.error(f"The component {tg_command} raised the following error: {e}")

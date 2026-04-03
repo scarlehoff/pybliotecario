@@ -1,6 +1,6 @@
 """
-    Module containing functions to deal with Git and Mercurial repositories.
-    Useful for monitoring changes in a repository being able to apply custom filters
+Module containing functions to deal with Git and Mercurial repositories.
+Useful for monitoring changes in a repository being able to apply custom filters
 """
 
 import logging

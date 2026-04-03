@@ -1,5 +1,5 @@
 """
-    Wrapper for the argument parser and the initialization
+Wrapper for the argument parser and the initialization
 """
 
 from argparse import Action, ArgumentParser, ArgumentTypeError

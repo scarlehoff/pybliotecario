@@ -1,5 +1,5 @@
 """
-    Tests the test backend
+Tests the test backend
 """
 
 from pybliotecario.backend import TestUtil
@@ -30,7 +30,7 @@ def test_get_updates_tmpfile(tmpfile):
 
 
 def test_act_on_update():
-    """ Check that act on update works as expected """
+    """Check that act on update works as expected"""
     test_util = TestUtil(fake_msgs=["/test command"])
 
     # Action function

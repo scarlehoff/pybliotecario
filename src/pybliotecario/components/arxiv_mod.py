@@ -1,11 +1,12 @@
 """
-    Module using the arxiv API for prelogger.info tracking
-    update notifications and quick-querying from the Telegram app
+Module using the arxiv API for prelogger.info tracking
+update notifications and quick-querying from the Telegram app
 """
 
 from datetime import datetime, timedelta, timezone
 import logging
 import os
+from pathlib import Path
 
 import arxiv
 
@@ -95,14 +96,16 @@ def url_to_id(arxiv_url):
 
 # Telegram-usable functions
 def arxiv_get_pdf(arxiv_id_raw):
-    """Downloads a paper from the arxiv given an id"""
+    """Downloads a paper from the arxiv given an id.
+    Returns path to the downloaded file.
+    """
     arxiv_id = url_to_id(arxiv_id_raw)
     # First we recover the information about the paper
     try:
         paper = next(arxiv.Search(id_list=[arxiv_id]).results())
     except arxiv.arxiv.HTTPError:
         return None
-    return paper.download_pdf("/tmp/")
+    return Path(paper.download_pdf("/tmp/"))
 
 
 def arxiv_recent_filtered(categories, filter_dict, abstract=False, max_authors=50):

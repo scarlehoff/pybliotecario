@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """
-    Facebook backend
+Facebook backend
 
-    Using this backend will stat a flask server in the selected port.
-    Testing this backend is a bit of a pain as one has to be in a server
-    which facebook should be able to access with a valid SSL certificate.
+Using this backend will stat a flask server in the selected port.
+Testing this backend is a bit of a pain as one has to be in a server
+which facebook should be able to access with a valid SSL certificate.
 
-    For quick testing, I am using the following setup:
-    ~$ iptables -A INPUT -p tcp --dport 3000  -j ACCEPT
-    ~$ ngrok http <my_personal_server>:3000
+For quick testing, I am using the following setup:
+~$ iptables -A INPUT -p tcp --dport 3000  -j ACCEPT
+~$ ngrok http <my_personal_server>:3000
 
-    And then I open the flask server in the port 3000 and give facebook
-    the ngrok url.
-    For actual deployment one would want to set up some actual server.
+And then I open the flask server in the port 3000 and give facebook
+the ngrok url.
+For actual deployment one would want to set up some actual server.
 """
 
 import json

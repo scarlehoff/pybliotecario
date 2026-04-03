@@ -1,7 +1,7 @@
 """
-    Module to run scripts from Telegram by calling custom commands
-    For instant, good_morning will call the command defined in
-    /script good_morning will call the command defined in [SCRIPTS] good_morning
+Module to run scripts from Telegram by calling custom commands
+For instant, good_morning will call the command defined in
+/script good_morning will call the command defined in [SCRIPTS] good_morning
 """
 
 import logging
