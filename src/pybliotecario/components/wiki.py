@@ -28,7 +28,7 @@ class WikiComponent(Component):
 
     def __init__(self, telegram_object, configuration=None, **kwargs):
         super().__init__(telegram_object, configuration=configuration, **kwargs)
-        wiki_config = self.read_config_section(WIKI_NAME)
+        wiki_config = self.read_config_section(WIKI_NAME, irrelevant=True)
         self.summary_size = int(wiki_config.get("msg_size", 1024))
         self.language = wiki_config.get("language", DEFAULT_LANGUAGE)
         wikipedia.set_lang(self.language)

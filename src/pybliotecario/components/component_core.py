@@ -52,7 +52,7 @@ class Component:
         self.configurable = False
         self.running_in_loop = running_in_loop
 
-    def read_config_section(self, section=None, telegram_error=True):
+    def read_config_section(self, section=None, telegram_error=True, irrelevant=False):
         """
         Checks whether section exists within the configuration file and returns its content
 
@@ -60,6 +60,8 @@ class Component:
         from the backend, send back an error message and return an empty dictionary.
 
         If the bot is running interactively, inform the user and exit with error.
+
+        If ``irrelevant`` is set to True, then not having the section has no effect.
         """
         if section is None:
             section = self.key_name
@@ -67,7 +69,9 @@ class Component:
         try:
             section_dict = self.configuration[section]
             return section_dict
-        except KeyError:
+        except KeyError as e:
+            if irrelevant:
+                return {}
             log.error(
                 f"Section {section} is not configured, please run pybliotecario with --init or add it manually"
             )
@@ -77,7 +81,7 @@ class Component:
                 return {}
 
             log.error("Exiting with error")
-            sys.exit(-1)
+            raise e
 
     @classmethod
     def whoamI(cls):

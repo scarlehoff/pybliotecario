@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-    Main script for the pybliotecario program
-    for command line invocation
+Main script for the pybliotecario program
+for command line invocation
 """
 import logging
 from pathlib import Path
@@ -31,7 +31,7 @@ def read_config(config_file=None):
         )
 
     if config_file is not None:
-        config_files.append(config_file)
+        config_files.append(Path(config_file))
     config = CustomConfigParser()
     config.read(config_files, encoding="UTF-8")
     # Add a custom paster to this config
@@ -93,7 +93,7 @@ def main(cmdline_arg=None, tele_api=None, config=None):
                 "No 'default:main_folder' option set in %s, using /tmp/", args.config_file
             )
             main_folder = "/tmp/"
-        logger_setup(main_folder + "/info.log", debug=args.debug)
+        logger_setup(Path(main_folder) / "info.log", debug=args.debug)
 
     logger.info("Initializing the pybliotecario")
 

@@ -1,17 +1,30 @@
 """
-    This module contains a mapping between the command line arguments
-    and the components which run them.
+This module contains a mapping between the command line arguments
+and the components which run them.
 
-    Note that the components are only imported when/if the appropriate command is invoked
-    This is a design choice as this way it is not necessary to have all dependencies
-    if you want to run only some submodules of the pybliotecario.
+Note that the components are only imported when/if the appropriate command is invoked
+This is a design choice as this way it is not necessary to have all dependencies
+if you want to run only some submodules of the pybliotecario.
 
-    The most obvious example is running the program just to send msgs and files to Telegram
+The most obvious example is running the program just to send msgs and files to Telegram
 """
 
 import logging
+from .utils import import_component
 
 log = logging.getLogger(__name__)
+
+# maps the CLI commands to module->class
+# TODO: the class should always be runner or actor or whatever so that only the module is needed
+CMDLINE_MAPPING = {
+    "my_ip": ("ip_lookup", "IpLookup"),
+    "pid": ("pid", "ControllerPID"),
+    "weather": ("weather", "Weather"),
+    "check_repository": ("repositories", "Repository"),
+    "check_github_issues": ("github_component", "Github"),
+    "arxiv_new": ("arxiv_mod", "Arxiv"),
+    "stock_watcher": ("stocks", "Stocks"),
+}
 
 
 def run_command(args, tele_api, config):
@@ -29,43 +42,13 @@ def run_command(args, tele_api, config):
     if not chat_id:
         chat_id = config["DEFAULT"]["chat_id"]
 
+    # Loop over the possible command line arguments
     actors = []
-
-    if args.my_ip:
-        from pybliotecario.components.ip_lookup import IpLookup
-
-        actors.append(IpLookup)
-
-    if args.pid:
-        from pybliotecario.components.pid import ControllerPID
-
-        actors.append(ControllerPID)
-
-    if args.weather:
-        from pybliotecario.components.weather import Weather
-
-        actors.append(Weather)
-
-    if args.check_repository:
-        from pybliotecario.components.repositories import Repository
-
-        actors.append(Repository)
-
-    if args.check_github_issues:
-        from pybliotecario.components.github_component import Github
-
-        actors.append(Github)
-
-    if args.arxiv_new:
-        from pybliotecario.components.arxiv_mod import Arxiv
-
-        actors.append(Arxiv)
-
-    if args.stock_watcher is not None:
-        # stock_watcher could be an empty list!
-        from pybliotecario.components.stocks import Stocks
-
-        actors.append(Stocks)
+    for arg_name, (module_name, class_name) in CMDLINE_MAPPING.items():
+        arg_val = getattr(args, arg_name, None)
+        # We first try to import all of them to check for import problems
+        if arg_val:
+            actors.append(import_component(module_name, class_name, arg_name))
 
     for Actor in actors:
         actor_instance = Actor(tele_api, chat_id=chat_id, configuration=config)
