@@ -7,12 +7,26 @@ from datetime import datetime, timedelta, timezone
 import logging
 import os
 from pathlib import Path
+import tempfile
+from urllib.request import urlretrieve
 
 import arxiv
 
 from pybliotecario.components.component_core import Component
 
 logger = logging.getLogger(__name__)
+
+
+def _get_paper_by_id(arxiv_id_raw):
+    """Constructs a search for arxiv_id and returns a paper object."""
+    arxiv_id = url_to_id(arxiv_id_raw)
+    client = arxiv.Client()
+    search = arxiv.Search(id_list=[arxiv_id])
+    try:
+        paper = next(client.results(search))
+    except arxiv.HTTPError:
+        return None
+    return paper
 
 
 def is_today(time_to_test):
@@ -41,9 +55,11 @@ def query_recent(category):
     """
     Query the arxiv for the updates of the last day for a given category
     """
-    results = arxiv.Search(
+    client = arxiv.Client()
+    search = arxiv.Search(
         query=category, max_results=75, sort_by=arxiv.SortCriterion.LastUpdatedDate
-    ).results()
+    )
+    results = client.results(search)
     elements = []
     for _, element in enumerate(results):
         if is_today(element.published):
@@ -95,17 +111,13 @@ def url_to_id(arxiv_url):
 
 
 # Telegram-usable functions
-def arxiv_get_pdf(arxiv_id_raw):
+def arxiv_get_pdf(arxiv_id_raw, out_name="/tmp/paper.pdf"):
     """Downloads a paper from the arxiv given an id.
     Returns path to the downloaded file.
     """
-    arxiv_id = url_to_id(arxiv_id_raw)
     # First we recover the information about the paper
-    try:
-        paper = next(arxiv.Search(id_list=[arxiv_id]).results())
-    except arxiv.arxiv.HTTPError:
-        return None
-    return Path(paper.download_pdf("/tmp/"))
+    paper = _get_paper_by_id(arxiv_id_raw)
+    return urlretrieve(paper.pdf_url, out_name)
 
 
 def arxiv_recent_filtered(categories, filter_dict, abstract=False, max_authors=50):
@@ -140,11 +152,10 @@ def arxiv_query_info(arxiv_id_raw):
     """
     Returns extra information about the queried paper
     """
-    arxiv_id = url_to_id(arxiv_id_raw)
-    paper = next(arxiv.Search(id_list=[arxiv_id]).results())
+    paper = _get_paper_by_id(arxiv_id_raw)
     authors = [str(i) for i in paper.authors]
     abstract = paper.summary.replace("\n", " ")
-    msg = f""" > {arxiv_id}
+    msg = f""" > {paper.get_short_id()}
 Title: {paper.title}
 
 Authors: {authors}
@@ -217,11 +228,13 @@ class Arxiv(Component):
             self.send_msg("This commands needs an argument")
             return
         if command in ("arxivget", "arxiv-get", "arxiv_get"):
-            file_send = arxiv_get_pdf(arxiv_id)
-            if file_send is None:
-                self.send_msg("Error trying to download the paper, please check ID again")
-            else:
-                self.send_file(file_send, delete=True)
+            with tempfile.NamedTemporaryFile(delete=True, suffix=".pdf") as tmp_file:
+                tmp_path = Path(tmp_file.name)
+                arxiv_get_pdf(arxiv_id, out_name=tmp_path)
+                if tmp_path.exists():
+                    self.send_file(tmp_path)
+                else:
+                    self.send_msg("Error trying to download the paper, please check ID again")
         else:
             msg = arxiv_query_info(arxiv_id)
             self.send_msg(msg)
@@ -247,7 +260,6 @@ if __name__ == "__main__":
     tlg_msg = arxiv_recent_filtered([categoria], dict_search)
     logger.info(tlg_msg)
 
-#     logger.info("Test download")
-#     test_id = "1802.02445"
-#     name = arxiv_get_pdf(test_id)
-#     os.remove(name)
+    logger.info("Test download")
+    test_id = "1802.02445"
+    name = arxiv_get_pdf(test_id, "test.pdf")
