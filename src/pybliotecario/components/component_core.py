@@ -14,7 +14,6 @@ to the `act_on_command` or `act_on_message` methods.
 
 import logging
 import os
-import sys
 
 log = logging.getLogger(__name__)
 
@@ -108,7 +107,7 @@ class Component:
     def split_list(comma_separated_str):
         """Receives a string representation of a comma separated list
         and splits it, filters out empty spaces and returns a list"""
-        list_str = comma_separated_str.strip().split(",")
+        list_str = [i.strip() for i in comma_separated_str.strip().split(",")]
         filtered_str = filter(lambda x: x, list_str)
         return list(filtered_str)
 
@@ -143,16 +142,18 @@ class Component:
         self.telegram.send_message("Command line argument invoked", self.chat_id)
 
     # Some useful wrappers
-    def send_msg(self, msg, chat_id=None, markdown=False, quiet=False):
+    def send_msg(self, msg, chat_id=None, markdown=False, html=False, quiet=False):
         """Wrapper around API send_msg, if chat_id is not defined
         it will use the chat_id this class was instantiated to.
         If ``quiet`` == True, use `send_quiet_message`
         """
+        if markdown and html:
+            raise ValueError("Only one of markdown and html can be chosen at a time.")
         if chat_id is None:
             chat_id = self.interaction_chat
         if quiet:
-            return self.telegram.send_quiet_message(msg, chat_id, markdown=markdown)
-        return self.telegram.send_message(msg, chat_id, markdown=markdown)
+            return self.telegram.send_quiet_message(msg, chat_id, markdown=markdown, html=html)
+        return self.telegram.send_message(msg, chat_id, markdown=markdown, html=html)
 
     def send_img(self, imgpath, chat_id=None, delete=False):
         """Wrapper around API send_img, if chat_id is not defined

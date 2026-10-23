@@ -207,12 +207,14 @@ class TelegramUtil(Backend):
         self.__re_offset(result)
         return result
 
-    def send_message(self, text, chat, markdown=False, **kwargs):
+    def send_message(self, text, chat, markdown=False, html=False, **kwargs):
         """Send a message to a given chat"""
         text = urllib.parse.quote_plus(text)
         url = f"{self.send_msg}?text={text}&chat_id={chat}"
         if markdown:
             url += "&parse_mode=markdown"
+        elif html:
+            url += "&parse_mode=html"
         content = self.__make_request(url)
         # Sometimes, when using markdown, the update might fail
         if markdown and not json.loads(content).get("ok"):
