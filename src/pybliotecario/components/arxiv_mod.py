@@ -4,6 +4,7 @@ update notifications and quick-querying from the Telegram app
 """
 
 from datetime import datetime, timedelta, timezone
+from html import escape
 import logging
 import os
 from pathlib import Path
@@ -11,6 +12,7 @@ import tempfile
 from urllib.request import urlretrieve
 
 import arxiv
+from pylatexenc.latex2text import LatexNodes2Text
 
 from pybliotecario.components.component_core import Component
 
@@ -48,22 +50,45 @@ def is_today(time_to_test):
     base_today = base_today.replace(hour=base_hour, minute=0, second=0, microsecond=0)
 
     # Now, if the paper date (pdt) is from before the base time (base_today), that means it is not from today
-    return time_to_test >= base_today
+    check = time_to_test >= base_today
+    if check:
+        return True
+    return False
 
 
-def query_recent(category):
+def query_recent(category, only_primary=True, exclude_categories=None):
     """
     Query the arxiv for the updates of the last day for a given category
+    https://info.arxiv.org/help/api/user-manual.html#query_details
+
+    If ``only_primary`` is set to True (default), cross-references are skipped
+    and ``exclude_categories``, which takes a list, can be used to remove elements
+    which are cross-referenced with something
     """
     client = arxiv.Client()
     search = arxiv.Search(
-        query=category, max_results=75, sort_by=arxiv.SortCriterion.LastUpdatedDate
+        query=f"cat:{category}", max_results=80, sort_by=arxiv.SortCriterion.LastUpdatedDate
     )
     results = client.results(search)
+    if exclude_categories is None:
+        exclude_categories = []
     elements = []
     for _, element in enumerate(results):
-        if is_today(element.published):
+
+        if only_primary and element.primary_category != category:
+            continue
+
+        if not is_today(element.published):
+            continue
+
+        # Check for excluded categories, if found, break
+        # otherwise continue the loop, exit normally and update the list
+        for cat in element.categories:
+            if cat in exclude_categories:
+                break
+        else:
             elements.append(element)
+
     logger.info("Found %d new papers", len(elements))
     return elements
 
@@ -120,34 +145,6 @@ def arxiv_get_pdf(arxiv_id_raw, out_name="/tmp/paper.pdf"):
     return urlretrieve(paper.pdf_url, out_name)
 
 
-def arxiv_recent_filtered(categories, filter_dict, abstract=False, max_authors=50):
-    """Read all recent papers in each category and save the ones matching the
-    requirements of filter_dict"""
-    lines = []
-    for category in categories:
-        tmp = query_recent(category)
-        results = filter_results(tmp, filter_dict)
-        url = f"https://arxiv.org/list/{category}/new"
-        n_new = len(tmp)
-        n_int = len(results)
-        line = f"{n_new} new papers in [{category}]({url}) "
-        if n_int > 0:
-            line += f"{n_int} interesting ones:\n"
-        else:
-            line += "(nothing to be highlighted)."
-        for paper in results:
-            paper_authors = paper.authors
-            if len(paper_authors) > max_authors:
-                paper_authors = paper_authors[:max_authors] + ["et al"]
-            authors = ", ".join(str(i) for i in paper_authors)
-            arxiv_id = paper.get_short_id().replace("v1", "")
-            line += f" > {paper.title}: [{arxiv_id}]({paper.links[0]})\n  by {authors}\n"
-            if abstract:
-                line += paper["summary"]
-        lines.append(line)
-    return "\n".join(lines)
-
-
 def arxiv_query_info(arxiv_id_raw):
     """
     Returns extra information about the queried paper
@@ -163,6 +160,30 @@ Authors: {authors}
 Abstract: {abstract}
     """
     return msg
+
+
+def _paper_summary(paper, max_authors=50, show_abstract=False, text_html=True):
+    """Create the paper summary in either markdown or html."""
+    paper_authors = paper.authors
+    if len(paper_authors) > max_authors:
+        paper_authors = paper_authors[:max_authors] + ["et al"]
+    authors = ", ".join(map(str, paper_authors))
+    arxiv_id = paper.get_short_id().replace("v1", "")
+    title = LatexNodes2Text().latex_to_text(paper.title)
+
+    if text_html:
+        authors = escape(authors)
+        title = escape(title)
+        arxiv_id = escape(arxiv_id)
+        link = escape(str(paper.links[0]))
+        line = f'<blockquote>{title}: <a href="{link}">{arxiv_id}</a></blockquote>\nby {authors}'
+        if show_abstract:
+            line += "\n\n" + escape(LatexNodes2Text().latex_to_text(paper.summary))
+    else:
+        line = f" > {title}: [{arxiv_id}]({paper.links[0]})\n  by {authors}"
+        if show_abstract:
+            line += "\n" + paper["summary"]
+    return line
 
 
 class Arxiv(Component):
@@ -183,6 +204,8 @@ class Arxiv(Component):
             "authors": self.split_list(authors),
         }
         self.categories = self.split_list(arxiv_config.get("categories", ""))
+        self._exclusions = self.split_list(arxiv_config.get("exclusions", ""))
+        self._show_abstract = False
 
     @classmethod
     def configure_me(cls):
@@ -215,10 +238,48 @@ class Arxiv(Component):
         sends a notification if any of the entries fulfill any of
         the requirements set in the config file
         """
-        msg = arxiv_recent_filtered(
-            self.categories, self.filter_dict, max_authors=self._max_authors
-        )
-        self.send_msg(msg, markdown=True)
+        outgoing_msg = ""
+        all_papers_msg = []
+        for category in self.categories:
+            # Get all entries for this category
+            entries = query_recent(category, exclude_categories=self._exclusions)
+            n_new = len(entries)
+
+            # Prepare the outgoing msg
+            url = f"https://arxiv.org/list/{category}/new"
+            s_new_entries = f'{n_new} new papers in <a href="{escape(url)}">{escape(category)}</a>'
+
+            # Check the ones passing the filters
+            good_results = filter_results(entries, self.filter_dict)
+            n_int = len(good_results)
+            if n_int > 0:
+                s_interest = f"{n_int} interesting one"
+                if n_int > 1:
+                    s_interest += "s"
+            else:
+                s_interest = "nothing to be highlighted"
+
+            paper_lines = [
+                _paper_summary(p, max_authors=self._max_authors, show_abstract=self._show_abstract)
+                for p in good_results
+            ]
+            line = "\n\n".join(paper_lines)
+
+            # Now construct the full msg depending on the command
+            outgoing_msg += f"{s_new_entries}, of which {s_interest}.\n{line}"
+
+            if args.arxiv_short:
+                continue
+
+            # IF we want the long message, then prepare the list of all papers
+            all_papers_msg += [_paper_summary(p, max_authors=4) for p in entries]
+
+        if all_papers_msg:
+            self.send_msg(f"Total number of papers: {len(all_papers_msg)}")
+            for batch in [all_papers_msg[i : i + 15] for i in range(0, len(all_papers_msg), 15)]:
+                self.send_msg("\n\n".join(batch), html=True)
+        # Put the nice summary at the end
+        self.send_msg(outgoing_msg, html=True)
         logger.info("Arxiv information sent")
 
     def telegram_message(self, msg):
@@ -257,8 +318,6 @@ if __name__ == "__main__":
     }
     filter_papers = filter_results(recent_papers, dict_search)
     logger.warning(filter_papers)
-    tlg_msg = arxiv_recent_filtered([categoria], dict_search)
-    logger.info(tlg_msg)
 
     logger.info("Test download")
     test_id = "1802.02445"

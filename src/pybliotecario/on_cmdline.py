@@ -23,7 +23,8 @@ CMDLINE_MAPPING = {
     "weather": ("weather", "Weather"),
     "check_repository": ("repositories", "Repository"),
     "check_github_issues": ("github_component", "Github"),
-    "arxiv_new": ("arxiv_mod", "Arxiv"),
+    "arxiv": ("arxiv_mod", "Arxiv"),
+    "arxiv_short": ("arxiv_mod", "Arxiv"),
     "stock_watcher": ("stocks", "Stocks"),
 }
 

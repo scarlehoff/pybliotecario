@@ -264,8 +264,13 @@ def parse_args(args):
 
     parser_com = parser.add_argument_group("Pybliotecario's components")
     parser_com.add_argument(
-        "--arxiv_new",
-        help="Send a msg containing a digest of the new submissions to arxiv",
+        "--arxiv_short",
+        help="Send a short msg containing a digest of the new submissions to arxiv",
+        action="store_true",
+    )
+    parser_com.add_argument(
+        "--arxiv",
+        help="Send the daily digest of the new submissions to arxiv",
         action="store_true",
     )
     parser_com.add_argument(
